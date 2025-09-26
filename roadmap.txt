@@ -1,0 +1,301 @@
+# 🛣 نقشه راه توسعه پروژه بنیاد حکمت
+
+## 📅 نمای کلی پروژه
+این فایل شامل تمامی بهبودها، تغییرات و ویژگی‌های جدیدی است که برای پروژه بنیاد حکمت پیشنهاد شده و باید پیاده‌سازی شود.
+
+---
+
+## 🎯 اهداف اصلی بازطراحی
+
+### 🔄 مشکلات فعلی
+1. **ساختار داشبورد**: سه داشبورد جداگانه که کدهای تکراری دارند
+2. **UX ضعیف**: فرم‌های جداگانه به جای popup ها
+3. **پیام‌رسانی سنتی**: نیاز به رابط مشابه تلگرام
+4. **Validation انگلیسی**: پیام‌های خطا به فارسی نیست
+5. **Frontend قدیمی**: نیاز به modernization با Vue.js
+
+### 🚀 اهداف نهایی
+1. **یک داشبورد واحد** با فیلترینگ بر اساس نقش
+2. **پیام‌رسانی مدرن** مشابه تلگرام
+3. **تمام فرم‌ها Popup** با UX عالی
+4. **API-First Architecture** برای آینده
+5. **Real-time Updates** با WebSocket
+
+---
+
+## 🏗 مرحله ۱: بازسازی Frontend Architecture
+
+### 1.1 انتخاب تکنولوژی
+✅ **تصمیم نهایی**: Vue.js (به دلیل scalability و ecosystem)
+
+### 1.2 مهاجرت تدریجی
+```
+Phase 1: Vue.js Components در Blade Templates
+Phase 2: API Routes برای AJAX calls
+Phase 3: SPA کامل با Vue Router
+Phase 4: Real-time با WebSocket
+```
+
+### 1.3 Component های اولویت‌دار
+1. **PopupFormComponent**: برای تمام فرم‌ها
+2. **MultiStepFormComponent**: فرم مرحله‌ای درخواست
+3. **TelegramChatComponent**: پیام‌رسانی مدرن
+4. **ProgressBarComponent**: نمایش وضعیت درخواست
+5. **NotificationComponent**: اعلانات real-time
+
+---
+
+## 🔧 مرحله ۲: بازسازی ساختار داشبورد
+
+### 2.1 ایجاد داشبورد واحد
+```php
+// جدید: UnifiedDashboardController
+class UnifiedDashboardController extends Controller
+{
+    public function index()
+    {
+        $user = Auth::user();
+
+        switch($user->role) {
+            case 'user':
+                return $this->userView($user);
+            case 'admin':
+                return $this->adminView($user);
+            case 'master':
+                return $this->masterView($user);
+        }
+    }
+}
+```
+
+### 2.2 ساختار View جدید
+```
+resources/views/
+├── unified/
+│   ├── dashboard.blade.php    → داشبورد واحد
+│   ├── components/
+│   │   ├── user-section.blade.php
+│   │   ├── admin-section.blade.php
+│   │   └── master-section.blade.php
+│   └── modals/
+│       ├── add-request.blade.php
+│       ├── edit-request.blade.php
+│       └── messages.blade.php
+```
+
+### 2.3 حذف فایل‌های اضافی
+- ❌ `resources/views/user/` (merge شود)
+- ❌ `resources/views/admin/` (merge شود)
+- ✅ کدهای مشترک extract شود
+
+---
+
+## 🎨 مرحله ۳: تبدیل فرم‌ها به Popup
+
+### 3.1 فرم‌های هدف
+1. **addrequest** → Multi-step popup با roadmap
+2. **editrequest** → Popup با pre-filled data
+3. **addcard** → Simple popup (فقط برای accept)
+4. **editprofile** → Popup در admin layout
+
+### 3.2 ویژگی‌های Popup
+```javascript
+// مثال: Multi-step Form
+const RequestFormSteps = {
+    1: { title: 'اطلاعات شخصی', fields: ['name', 'female'] },
+    2: { title: 'اطلاعات تماس', fields: ['phone', 'address'] },
+    3: { title: 'مدارک', fields: ['grade', 'nationalcode', 'imgpath'] },
+    4: { title: 'تخصص‌ها', fields: ['abouts[]'] },
+    5: { title: 'تایید نهایی', fields: [] }
+}
+```
+
+### 3.3 Validation فارسی
+```php
+// Laravel Validation Messages
+'required' => 'فیلد :attribute الزامی است.',
+'email' => 'فرمت :attribute صحیح نیست.',
+'max' => 'حداکثر طول :attribute :max کاراکتر است.',
+// + تمام پیام‌های فارسی
+```
+
+### 3.4 انیمیشن Success
+```css
+.success-animation {
+    /* تیک سبز با glow effect */
+    animation: checkmark 0.6s ease-in-out,
+               glow 2s ease-in-out infinite alternate;
+}
+```
+
+---
+
+## 💬 مرحله ۴: سیستم پیام‌رسانی تلگرامی
+
+### 4.1 طراحی رابط جدید
+```
+┌─────────────────────────────────────┐
+│ 📱 پیام‌ها                          │
+├─────────────────────────────────────┤
+│ 👤 علی احمدی        │ 💬 پیام‌ها    │
+│ 📷 [عکس پروفایل]    │               │
+│ 📞 ۰۹۱۲۳۴۵۶۷۸۹    │  سلام آقای   │
+│                     │  علی...       │
+├─────────────────────┤               │
+│ 👤 فاطمه محمدی      │               │
+│ ...                 │               │
+├─────────────────────┼───────────────┤
+│                     │ 💬 [متن پیام] │
+│                     │ 😊 📎 📷 📤    │
+└─────────────────────┴───────────────┘
+```
+
+### 4.2 ویژگی‌های جدید
+- **Context Menu**: راست کلیک → Copy, Edit, Delete
+- **Mobile Touch**: نگه داشتن → منوی عملیات
+- **Notification Badge**: تعداد پیام‌های خوانده نشده
+- **Message Types**: Warning (⚠️), Thanks (🙏), Message (💬), Scholarship (💰)
+
+### 4.3 حذف فیلد title
+```sql
+-- Migration: Remove title from scholarships
+ALTER TABLE scholarships DROP COLUMN title;
+```
+
+### 4.4 API Routes جدید
+```php
+Route::prefix('api/messages')->group(function () {
+    Route::get('/', 'MessageController@index');
+    Route::post('/', 'MessageController@store');
+    Route::put('/{id}', 'MessageController@update');
+    Route::delete('/{id}', 'MessageController@destroy');
+    Route::post('/mark-read', 'MessageController@markAsRead');
+});
+```
+
+---
+
+## 🔐 مرحله ۵: کنترل دسترسی و محدودیت‌ها
+
+### 5.1 محدودیت‌های ویرایش
+```php
+// BusinessLogic: Edit Restrictions
+if ($request->story === 'appointment') {
+    // هیچ ویرایشی مجاز نیست
+    return response()->json(['error' => 'در حالت ملاقات امکان ویرایش وجود ندارد'], 403);
+}
+
+if ($request->story === 'accept') {
+    // فقط شماره کارت
+    $allowedFields = ['cardnumber'];
+    // بقیه فیلدها disabled
+}
+```
+
+### 5.2 Dashboard Sections
+```php
+// نمایش بخش‌ها بر اساس نقش
+$sections = [
+    'user' => ['my-requests', 'messages'],
+    'admin' => ['all-requests', 'users', 'accepted-requests'],
+    'master' => ['all-requests', 'users', 'accepted-requests', 'role-management']
+];
+```
+
+---
+
+## 🔄 برنامه زمان‌بندی پیاده‌سازی
+
+### Week 1: Foundation
+- [ ] Setup Vue.js در پروژه
+- [ ] ایجاد Base Components
+- [ ] فارسی‌سازی Validation
+- [ ] **Commit**: "feat: Vue.js setup + Persian validation"
+
+### Week 2: Unified Dashboard
+- [ ] ایجاد UnifiedDashboardController
+- [ ] بازطراحی layout واحد
+- [ ] Role-based section rendering
+- [ ] **Commit**: "feat: Unified dashboard architecture"
+
+### Week 3: Popup Forms
+- [ ] تبدیل addrequest به multi-step popup
+- [ ] تبدیل editrequest به popup
+- [ ] تبدیل addcard به popup
+- [ ] **Commit**: "feat: All forms converted to popups"
+
+### Week 4: Telegram-like Messaging
+- [ ] طراحی رابط پیام‌رسانی جدید
+- [ ] Context menu و mobile touch
+- [ ] Real-time notifications
+- [ ] **Commit**: "feat: Modern messaging system"
+
+### Week 5: API & Real-time
+- [ ] ایجاد API routes
+- [ ] WebSocket integration
+- [ ] Testing و debugging
+- [ ] **Commit**: "feat: API-first + Real-time updates"
+
+---
+
+## 🎯 معیارهای موفقیت
+
+### Performance Metrics
+- [ ] Page Load Time < 2s
+- [ ] API Response Time < 500ms
+- [ ] Mobile Responsive Score > 95%
+- [ ] Accessibility Score > 90%
+
+### User Experience
+- [ ] تمام فرم‌ها popup هستند
+- [ ] پیام‌های validation فارسی
+- [ ] پیام‌رسانی مشابه تلگرام
+- [ ] انیمیشن‌های smooth
+
+### Code Quality
+- [ ] DRY: حذف کدهای تکراری
+- [ ] Component-based architecture
+- [ ] API-first approach
+- [ ] Test coverage > 80%
+
+---
+
+## 🚨 نکات مهم پیاده‌سازی
+
+### Git Strategy
+```bash
+# قبل از هر تغییر
+git add -A
+git commit -m "before: [description]"
+
+# بعد از تغییر
+git add -A
+git commit -m "after: [description]"
+```
+
+### Testing Strategy
+- Unit Tests برای Components
+- Integration Tests برای API
+- E2E Tests برای User Journey
+- Manual Testing برای UX
+
+### Security Considerations
+- CSRF protection در API calls
+- Input sanitization
+- File upload validation
+- Rate limiting برای API
+
+---
+
+## 🎉 نتیجه نهایی
+
+پس از تکمیل این roadmap، پروژه بنیاد حکمت به یک سیستم مدرن، کارآمد و کاربرپسند تبدیل خواهد شد که:
+
+✅ **UX بهتر**: تمام عملیات در popup ها
+✅ **کد تمیز**: بدون تکرار و منظم
+✅ **مقیاس‌پذیر**: آماده برای توسعه آینده
+✅ **مدرن**: با آخرین تکنولوژی‌ها
+✅ **کاربرپسند**: رابط فارسی و بصری
+
+---
+*نقشه راه تدوین شده در تاریخ ۱۱ مرداد ۱۴۰۴*

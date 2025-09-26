@@ -1,0 +1,1452 @@
+# 👨‍💻 راهنمای کامل برنامه‌نویسی - پروژه بنیاد حکمت
+
+## 🎯 معرفی پروژه
+
+### نام پروژه: سیستم مدیریت بورسیه بنیاد حکمت
+**نوع**: وب اپلیکیشن مدیریت محتوا  
+**زبان اصلی**: فارسی (RTL)  
+**معماری**: MVC Pattern با Laravel Framework  
+**هدف**: مدیریت درخواست‌های بورسیه تحصیلی و پیگیری آن‌ها  
+
+### کاربران هدف
+- **متقاضیان بورسیه**: اولیای دانش‌آموزان نیازمند
+- **مدیران بررسی**: کارشناسان بررسی‌کننده درخواست‌ها  
+- **مدیران ارشد**: نظارت کلی و مدیریت سیستم
+
+---
+
+## 🏗️ معماری فنی سیستم
+
+### Stack Technology
+```yaml
+Backend:
+  Framework: Laravel 12.0
+  Language: PHP 8.2+
+  Database: SQLite (Production-ready)
+  Authentication: Laravel Auth + Custom Roles
+
+Frontend:
+  Template: Blade Engine
+  CSS: TailwindCSS + Custom CSS
+  JavaScript: Vanilla JS + External Modules
+  Icons: SVG Heroicons
+
+External Dependencies:
+  - JalaliDatePicker: Persian calendar
+  - morilog/jalali: Date conversion
+  - Livewire 3.6: Real-time components
+```
+
+### فولدر بندی پروژه
+```
+boniad_hekmat/
+├── app/
+│   ├── Http/Controllers/      → کنترلرهای اصلی
+│   ├── Models/               → مدل‌های دیتابیس
+│   └── Providers/            → Service Providers
+├── database/
+│   ├── migrations/           → تغییرات دیتابیس
+│   ├── seeders/             → داده‌های اولیه
+│   └── database.sqlite      → فایل دیتابیس
+├── resources/
+│   ├── views/               → Template files
+│   ├── css/                 → استایل‌های کامپایل شده
+│   └── js/                  → فایل‌های JavaScript
+├── public/
+│   ├── assets/              → فایل‌های استاتیک
+│   └── uploads/             → آپلودهای کاربران
+├── routes/
+│   └── web.php              → تعریف Route ها
+└── storage/                 → فایل‌های خصوصی
+```
+
+---
+
+## 🗄️ ساختار دیتابیس
+
+### ERD Schema
+```
+users (1) ──────────── (∞) requests
+  │                           │
+  │                           │
+  └── (1) profiles           └── (∞) aboutreq
+                              │
+                              └── (∞) scholarships
+                              │
+                              └── (1) daily_trackers
+```
+
+### جداول اصلی
+
+#### 👥 users - مدیریت کاربران
+```sql
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(255) NOT NULL,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('user', 'admin', 'master') DEFAULT 'user',
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+```
+
+**فیلدهای کلیدی:**
+- `role`: نقش کاربر در سیستم
+  - `user`: متقاضی عادی  
+  - `admin`: مدیر بررسی‌کننده
+  - `master`: مدیر ارشد
+
+#### 📋 requests - هسته اصلی سیستم
+```sql
+CREATE TABLE requests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    name VARCHAR(255) NOT NULL,        -- نام متقاضی (فرزند)
+    female BOOLEAN DEFAULT 0,          -- 0=پسر, 1=دختر
+    grade VARCHAR(50),                 -- پایه تحصیلی
+    nationalcode VARCHAR(10) UNIQUE,   -- کد ملی
+    phone VARCHAR(15),                 -- شماره تماس
+    address TEXT,                      -- آدرس کامل
+    story ENUM('submit','cancel','check','reject','accept','appointment'),
+    imgpath VARCHAR(255),              -- مسیر عکس
+    date DATETIME NULL,                -- تاریخ ملاقات
+    cardnumber VARCHAR(16) NULL,       -- شماره کارت
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+**وضعیت‌های story:**
+```php
+'submit'     => 'ثبت شده',           // ثبت اولیه توسط کاربر
+'cancel'     => 'لغو شده',           // لغو توسط کاربر  
+'check'      => 'در حال بررسی',      // خودکار هنگام ورود ادمین
+'reject'     => 'رد شده',            // رد توسط ادمین
+'accept'     => 'تایید شده',         // تایید + شروع 31 روز
+'appointment'=> 'تعیین وقت ملاقات'   // تعیین وقت حضوری
+```
+
+#### 👤 profiles - اطلاعات ادمین‌ها
+```sql
+CREATE TABLE profiles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    female BOOLEAN DEFAULT 0,
+    grade VARCHAR(50),
+    phone VARCHAR(15),
+    address TEXT,
+    imgpath VARCHAR(255),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+**نکته مهم**: پروفایل برای admin ها اجباری است
+
+#### 💬 scholarships - سیستم پیام‌رسانی
+```sql
+CREATE TABLE scholarships (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    profile_id INTEGER NOT NULL,       -- فرستنده (ادمین)
+    request_id INTEGER NOT NULL,       -- درخواست مرتبط
+    title VARCHAR(255) NOT NULL,       -- عنوان پیام
+    description TEXT,                  -- متن پیام
+    price DECIMAL(10,2) DEFAULT 0,     -- مبلغ بورسیه
+    story ENUM('warning','thanks','message','scholarship'),
+    ismaster BOOLEAN DEFAULT 0,        -- آیا توسط master ارسال شده
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    
+    FOREIGN KEY (profile_id) REFERENCES profiles(id),
+    FOREIGN KEY (request_id) REFERENCES requests(id)
+);
+```
+
+**انواع پیام:**
+```php
+'warning'     => ['رنگ' => 'زرد',  'معنی' => 'هشدار'],
+'thanks'      => ['رنگ' => 'آبی',  'معنی' => 'تشکر'],  
+'message'     => ['رنگ' => 'آبی',  'معنی' => 'پیام عادی'],
+'scholarship' => ['رنگ' => 'سبز',  'معنی' => 'اعلان بورسیه']
+```
+
+#### 🏆 aboutreq - تخصص‌ها و افتخارات
+```sql
+CREATE TABLE aboutreq (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    request_id INTEGER NOT NULL,
+    title VARCHAR(255) NOT NULL,       -- عنوان مهارت/افتخار
+    description TEXT,                  -- توضیحات
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    
+    FOREIGN KEY (request_id) REFERENCES requests(id)
+);
+```
+
+#### ⏰ daily_trackers - پیگیری زمانی 31 روزه
+```sql
+CREATE TABLE daily_trackers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    request_id INTEGER UNIQUE NOT NULL,
+    start_date DATE NOT NULL,          -- تاریخ شروع
+    max_days INTEGER DEFAULT 31,       -- مدت زمان ثابت
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    
+    FOREIGN KEY (request_id) REFERENCES requests(id)
+);
+```
+
+---
+
+## 🔧 کنترلرها و Route ها
+
+### ساختار کنترلرها
+```php
+app/Http/Controllers/
+├── AuthController.php      → احراز هویت + هدایت نقش‌ها
+├── UserController.php      → عملیات کاربران عادی
+├── AdminController.php     → عملیات مدیران
+├── MasterController.php    → عملیات مدیران ارشد
+└── HomeController.php      → صفحات عمومی
+```
+
+### متدهای کلیدی
+
+#### AuthController.php
+```php
+class AuthController extends Controller 
+{
+    // تشخیص نقش و هدایت
+    public function roler()
+    {
+        $user = Auth::user();
+        
+        switch($user->role) {
+            case 'user':
+                return redirect()->route('user.dashboard');
+            case 'admin':
+                // بررسی وجود پروفایل
+                if (!$user->profile) {
+                    return redirect()->route('admin.addprofile');
+                }
+                return redirect()->route('admin.dashboard');
+            case 'master':
+                return redirect()->route('master.dashboard');
+        }
+    }
+    
+    public function login(Request $request) { /* ... */ }
+    public function logout() { /* ... */ }
+}
+```
+
+#### UserController.php
+```php
+class UserController extends Controller
+{
+    public function dashboard()
+    {
+        $requests = Request::where('user_id', Auth::id())
+                          ->orderBy('created_at', 'desc')
+                          ->get();
+        return view('user.dashboard', compact('requests'));
+    }
+    
+    public function addrequest() { /* فرم درخواست جدید */ }
+    public function storerequest(Request $request) { /* ذخیره درخواست */ }
+    public function editrequest($id) { /* ویرایش درخواست */ }
+    public function updaterequest(Request $request, $id) { /* بروزرسانی */ }
+    public function message() { /* نمایش پیام‌ها */ }
+    public function addcard($id) { /* اضافه کردن شماره کارت */ }
+}
+```
+
+#### AdminController.php
+```php
+class AdminController extends Controller
+{
+    public function dashboard()
+    {
+        $requests = Request::with('user')
+                          ->where('story', '!=', 'submit')
+                          ->orderBy('created_at', 'desc')
+                          ->get();
+        return view('admin.dashboard', compact('requests'));
+    }
+    
+    public function userdetail($id)
+    {
+        $request = Request::findOrFail($id);
+        
+        // تغییر خودکار وضعیت به "در حال بررسی"
+        if ($request->story === 'submit') {
+            $request->update(['story' => 'check']);
+        }
+        
+        return view('admin.userdetail', compact('request'));
+    }
+    
+    public function acceptuser($id)
+    {
+        $request = Request::findOrFail($id);
+        $request->update(['story' => 'accept']);
+        
+        // شروع پیگیری 31 روزه
+        DailyTracker::create([
+            'request_id' => $id,
+            'start_date' => Carbon::now()->startOfDay(),
+            'max_days' => 31
+        ]);
+        
+        return redirect()->back()->with('success', 'درخواست تایید شد');
+    }
+    
+    public function rejectuser($id) { /* رد درخواست */ }
+    public function setAppointment(Request $request, $id) { /* تعیین وقت */ }
+    public function storemessage(Request $request) { /* ارسال پیام */ }
+}
+```
+
+### Route Structure
+```php
+// routes/web.php
+
+// مسیرهای عمومی
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/register', [HomeController::class, 'register'])->name('register');
+Route::post('/register', [HomeController::class, 'store']);
+
+// مسیرهای احراز هویت
+Route::middleware('auth')->group(function () {
+    Route::get('/roler', [AuthController::class, 'roler'])->name('roler');
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+// مسیرهای کاربر عادی
+Route::prefix('user')->name('user.')->middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+    Route::get('/addrequest', [UserController::class, 'addrequest'])->name('addrequest');
+    Route::post('/storerequest', [UserController::class, 'storerequest'])->name('storerequest');
+    Route::get('/editrequest/{id}', [UserController::class, 'editrequest'])->name('editrequest');
+    Route::put('/updaterequest/{id}', [UserController::class, 'updaterequest'])->name('updaterequest');
+    Route::get('/message', [UserController::class, 'message'])->name('message');
+    Route::get('/addcard/{id}', [UserController::class, 'addcard'])->name('addcard');
+    Route::put('/updatecard/{id}', [UserController::class, 'updatecard'])->name('updatecard');
+});
+
+// مسیرهای ادمین
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,master'])->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/userdetail/{id}', [AdminController::class, 'userdetail'])->name('userdetail');
+    Route::put('/acceptuser/{id}', [AdminController::class, 'acceptuser'])->name('acceptuser');
+    Route::put('/rejectuser/{id}', [AdminController::class, 'rejectuser'])->name('rejectuser');
+    Route::put('/setappointment/{id}', [AdminController::class, 'setAppointment'])->name('setappointment');
+    Route::post('/storemessage', [AdminController::class, 'storemessage'])->name('storemessage');
+    Route::get('/accepts', [AdminController::class, 'accepts'])->name('accepts');
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+});
+
+// مسیرهای مستر (مدیر ارشد)
+Route::prefix('master')->name('master.')->middleware(['auth', 'role:master'])->group(function () {
+    Route::get('/dashboard', [MasterController::class, 'dashboard'])->name('dashboard');
+    Route::put('/changerole/{id}', [MasterController::class, 'changerole'])->name('changerole');
+    Route::get('/addprofile', [MasterController::class, 'addprofile'])->name('addprofile');
+    Route::post('/storeprofile', [MasterController::class, 'storeprofile'])->name('storeprofile');
+});
+
+// 🆕 مسیرهای یکپارچه (Unified Dashboard)
+Route::prefix('unified')->name('unified.')->middleware('auth')->group(function () {
+    Route::get('/myrequests', [UnifiedController::class, 'myrequests'])->name('myrequests');
+    Route::get('/allrequests', [UnifiedController::class, 'allrequests'])->name('allrequests');
+    Route::get('/acceptes', [UnifiedController::class, 'acceptes'])->name('acceptes');
+    Route::get('/users', [UnifiedController::class, 'users'])->name('users');
+    Route::get('/addprofile', [UnifiedController::class, 'addprofile'])->name('addprofile');
+    Route::get('/requestdetail/{id}', [UnifiedController::class, 'requestdetail'])->name('requestdetail');
+});
+```
+
+---
+
+## 🎨 Frontend و UI Components
+
+### Layout System
+
+#### unified.blade.php - Layout اصلی
+```html
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'پنل مدیریت')</title>
+    
+    <!-- استایل‌ها -->
+    <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/search-box.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/sidebar.css') }}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    @yield('head')
+</head>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen">
+        <!-- سایدبار -->
+        <div id="sidebar" class="w-64 bg-white shadow-lg transition-all duration-300 ease-in-out">
+            <!-- هدر با دکمه Toggle -->
+            <div class="p-6 flex items-center justify-between">
+                <h2 id="sidebarTitle" class="text-xl font-bold text-gray-800">پنل مدیریت</h2>
+                <button id="toggleSidebar" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg id="toggleIcon" class="w-5 h-5 text-gray-600">
+                        <!-- آیکون SVG -->
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- منوهای ناوبری -->
+            <nav class="mt-6">
+                <div class="px-6 py-2">
+                    <div id="menuLabel" class="text-xs font-semibold text-gray-400 uppercase tracking-widest">منوی اصلی</div>
+                </div>
+                
+                <!-- منوی درخواست‌های من - همه نقش‌ها -->
+                <a href="{{ route('unified.myrequests') }}" 
+                   class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50 group" 
+                   title="درخواست‌های من">
+                    <svg class="w-5 h-5 ml-3 flex-shrink-0">
+                        <!-- آیکون -->
+                    </svg>
+                    <span class="menu-text">درخواست‌های من</span>
+                </a>
+
+                @if(Auth::user()->role !== 'user')
+                    <!-- منوهای ویژه ادمین/مستر -->
+                    <a href="{{ route('unified.allrequests') }}" 
+                       class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50 group" 
+                       title="تمام درخواست‌ها">
+                        <svg class="w-5 h-5 ml-3 flex-shrink-0">
+                            <!-- آیکون -->
+                        </svg>
+                        <span class="menu-text">تمام درخواست‌ها</span>
+                    </a>
+                @endif
+
+                @if(Auth::user()->role === 'admin')
+                    <!-- منوهای ویژه ادمین -->
+                @endif
+                
+                <!-- منوی خروج -->
+                <a href="{{ route('logout') }}" 
+                   class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50 group" 
+                   title="خروج">
+                    <svg class="w-5 h-5 ml-3 flex-shrink-0">
+                        <!-- آیکون خروج -->
+                    </svg>
+                    <span class="menu-text">خروج</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- محتوای اصلی -->
+        <div class="flex-1">
+            <!-- هدر صفحه -->
+            <div class="bg-white shadow">
+                <div class="px-6 py-4">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-lg font-semibold text-gray-800">
+                            @yield('page-title', 'داشبورد')
+                        </h1>
+                        <div class="text-sm text-gray-600">
+                            خوش آمدید، {{ Auth::user()->name }}
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-2">
+                                @if(Auth::user()->role === 'admin')
+                                    ادمین
+                                @elseif(Auth::user()->role === 'master')
+                                    مستر
+                                @else
+                                    کاربر
+                                @endif
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- محتوای صفحه -->
+            @yield('content')
+        </div>
+    </div>
+
+    <!-- بارگذاری JavaScript سایدبار -->
+    <script src="{{ asset('assets/js/sidebar.js') }}"></script>
+    @yield('scripts')
+</body>
+</html>
+```
+
+### CSS Components
+
+#### sidebar.css - سیستم سایدبار
+```css
+/* انیمیشن اصلی سایدبار */
+#sidebar {
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* منوی فعال */
+nav a.active {
+    background-color: #dbeafe;
+    border-right: 4px solid #3b82f6;
+    color: #1d4ed8;
+}
+
+nav a.active svg {
+    color: #3b82f6;
+}
+
+/* سیستم Tooltip برای حالت جمع */
+.w-16 a[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #374151;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-left: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.w-16 a[title]:hover::before {
+    content: '';
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-left-color: #374151;
+    margin-left: 2px;
+    z-index: 1000;
+}
+
+/* انیمیشن متن‌ها */
+.menu-text {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+#sidebarTitle,
+#menuLabel,
+#accountLabel {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* مخفی کردن فوری هنگام جمع شدن */
+.sidebar-collapsing .menu-text,
+.sidebar-collapsing #sidebarTitle,
+.sidebar-collapsing #menuLabel,
+.sidebar-collapsing #accountLabel {
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+/* نمایش با تاخیر هنگام باز شدن */
+.sidebar-expanding .menu-text,
+.sidebar-expanding #sidebarTitle,
+.sidebar-expanding #menuLabel,
+.sidebar-expanding #accountLabel {
+    opacity: 1;
+    transform: translateX(0);
+    transition-delay: 0.2s;
+}
+
+/* ثبات موقعیت برچسب‌ها */
+#menuLabel,
+#accountLabel {
+    transition: opacity 0.3s ease-in-out;
+    height: 1rem;
+    line-height: 1rem;
+    display: block;
+}
+
+/* مخفی کردن برچسب‌ها با حفظ فضا */
+#sidebar.w-16 #menuLabel,
+#sidebar.w-16 #accountLabel {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+#sidebar.w-64 #menuLabel,
+#sidebar.w-64 #accountLabel {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+}
+
+/* Container های ثابت */
+.px-6.py-2 {
+    transition: opacity 0.3s ease-in-out;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* حالت‌های مختلف سایدبار */
+#sidebar.w-16 .px-6.py-2,
+#sidebar.w-64 .px-6.py-2 {
+    height: 2.5rem;
+    padding: 0.5rem 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* استایل دکمه Toggle */
+#toggleSidebar {
+    transition: all 0.2s ease-in-out;
+}
+
+#toggleSidebar:hover {
+    background-color: #f3f4f6;
+    transform: scale(1.05);
+}
+
+/* ثبات موقعیت منوها */
+nav a {
+    position: relative;
+    transition: all 0.2s ease-in-out;
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+}
+
+nav a:hover {
+    background-color: #f9fafb;
+    padding-right: 28px;
+}
+
+nav a svg {
+    transition: color 0.2s ease-in-out;
+}
+
+nav a:hover svg {
+    color: #3b82f6;
+}
+
+/* ریسپانسیو موبایل */
+@media (max-width: 768px) {
+    #sidebar {
+        position: fixed;
+        height: 100vh;
+        z-index: 50;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    #sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .w-16 a[title]:hover::after,
+    .w-16 a[title]:hover::before {
+        display: none;
+    }
+    
+    #toggleSidebar {
+        display: none;
+    }
+}
+
+/* انیمیشن‌های اضافی */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+}
+
+.menu-text.show {
+    animation: slideIn 0.3s ease-in-out;
+}
+
+.menu-text.hide {
+    animation: slideOut 0.3s ease-in-out;
+}
+```
+
+### JavaScript Components
+
+#### sidebar.js - منطق سایدبار
+```javascript
+// بارگذاری DOM
+document.addEventListener('DOMContentLoaded', function() {
+    // عناصر DOM
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const toggleIcon = document.getElementById('toggleIcon');
+    const sidebarTitle = document.getElementById('sidebarTitle');
+    const menuLabel = document.getElementById('menuLabel');
+    const accountLabel = document.getElementById('accountLabel');
+    const menuTexts = document.querySelectorAll('.menu-text');
+    const menuLinks = document.querySelectorAll('nav a');
+    
+    // تشخیص موبایل
+    let isMobile = window.innerWidth <= 768;
+    
+    // تنظیم منوی فعال
+    setActiveMenuItem();
+    
+    // اعمال وضعیت ذخیره شده
+    if (!isMobile) {
+        const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        if (isCollapsed) {
+            applySidebarState(true, false); // جمع، بدون انیمیشن
+        }
+    }
+    
+    // Event Listener دکمه Toggle
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            if (isMobile) {
+                return; // در موبایل غیرفعال
+            }
+            
+            if (sidebar.classList.contains('w-16')) {
+                expandSidebar();
+            } else {
+                collapseSidebar();
+            }
+        });
+    }
+    
+    /**
+     * تشخیص و تنظیم منوی فعال بر اساس URL
+     */
+    function setActiveMenuItem() {
+        const currentPath = window.location.pathname;
+        
+        menuLinks.forEach(link => {
+            link.classList.remove('active');
+            
+            const linkPath = new URL(link.href).pathname;
+            if (currentPath === linkPath || (currentPath.includes(linkPath) && linkPath !== '/')) {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    /**
+     * اعمال وضعیت سایدبار
+     * @param {boolean} collapsed - آیا جمع باشد
+     * @param {boolean} animate - آیا انیمیشن داشته باشد
+     */
+    function applySidebarState(collapsed, animate = true) {
+        if (!animate) {
+            // غیرفعال کردن موقت transition ها
+            sidebar.style.transition = 'none';
+            if (sidebarTitle) sidebarTitle.style.transition = 'none';
+            if (menuLabel) menuLabel.style.transition = 'none';
+            if (accountLabel) accountLabel.style.transition = 'none';
+            menuTexts.forEach(text => text.style.transition = 'none');
+        }
+        
+        if (collapsed) {
+            // حالت جمع
+            sidebar.classList.remove('w-64');
+            sidebar.classList.add('w-16');
+            
+            if (sidebarTitle) sidebarTitle.classList.add('hidden');
+            if (menuLabel) {
+                menuLabel.style.opacity = '0';
+                menuLabel.style.visibility = 'hidden';
+            }
+            if (accountLabel) {
+                accountLabel.style.opacity = '0';
+                accountLabel.style.visibility = 'hidden';
+            }
+            menuTexts.forEach(text => text.classList.add('hidden'));
+            
+            // تنظیم آیکون جمع
+            if (toggleIcon) {
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>';
+            }
+        } else {
+            // حالت باز
+            sidebar.classList.remove('w-16');
+            sidebar.classList.add('w-64');
+            
+            if (sidebarTitle) sidebarTitle.classList.remove('hidden');
+            if (menuLabel) {
+                menuLabel.style.opacity = '1';
+                menuLabel.style.visibility = 'visible';
+            }
+            if (accountLabel) {
+                accountLabel.style.opacity = '1';
+                accountLabel.style.visibility = 'visible';
+            }
+            menuTexts.forEach(text => text.classList.remove('hidden'));
+            
+            // تنظیم آیکون باز
+            if (toggleIcon) {
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>';
+            }
+        }
+        
+        if (!animate) {
+            // بازگردانی transition ها پس از اعمال
+            setTimeout(() => {
+                sidebar.style.transition = '';
+                if (sidebarTitle) sidebarTitle.style.transition = '';
+                if (menuLabel) menuLabel.style.transition = '';
+                if (accountLabel) accountLabel.style.transition = '';
+                menuTexts.forEach(text => text.style.transition = '');
+            }, 50);
+        }
+    }
+    
+    /**
+     * جمع کردن سایدبار
+     */
+    function collapseSidebar() {
+        // اضافه کردن کلاس در حال جمع شدن
+        sidebar.classList.add('sidebar-collapsing');
+        
+        // مخفی کردن فوری متن‌ها با حفظ فضای برچسب‌ها
+        if (sidebarTitle) sidebarTitle.classList.add('hidden');
+        if (menuLabel) {
+            menuLabel.style.opacity = '0';
+            menuLabel.style.visibility = 'hidden';
+        }
+        if (accountLabel) {
+            accountLabel.style.opacity = '0';
+            accountLabel.style.visibility = 'hidden';
+        }
+        menuTexts.forEach(text => text.classList.add('hidden'));
+        
+        // تغییر عرض پس از تاخیر کوتاه
+        setTimeout(() => {
+            sidebar.classList.remove('w-64');
+            sidebar.classList.add('w-16');
+            sidebar.classList.remove('sidebar-collapsing');
+        }, 100);
+        
+        // تغییر آیکون
+        if (toggleIcon) {
+            toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>';
+        }
+        
+        // ذخیره وضعیت
+        if (!isMobile) {
+            localStorage.setItem('sidebarCollapsed', 'true');
+        }
+    }
+    
+    /**
+     * باز کردن سایدبار
+     */
+    function expandSidebar() {
+        // اضافه کردن کلاس در حال باز شدن
+        sidebar.classList.add('sidebar-expanding');
+        
+        // تغییر عرض ابتدا
+        sidebar.classList.remove('w-16');
+        sidebar.classList.add('w-64');
+        
+        // نمایش متن‌ها با تاخیر
+        setTimeout(() => {
+            if (sidebarTitle) sidebarTitle.classList.remove('hidden');
+            if (menuLabel) {
+                menuLabel.style.opacity = '1';
+                menuLabel.style.visibility = 'visible';
+            }
+            if (accountLabel) {
+                accountLabel.style.opacity = '1';
+                accountLabel.style.visibility = 'visible';
+            }
+            menuTexts.forEach(text => text.classList.remove('hidden'));
+            
+            // حذف کلاس پس از انیمیشن
+            setTimeout(() => {
+                sidebar.classList.remove('sidebar-expanding');
+            }, 300);
+        }, 200);
+        
+        // تغییر آیکون
+        if (toggleIcon) {
+            toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>';
+        }
+        
+        // ذخیره وضعیت
+        if (!isMobile) {
+            localStorage.setItem('sidebarCollapsed', 'false');
+        }
+    }
+    
+    // مدیریت تغییر اندازه صفحه
+    window.addEventListener('resize', function() {
+        const newIsMobile = window.innerWidth <= 768;
+        if (newIsMobile !== isMobile) {
+            isMobile = newIsMobile;
+            
+            if (isMobile) {
+                // بازگشت به سایدبار کامل در موبایل
+                applySidebarState(false, false);
+            } else {
+                // بررسی وضعیت ذخیره شده در دسکتاپ
+                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                applySidebarState(isCollapsed, false);
+            }
+        }
+    });
+    
+    /**
+     * Toggle سایدبار موبایل (برای آینده)
+     */
+    function toggleMobileSidebar() {
+        if (isMobile) {
+            sidebar.classList.toggle('mobile-open');
+        }
+    }
+    
+    // در دسترس قرار دادن function ها در سطح global
+    window.sidebarToggle = {
+        collapse: collapseSidebar,
+        expand: expandSidebar,
+        toggleMobile: toggleMobileSidebar
+    };
+});
+```
+
+---
+
+## 🔍 ویژگی‌های خاص سیستم
+
+### 1. سیستم پیگیری 31 روزه
+```php
+// منطق محاسبه پیشرفت
+public function getProgressPercentage($tracker)
+{
+    $start = Carbon::parse($tracker->start_date);
+    $now = Carbon::now();
+    $daysPassed = $start->diffInDays($now);
+    
+    return min(100, ($daysPassed / $tracker->max_days) * 100);
+}
+
+// نمایش Progress Bar در Blade
+@if($tracker)
+    @php
+        $progress = min(100, ($tracker->start_date->diffInDays(now()) / $tracker->max_days) * 100);
+    @endphp
+    
+    <div class="w-full bg-gray-200 rounded-full h-2.5">
+        <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+             style="width: {{ $progress }}%"></div>
+    </div>
+    
+    <p class="text-sm text-gray-600 mt-2">
+        {{ round($progress) }}% - 
+        {{ 31 - $tracker->start_date->diffInDays(now()) }} روز باقی‌مانده
+    </p>
+@endif
+```
+
+### 2. سیستم JalaliDatePicker
+```html
+<!-- در requestdetail.blade.php -->
+<div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-2">
+        تاریخ و ساعت ملاقات
+    </label>
+    <input type="text" 
+           id="appointmentDate" 
+           name="date" 
+           class="w-full px-3 py-2 border border-gray-300 rounded-md"
+           placeholder="تاریخ و ساعت را انتخاب کنید"
+           readonly>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // بارگذاری JalaliDatePicker
+    if (typeof jalaliDatepicker !== 'undefined') {
+        jalaliDatepicker.startWatch({
+            time: true,                    // انتخاب ساعت
+            persianDigit: false,           // اعداد لاتین
+            minDate: 'today',              // حداقل امروز
+            format: 'YYYY-MM-DD HH:mm',    // فرمت خروجی
+            dayViewHeaderFormat: 'MMMM YYYY',
+            monthViewHeaderFormat: 'YYYY',
+            yearViewHeaderFormat: 'YYYY-YYYY'
+        });
+    }
+});
+</script>
+```
+
+### 3. سیستم Modal AJAX
+```javascript
+// مثال از acceptes.blade.php
+function openScholarshipModal(requestId) {
+    document.getElementById('request_id').value = requestId;
+    document.getElementById('scholarshipModal').classList.remove('hidden');
+}
+
+// ارسال فرم با AJAX
+$('#scholarshipForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    $.ajax({
+        url: $(this).attr('action'),
+        method: 'POST',
+        data: $(this).serialize(),
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            // نمایش پیام موفقیت
+            showSuccessPopup();
+            
+            // بستن modal
+            closeModal();
+            
+            // بروزرسانی صفحه (اختیاری)
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        },
+        error: function(xhr) {
+            console.error('خطا در ارسال:', xhr);
+            alert('خطا در ارسال پیام');
+        }
+    });
+});
+
+function showSuccessPopup() {
+    const popup = document.getElementById('successPopup');
+    popup.classList.remove('hidden');
+    
+    setTimeout(() => {
+        popup.classList.add('hidden');
+    }, 3000);
+}
+```
+
+---
+
+## 🔒 امنیت و Middleware
+
+### Role-based Access Control
+```php
+// app/Http/Middleware/CheckRole.php
+class CheckRole
+{
+    public function handle($request, Closure $next, ...$roles)
+    {
+        $user = Auth::user();
+        
+        if (!$user) {
+            return redirect()->route('login');
+        }
+        
+        if (!in_array($user->role, $roles)) {
+            abort(403, 'دسترسی مجاز نیست');
+        }
+        
+        return $next($request);
+    }
+}
+
+// استفاده در Route
+Route::middleware(['auth', 'role:admin,master'])->group(function () {
+    // فقط admin و master
+});
+```
+
+### CSRF Protection
+```html
+<!-- در همه فرم‌ها -->
+<form method="POST" action="{{ route('example') }}">
+    @csrf
+    <!-- فیلدهای فرم -->
+</form>
+
+<!-- در AJAX -->
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+```
+
+### File Upload Security
+```php
+// در کنترلر
+public function uploadImage(Request $request)
+{
+    $request->validate([
+        'image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+    ]);
+    
+    $image = $request->file('image');
+    $filename = time() . '_' . $image->getClientOriginalName();
+    
+    // ذخیره در storage خصوصی
+    $path = $image->storeAs('uploads', $filename, 'public');
+    
+    return $path;
+}
+```
+
+---
+
+## 📚 مدل‌ها و Eloquent Relations
+
+### User Model
+```php
+// app/Models/User.php
+class User extends Authenticatable
+{
+    protected $fillable = [
+        'name', 'username', 'password', 'role'
+    ];
+
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+    // روابط
+    public function requests()
+    {
+        return $this->hasMany(Request::class);
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+    // Accessors
+    public function getRoleNameAttribute()
+    {
+        return [
+            'user' => 'کاربر',
+            'admin' => 'ادمین', 
+            'master' => 'مستر'
+        ][$this->role] ?? 'نامشخص';
+    }
+
+    // Scopes
+    public function scopeAdmins($query)
+    {
+        return $query->whereIn('role', ['admin', 'master']);
+    }
+}
+```
+
+### Request Model
+```php
+// app/Models/Request.php
+class Request extends Model
+{
+    protected $fillable = [
+        'user_id', 'name', 'female', 'grade', 'nationalcode',
+        'phone', 'address', 'story', 'imgpath', 'date', 'cardnumber'
+    ];
+
+    protected $casts = [
+        'female' => 'boolean',
+        'date' => 'datetime',
+    ];
+
+    // روابط
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function aboutreqs()
+    {
+        return $this->hasMany(Aboutreq::class);
+    }
+
+    public function scholarships()
+    {
+        return $this->hasMany(Scholarship::class);
+    }
+
+    public function dailyTracker()
+    {
+        return $this->hasOne(DailyTracker::class);
+    }
+
+    // Accessors
+    public function getGenderAttribute()
+    {
+        return $this->female ? 'دختر' : 'پسر';
+    }
+
+    public function getStoryNameAttribute()
+    {
+        return [
+            'submit' => 'ثبت شده',
+            'cancel' => 'لغو شده',
+            'check' => 'در حال بررسی',
+            'reject' => 'رد شده',
+            'accept' => 'تایید شده',
+            'appointment' => 'تعیین وقت ملاقات'
+        ][$this->story] ?? 'نامشخص';
+    }
+
+    public function getStoryColorAttribute()
+    {
+        return [
+            'submit' => 'blue',
+            'cancel' => 'gray',
+            'check' => 'yellow',
+            'reject' => 'red',
+            'accept' => 'green',
+            'appointment' => 'purple'
+        ][$this->story] ?? 'gray';
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->whereNotIn('story', ['cancel', 'reject']);
+    }
+
+    public function scopeForRole($query, $role)
+    {
+        if ($role === 'user') {
+            return $query->where('user_id', auth()->id());
+        }
+        
+        return $query; // admin/master می‌بینند همه
+    }
+}
+```
+
+### DailyTracker Model
+```php
+// app/Models/DailyTracker.php
+class DailyTracker extends Model
+{
+    protected $fillable = [
+        'request_id', 'start_date', 'max_days'
+    ];
+
+    protected $casts = [
+        'start_date' => 'date',
+    ];
+
+    public function request()
+    {
+        return $this->belongsTo(Request::class);
+    }
+
+    // محاسبه پیشرفت
+    public function getProgressPercentageAttribute()
+    {
+        $daysPassed = $this->start_date->diffInDays(now());
+        return min(100, ($daysPassed / $this->max_days) * 100);
+    }
+
+    public function getDaysRemainingAttribute()
+    {
+        $daysPassed = $this->start_date->diffInDays(now());
+        return max(0, $this->max_days - $daysPassed);
+    }
+
+    public function getIsCompletedAttribute()
+    {
+        return $this->progress_percentage >= 100;
+    }
+}
+```
+
+---
+
+## 🔧 دستورات مفید Laravel
+
+### Migration Commands
+```bash
+# ایجاد migration جدید
+php artisan make:migration create_table_name
+
+# اجرای migration ها
+php artisan migrate
+
+# Rollback آخرین migration
+php artisan migrate:rollback
+
+# نمایش وضعیت migration ها
+php artisan migrate:status
+```
+
+### Model Commands
+```bash
+# ایجاد Model + Migration + Controller
+php artisan make:model ModelName -mcr
+
+# ایجاد Factory
+php artisan make:factory ModelNameFactory
+
+# ایجاد Seeder
+php artisan make:seeder TableNameSeeder
+```
+
+### Cache & Performance
+```bash
+# Clear کش‌ها
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+# Optimize برای production
+php artisan optimize
+php artisan config:cache
+php artisan route:cache
+```
+
+### Development Tools
+```bash
+# اجرای سرور توسعه
+php artisan serve
+
+# نمایش Route ها
+php artisan route:list
+
+# تولید App Key
+php artisan key:generate
+
+# ایجاد symbolic link برای storage
+php artisan storage:link
+```
+
+---
+
+## 🚀 تنظیمات Production
+
+### Environment Variables (.env)
+```env
+APP_NAME="بنیاد حکمت"
+APP_ENV=production
+APP_KEY=base64:generated_key_here
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+
+DB_CONNECTION=sqlite
+DB_DATABASE=/absolute/path/to/database/database.sqlite
+
+# Mail Settings (اختیاری)
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_ENCRYPTION=tls
+
+# Session & Cache
+SESSION_DRIVER=file
+CACHE_DRIVER=file
+QUEUE_CONNECTION=sync
+```
+
+### Apache/Nginx Configuration
+```apache
+# Apache .htaccess
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+```
+
+```nginx
+# Nginx configuration
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /path/to/boniad_hekmat/public;
+
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+```
+
+### Security Checklist
+- [ ] APP_DEBUG=false در production
+- [ ] تنظیم مجوزهای فایل (755 برای فولدرها، 644 برای فایل‌ها)
+- [ ] محدود کردن دسترسی به .env
+- [ ] HTTPS activation
+- [ ] Regular backup از دیتابیس
+- [ ] Update منظم Laravel و dependencies
+
+---
+
+## 📝 خلاصه برنامه‌نویسان
+
+### نکات کلیدی
+1. **ساختار MVC**: کاملاً طبق Laravel convention
+2. **RTL Support**: تمام UI برای زبان فارسی بهینه شده
+3. **Role-based System**: سه سطح دسترسی کاملاً جدا
+4. **Responsive Design**: Mobile-first approach
+5. **Modern UI**: TailwindCSS + Custom animations
+
+### ویژگی‌های منحصر به فرد
+- **Unified Dashboard**: یک layout برای همه نقش‌ها
+- **Smart Sidebar**: State persistence + Smooth animations
+- **Jalali Date Support**: کامل و یکپارچه
+- **Progress Tracking**: سیستم 31 روزه پیگیری
+- **Modal System**: AJAX-based communication
+
+### آماده برای توسعه
+- **Modular Structure**: قابل گسترش
+- **Clean Code**: مستندسازی کامل
+- **External Assets**: CSS/JS منفصل
+- **Component-ready**: آماده برای component سازی
+
+---
+
+*این مستندات آخرین وضعیت فنی پروژه بنیاد حکمت را به تاریخ ۱۶ مرداد ۱۴۰۴ ارائه می‌دهد.*

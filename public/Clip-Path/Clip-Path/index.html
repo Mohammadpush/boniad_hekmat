@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inverted Border Card</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* فقط استایل‌هایی که Tailwind نمی‌تواند پیاده‌سازی کند */
+        .card-clip-path {
+            clip-path: path("M 10,20 L 60,20 A 10,10 0,0,0 70,10 L 70,10 A 10,10 0,0,1 80,0 L 140,0 A 10,10 0,0,1 150,10 L 150,190 A 10,10 0,0,1 140,200 L 10,200 A 10,10 0,0,1 0,190 L 0,30 A 10,10 0,0,1 10,20 Z");
+        }
+
+        .title-clip-path {
+            clip-path: inset(0.5px round 8px 0);
+        }
+
+        /* انیمیشن‌های خاص */
+        .card-container {
+            perspective: 1000px;
+        }
+
+        .card-container:hover .card-flip {
+            transform: rotateY(5deg) rotateX(5deg);
+        }
+
+        .progress-bar {
+            width: 0%;
+            animation: fillProgress 2s ease-out forwards;
+        }
+
+        @keyframes fillProgress {
+            to {
+                width: 100%;
+            }
+        }
+
+        .pulse-ring {
+            animation: pulseRing 2s infinite;
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="flex justify-center items-center min-h-screen bg-gradient-to-br from-orange-100 via-amber-50 to-yellow-100 font-sans overflow-hidden">
+    <div class="mr-4">
+
+
+
+        <div class="relative card-container">
+            <!-- Status Indicator -->
+            <div class="absolute -top-2 -right-2 z-20">
+                <div class="relative">
+                    <div class="w-4 h-4 bg-green-500 rounded-full pulse-ring"></div>
+                    <div class="absolute top-1 left-1 w-2 h-2 bg-green-400 rounded-full"></div>
+                </div>
+            </div>
+
+            <!-- Main Card Container -->
+            <div
+                class="relative flex items-center justify-center gap-1.5 flex-col card-flip transition-all duration-500 hover:scale-105">
+
+                <!-- Progress Bar Container -->
+                <div class="absolute -top-2 left-0 right-0">
+                    <div class="h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-green-400 to-green-600 progress-bar rounded-full ">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Title Badge -->
+                <div
+                    class="absolute top-0 left-0 h-[18px] w-[69px] bg-gradient-to-r from-green-600 to-green-700 title-clip-path text-[10px] font-bold text-white flex items-center justify-center z-10">
+                    در حال بررسی
+                </div>
+
+                <!-- Card with Enhanced Effects -->
+                <div
+                    class="relative w-[150px] h-[200px] bg-gradient-to-br from-gray-800 to-gray-900 card-clip-path border border-gray-700">
+                    <!-- Image with Overlay -->
+                    <div class="relative h-full w-full p-2.5 group">
+                        <img src="./shoes.png" alt="img"
+                            class="h-full w-full object-cover rounded-lg transition-all duration-300 group-hover:scale-105 group-hover:brightness-110">
+
+                        <!-- Simple Overlay -->
+                        <div
+                            class="absolute cursor-pointer inset-2.5 bg-black/30 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                            <a class="text-white text-xs font-medium ">👁️ مشاهده</a>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <!-- Enhanced Product Card -->
+                <div
+                    class="w-[150px] bg-gradient-to-br from-amber-500 to-amber-800 text-white pt-3 pb-0 rounded-[10px] text-center border border-amber-700 transition-all duration-300">
+
+                    <!-- User Info with Status -->
+                    <div class="relative mb-3">
+                        <h2 class="text-[15px] font-bold mb-1 text-amber-100">امیر حسینی</h2>
+                        <p class="text-[12px] opacity-80 flex items-center justify-center gap-1">
+                            <span class="text-xs">🎓</span>
+                            یازدهم
+                        </p>
+
+                    </div>
+
+                    <!-- Enhanced Action Buttons -->
+                    <div class="flex w-full h-full relative ">
+                        <a href="#"
+                            class="bg-gradient-to-r  from-blue-500 to-blue-600 w-1/2 rounded-es-[10px] scale-105 transition-all hover:-translate-x-1 hover:shadow-lg py-2 flex items-center justify-center gap-1 relative group">
+                            <span class="text-xs">�</span>
+                            <span class="text-xs font-medium">جزئیات</span>
+                            <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity">
+                            </div>
+                        </a>
+
+                        <a href="#"
+                            class="bg-gradient-to-r from-red-500 to-red-600 w-1/2 rounded-ee-[10px] scale-105 transition-all hover:translate-x-1 hover:shadow-lg py-2 flex items-center justify-center gap-1 relative group">
+                            <span class="text-xs">❌</span>
+                            <span class="text-xs font-medium">تغییر وضعیت </span>
+                            <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity">
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tooltip -->
+                <div
+                    class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 hover:opacity-100 transition-opacity bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                    کلیک برای جزئیات بیشتر
+                </div>
+            </div>
+        </div>
+
+</body>
+
+</html>

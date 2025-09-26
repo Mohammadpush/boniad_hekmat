@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="js/tail.js"></script>
+    <title>کارت درخواست</title>
+    <style>
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+        .status-badge {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        .action-btn {
+            transition: all 0.2s ease;
+        }
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-8 min-h-screen">
+    <!-- کانتینر اصلی با Grid Layout -->
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">مدیریت درخواست‌های بورسیه</h1>
+
+        <!-- Grid Container برای کارت‌ها -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
+
+        <!-- کارت ۱ -->
+        <div class="card-hover flex flex-col items-center bg-gradient-to-br from-white to-gray-50 w-full max-w-72 h-96 justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden">
+
+        <!-- آیکون وضعیت در گوشه -->
+        <div class="absolute top-4 right-4">
+            <div class="status-badge bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium border border-green-200">
+                ✓ تایید شده
+            </div>
+        </div>
+
+        <!-- تصویر پروفایل -->
+        <div class="relative mb-4">
+            <img src="../../storage/app/public/private/userimage/default.png" alt="تصویر کاربر"
+                 class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white">
+            <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+        </div>
+
+        <!-- اطلاعات کاربر -->
+        <div class="text-center mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-1">محمد حسن حاکمی</h3>
+            <p class="text-sm text-gray-500">پایه : یازدهم</p>
+        </div>
+
+        <!-- دکمه‌های عملکرد -->
+        <div class="flex gap-3 w-full">
+            <a href="#" class="action-btn flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                ویرایش
+            </a>
+
+            <a href="#" class="action-btn flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                مشاهده
+            </a>
+        </div>
+
+        <!-- جزئیات اضافی -->
+        <div class="mt-4 w-full">
+            <div class="bg-gray-50 rounded-xl p-3 text-center">
+                <p class="text-xs text-gray-600">تاریخ ثبت: ۱۴۰۳/۰۶/۲۱</p>
+            </div>
+        </div>
+
+        <!-- افکت دکوراتیو -->
+        <div class="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full opacity-20"></div>
+        <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-green-200 to-blue-200 rounded-full opacity-20"></div>
+    </div>
+
+    <!-- کارت ۲ -->
+    <div class="card-hover flex flex-col items-center bg-gradient-to-br from-white to-gray-50 w-full max-w-72 h-96 justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden">
+
+        <!-- آیکون وضعیت در گوشه -->
+        <div class="absolute top-4 right-4">
+            <div class="status-badge bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium border border-yellow-200">
+                ⏳ در انتظار
+            </div>
+        </div>
+
+        <!-- تصویر پروفایل -->
+        <div class="relative mb-4">
+            <img src="../../storage/app/public/private/userimage/default.png" alt="تصویر کاربر"
+                 class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white">
+            <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-yellow-500 rounded-full border-2 border-white"></div>
+        </div>
+
+        <!-- اطلاعات کاربر -->
+        <div class="text-center mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-1">علی رضایی</h3>
+            <p class="text-sm text-gray-500">پایه : دوازدهم</p>
+        </div>
+
+        <!-- دکمه‌های عملکرد -->
+        <div class="flex gap-3 w-full">
+            <a href="#" class="action-btn flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                ویرایش
+            </a>
+
+            <a href="#" class="action-btn flex-1 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                بررسی
+            </a>
+        </div>
+
+        <!-- جزئیات اضافی -->
+        <div class="mt-4 w-full">
+            <div class="bg-gray-50 rounded-xl p-3 text-center">
+                <p class="text-xs text-gray-600">تاریخ ثبت: ۱۴۰۳/۰۶/۱۸</p>
+            </div>
+        </div>
+
+        <!-- افکت دکوراتیو -->
+        <div class="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-full opacity-20"></div>
+        <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-orange-200 to-red-200 rounded-full opacity-20"></div>
+    </div>
+
+    <!-- کارت ۳ -->
+    <div class="card-hover flex flex-col items-center bg-gradient-to-br from-white to-gray-50 w-full max-w-72 h-96 justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden">
+
+        <!-- آیکون وضعیت در گوشه -->
+        <div class="absolute top-4 right-4">
+            <div class="status-badge bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium border border-red-200">
+                ✗ رد شده
+            </div>
+        </div>
+
+        <!-- تصویر پروفایل -->
+        <div class="relative mb-4">
+            <img src="../../storage/app/public/private/userimage/default.png" alt="تصویر کاربر"
+                 class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white">
+            <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-red-500 rounded-full border-2 border-white"></div>
+        </div>
+
+        <!-- اطلاعات کاربر -->
+        <div class="text-center mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-1">فاطمه احمدی</h3>
+            <p class="text-sm text-gray-500">پایه : دهم</p>
+        </div>
+
+        <!-- دکمه‌های عملکرد -->
+        <div class="flex gap-3 w-full">
+            <a href="#" class="action-btn flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                ویرایش
+            </a>
+
+            <a href="#" class="action-btn flex-1 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                بازبینی
+            </a>
+        </div>
+
+        <!-- جزئیات اضافی -->
+        <div class="mt-4 w-full">
+            <div class="bg-gray-50 rounded-xl p-3 text-center">
+                <p class="text-xs text-gray-600">تاریخ ثبت: ۱۴۰۳/۰۶/۱۵</p>
+            </div>
+        </div>
+
+        <!-- افکت دکوراتیو -->
+        <div class="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-red-200 to-pink-200 rounded-full opacity-20"></div>
+        <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-pink-200 to-purple-200 rounded-full opacity-20"></div>
+    </div>
+
+    <!-- کارت ۴ -->
+    <div class="card-hover flex flex-col items-center bg-gradient-to-br from-white to-gray-50 w-full max-w-72 h-96 justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden">
+
+        <!-- آیکون وضعیت در گوشه -->
+        <div class="absolute top-4 right-4">
+            <div class="status-badge bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium border border-blue-200">
+                🔄 در حال بررسی
+            </div>
+        </div>
+
+        <!-- تصویر پروفایل -->
+        <div class="relative mb-4">
+            <img src="../../storage/app/public/private/userimage/default.png" alt="تصویر کاربر"
+                 class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white">
+            <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-blue-500 rounded-full border-2 border-white"></div>
+        </div>
+
+        <!-- اطلاعات کاربر -->
+        <div class="text-center mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-1">حسین موسوی</h3>
+            <p class="text-sm text-gray-500">پایه : یازدهم</p>
+        </div>
+
+        <!-- دکمه‌های عملکرد -->
+        <div class="flex gap-3 w-full">
+            <a href="#" class="action-btn flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                ویرایش
+            </a>
+
+            <a href="#" class="action-btn flex-1 bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                تصویب
+            </a>
+        </div>
+
+        <!-- جزئیات اضافی -->
+        <div class="mt-4 w-full">
+            <div class="bg-gray-50 rounded-xl p-3 text-center">
+                <p class="text-xs text-gray-600">تاریخ ثبت: ۱۴۰۳/۰۶/۲۰</p>
+            </div>
+        </div>
+
+        <!-- افکت دکوراتیو -->
+        <div class="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-indigo-200 to-blue-200 rounded-full opacity-20"></div>
+        <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-blue-200 to-cyan-200 rounded-full opacity-20"></div>
+    </div>
+
+    <!-- کارت ۵ -->
+    <div class="card-hover flex flex-col items-center bg-gradient-to-br from-white to-gray-50 w-full max-w-72 h-96 justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden">
+
+        <!-- آیکون وضعیت در گوشه -->
+        <div class="absolute top-4 right-4">
+            <div class="status-badge bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium border border-green-200">
+                ✓ تایید شده
+            </div>
+        </div>
+
+        <!-- تصویر پروفایل -->
+        <div class="relative mb-4">
+            <img src="../../storage/app/public/private/userimage/default.png" alt="تصویر کاربر"
+                 class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white">
+            <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+        </div>
+
+        <!-- اطلاعات کاربر -->
+        <div class="text-center mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-1">محمد حسن حاکمی</h3>
+            <p class="text-sm text-gray-500">پایه : یازدهم</p>
+        </div>
+
+        <!-- دکمه‌های عملکرد -->
+        <div class="flex gap-3 w-full">
+            <a href="#" class="action-btn flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                ویرایش
+            </a>
+
+            <a href="#" class="action-btn flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                مشاهده
+            </a>
+        </div>
+
+        <!-- جزئیات اضافی -->
+        <div class="mt-4 w-full">
+            <div class="bg-gray-50 rounded-xl p-3 text-center">
+                <p class="text-xs text-gray-600">تاریخ ثبت: ۱۴۰۳/۰۶/۲۱</p>
+            </div>
+        </div>
+
+        <!-- آیکون وضعیت در گوشه -->
+        <div class="absolute top-4 right-4">
+            <div class="status-badge bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium border border-emerald-200">
+                💳 پرداخت شده
+            </div>
+        </div>
+
+        <!-- تصویر پروفایل -->
+        <div class="relative mb-4">
+            <img src="../../storage/app/public/private/userimage/default.png" alt="تصویر کاربر"
+                 class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white">
+            <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full border-2 border-white"></div>
+        </div>
+
+        <!-- اطلاعات کاربر -->
+        <div class="text-center mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-1">زهرا کریمی</h3>
+            <p class="text-sm text-gray-500">پایه : دوازدهم</p>
+        </div>
+
+        <!-- دکمه‌های عملکرد -->
+        <div class="flex gap-3 w-full">
+            <a href="#" class="action-btn flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                ویرایش
+            </a>
+
+            <a href="#" class="action-btn flex-1 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                رسید
+            </a>
+        </div>
+
+        <!-- جزئیات اضافی -->
+        <div class="mt-4 w-full">
+            <div class="bg-gray-50 rounded-xl p-3 text-center">
+                <p class="text-xs text-gray-600">تاریخ ثبت: ۱۴۰۳/۰۵/۳۰</p>
+            </div>
+        </div>
+
+        <!-- افکت دکوراتیو -->
+        <div class="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-emerald-200 to-teal-200 rounded-full opacity-20"></div>
+        <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-teal-200 to-cyan-200 rounded-full opacity-20"></div>
+    </div>
+
+    </div> <!-- پایان Grid Container -->
+    </div> <!-- پایان Container اصلی -->
+</body>
+</html>

@@ -1,0 +1,60 @@
+/* Message System Button Styles */
+.singbutton {
+    --primary-color: #1447e6;
+    --secondary-color: #fff;
+    --hover-color: #111;
+    --arrow-width: 10px;
+    --arrow-stroke: 2px;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: 20px;
+    color: var(--secondary-color);
+    padding: 1em 1.8em;
+    background: var(--primary-color);
+    display: flex;
+    transition: 0.2s background;
+    align-items: center;
+    gap: 0.6em;
+    font-weight: bold;
+}
+
+.singbutton .arrow-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.singbutton .arrow {
+    margin-top: 1px;
+    width: var(--arrow-width);
+    background: var(--primary-color);
+    height: var(--arrow-stroke);
+    position: relative;
+    transition: 0.2s;
+}
+
+.singbutton .arrow::before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    border: solid var(--secondary-color);
+    border-width: 0 var(--arrow-stroke) var(--arrow-stroke) 0;
+    display: inline-block;
+    top: -3px;
+    left: 3px;
+    transition: 0.2s;
+    padding: 3px;
+    transform: rotate(135deg);
+}
+
+.singbutton:hover {
+    background-color: var(--hover-color);
+}
+
+.singbutton:hover .arrow {
+    background: var(--secondary-color);
+}
+
+.singbutton:hover .arrow::before {
+    left: 0;
+}

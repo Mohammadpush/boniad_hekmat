@@ -1,0 +1,231 @@
+
+ /* From Uiverse.io by fanishah */
+.search-bar {
+  display: flex;
+}
+
+.search-bar input,
+.search-btn,
+.search-btn:before,
+.search-btn:after {
+  transition: all 0.25s ease-out;
+}
+
+.search-bar input,
+.search-btn {
+  width: 3em;
+  height: 3em;
+}
+
+.search-bar input:invalid:not(:focus),
+.search-btn {
+  cursor: pointer;
+}
+
+.search-bar,
+.search-bar input:focus,
+.search-bar input:valid {
+  width: 100%;
+}
+
+.search-bar input:focus,
+.search-bar input:not(:focus) + .search-btn:focus {
+  outline: transparent;
+}
+
+.search-bar {
+  margin: 0;
+  justify-content: flex-start;
+  max-width: 30em;
+  margin-right: auto;
+}
+
+.search-bar input {
+  background: transparent;
+  border-radius: 1.5em;
+  box-shadow: 0 0 0 0.4em #171717 inset;
+  padding: 0.75em;
+  transform: translate(0.5em,0.5em) scale(0.5);
+  transform-origin: 100% 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  color: #ffffff; /* رنگ متن سفید در حالت بسته */
+}
+
+.search-bar input::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/* تنظیم رنگ placeholder */
+.search-bar input::placeholder {
+  color: transparent; /* placeholder شفاف در حالت بسته */
+  opacity: 1;
+}
+
+.search-bar input::-webkit-input-placeholder {
+  color: transparent; /* برای webkit */
+}
+
+.search-bar input::-moz-placeholder {
+  color: transparent; /* برای Firefox */
+  opacity: 1;
+}
+
+.search-bar input:-ms-input-placeholder {
+  color: transparent; /* برای IE */
+}
+
+.search-bar input:focus,
+.search-bar input:valid {
+  background: #fff;
+  border-radius: 0.375em 0 0 0.375em;
+  box-shadow: 0 0 0 0.1em #0f0d0d inset;
+  transform: scale(1);
+  color: #000000; /* رنگ متن مشکی */
+}
+
+/* placeholder در حالت باز */
+.search-bar input:focus::placeholder,
+.search-bar input:valid::placeholder {
+  color: #9ca3af; /* placeholder خاکستری در حالت باز */
+}
+
+.search-bar input:focus::-webkit-input-placeholder,
+.search-bar input:valid::-webkit-input-placeholder {
+  color: #9ca3af;
+}
+
+.search-bar input:focus::-moz-placeholder,
+.search-bar input:valid::-moz-placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+.search-bar input:focus:-ms-input-placeholder,
+.search-bar input:valid:-ms-input-placeholder {
+  color: #9ca3af;
+}
+
+.search-btn {
+  background: #171717;
+  border-radius: 0 0.75em 0.75em 0 / 0 1.5em 1.5em 0;
+  padding: 0.75em;
+  position: relative;
+  transform: translate(0.25em,0.25em) rotate(45deg) scale(0.25,0.125);
+  transform-origin: 0 50%;
+}
+
+.search-btn:before,
+.search-btn:after {
+  content: "";
+  display: block;
+  opacity: 0;
+  position: absolute;
+}
+
+/* حالت عادی (بسته) - content خالی */
+.search-btn:before {
+  content: ""; /* محتوا خالی در حالت بسته */
+  opacity: 0;
+
+}
+
+.search-btn:after {
+  content: ""; /* محتوا خالی در حالت بسته */
+  opacity: 0;
+}
+
+/* X Icon برای حالت باز - چارچوب مربعی دقیق */
+.search-bar input:focus + .search-btn:before,
+.search-bar input:valid + .search-btn:before {
+  /* خط اول X */
+  place-content: "";
+  display: block;
+  position: absolute;
+  background: #f1f1f1;
+  top: 50%;
+  left: 50%;
+  width: 1em;
+  height: 0.12em;
+  transform: translate(-50%, -50%) rotate(45deg);
+  border-radius: 1px;
+}
+
+.search-bar input:focus + .search-btn:after,
+.search-bar input:valid + .search-btn:after {
+  /* خط دوم X */
+  place-content: "";
+  display: block;
+  position: absolute;
+  background: #f1f1f1;
+  top: 50%;
+  left: 50%;
+  width: 1em;
+  height: 0.12em;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  border-radius: 1px;
+}
+
+.search-btn span {
+  display: inline-block;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+}
+
+/* Active state */
+.search-bar input:focus + .search-btn,
+.search-bar input:valid + .search-btn {
+  background: #dc2626; /* رنگ قرمز برای دکمه X */
+  border-radius: 0 0.375em 0.375em 0;
+  transform: scale(1);
+}
+
+.search-bar input:focus + .search-btn:before,
+.search-bar input:focus + .search-btn:after,
+.search-bar input:valid + .search-btn:before,
+.search-bar input:valid + .search-btn:after {
+  opacity: 1;
+}
+
+.search-bar input:focus + .search-btn:hover,
+.search-bar input:valid + .search-btn:hover,
+.search-bar input:valid:not(:focus) + .search-btn:focus {
+  background: #b91c1c; /* رنگ قرمز تیره‌تر برای hover */
+}
+
+/* قابلیت بستن با کلیک روی دکمه X */
+.search-bar input:valid + .search-btn:active {
+  transform: translateY(1px);
+}
+
+/* بستن search box با کلیک روی X */
+.search-bar input:valid + .search-btn {
+  cursor: pointer;
+}
+
+.search-bar input:valid + .search-btn:focus {
+  outline: none;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  body, input {
+    color: #f1f1f1;
+  }
+
+  .search-bar input {
+    box-shadow: 0 0 0 0.4em #0f0d0d inset;
+  }
+
+  .search-bar input:focus,
+	.search-bar input:valid {
+    background: #ffffff;
+    box-shadow: 0 0 0 0.1em #3d3d3d inset;
+  }
+
+  .search-btn {
+    background: #0f0d0d;
+  }
+}
+
