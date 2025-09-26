@@ -167,13 +167,14 @@
                     </a>
                 </div>
             @else
+                <!-- Container برای کارت‌های wrap شونده -->
+                <div class="flex flex-wrap gap-14 justify-center ">
 
-                                            @foreach ($requests as $request)
-                                                <!-- کارت -->
-                                                <div
-                                                    class="card-hover flex-shrink-0 flex flex-col items-center bg-gradient-to-br from-white to-gray-50 w-72 h-96 justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden select-none">
+                    @foreach ($requests as $request)
+                        <!-- کارت -->
+                        <div class="card-hover bg-gradient-to-br from-white to-gray-50 w-72 h-96 flex flex-col items-center justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden select-none">
 
-                                                    <!-- آیکون وضعیت در گوشه -->
+                            <!-- آیکون وضعیت در گوشه -->
                                                     <div class="absolute top-4 right-4">
                                                         <div
                                                             class="status-badge px-3 py-1 rounded-full text-xs font-medium border
@@ -233,20 +234,58 @@
                                                             ویرایش
                                                         </a>
 
-                                                        <form method="POST"
-                                                            action="{{ route('unified.requestdetail', ['id' => $request->id]) }}"
-                                                            class="flex-1">
-                                                            @csrf
-                                                            <button type="submit"
-                                                                class="action-btn flex-1 w-full bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center  py-3 justify-center gap-2">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                                    viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                                        stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                                </svg>
-                                                                مشاهده
-                                                            </button>
-                                                        </form>
+                                                        <button type="button"
+                                                            onclick="openRequestDetailModal({
+                                                                id: {{ $request->id }},
+                                                                name: '{{ addslashes($request->name) }}',
+                                                                grade: '{{ addslashes($request->grade) }}',
+                                                                story: '{{ $request->story }}',
+                                                                imgpath_url: '{{ route('img', ['filename' => $request->imgpath]) }}',
+                                                                nationalcode: '{{ addslashes($request->nationalcode) }}',
+                                                                birthdate: '{{ addslashes($request->birthdate) }}',
+                                                                phone: '{{ addslashes($request->phone) }}',
+                                                                telephone: '{{ addslashes($request->telephone) }}',
+                                                                school: '{{ addslashes($request->school) }}',
+                                                                principal: '{{ addslashes($request->principal) }}',
+                                                                major_name: '{{ $request->major ? addslashes($request->major->name) : '' }}',
+                                                                last_score: '{{ addslashes($request->last_score) }}',
+                                                                school_telephone: '{{ addslashes($request->school_telephone) }}',
+                                                                english_proficiency: {{ $request->english_proficiency ?? 0 }},
+                                                                gradesheetpath: '{{ $request->gradesheetpath }}',
+                                                                gradesheetpath_url: '{{ $request->gradesheetpath ? route('img', ['filename' => $request->gradesheetpath]) : '' }}',
+                                                                rental: '{{ $request->rental }}',
+                                                                address: '{{ addslashes($request->address) }}',
+                                                                siblings_count: '{{ $request->siblings_count }}',
+                                                                siblings_rank: '{{ $request->siblings_rank }}',
+                                                                know: '{{ addslashes($request->know) }}',
+                                                                counseling_method: '{{ addslashes($request->counseling_method) }}',
+                                                                why_counseling_method: '{{ addslashes($request->why_counseling_method) }}',
+                                                                father_name: '{{ addslashes($request->father_name) }}',
+                                                                father_phone: '{{ addslashes($request->father_phone) }}',
+                                                                father_job: '{{ addslashes($request->father_job) }}',
+                                                                father_income: '{{ $request->father_income }}',
+                                                                father_job_address: '{{ addslashes($request->father_job_address) }}',
+                                                                mother_name: '{{ addslashes($request->mother_name) }}',
+                                                                mother_phone: '{{ addslashes($request->mother_phone) }}',
+                                                                mother_job: '{{ addslashes($request->mother_job) }}',
+                                                                mother_income: '{{ $request->mother_income }}',
+                                                                mother_job_address: '{{ addslashes($request->mother_job_address) }}',
+                                                                motivation: '{{ addslashes($request->motivation) }}',
+                                                                spend: '{{ addslashes($request->spend) }}',
+                                                                how_am_i: '{{ addslashes($request->how_am_i) }}',
+                                                                future: '{{ addslashes($request->future) }}',
+                                                                favorite_major: '{{ addslashes($request->favorite_major) }}',
+                                                                help_others: '{{ addslashes($request->help_others) }}',
+                                                                suggestion: '{{ addslashes($request->suggestion) }}'
+                                                            })"
+                                                            class="action-btn flex-1 w-full bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center py-3 justify-center gap-2">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                                viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                            مشاهده
+                                                        </button>
                                                     </div>
 
                                                     {{-- <!-- جزئیات اضافی -->
@@ -293,7 +332,15 @@
 
 
                     <!-- Modal -->
-                    <div id="popup" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+                                     
+                </div>
+            </main>
+
+            {{-- اضافه کردن مودال جزئیات درخواست --}}
+            @include('unified.partials.request-detail-for-users')
+
+            <!-- Modal -->
+            <div id="popup" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
                         <div class="flex items-center justify-center min-h-screen">
                             <div class="bg-white rounded-2xl p-8 max-w-[35.6rem] w-full mx-4 shadow-2xl">
                                 <div class="text-center mb-6">

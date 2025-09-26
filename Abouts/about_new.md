@@ -19,7 +19,7 @@
 - **External Assets**: sidebar.css, sidebar.js, search-box.css
 
 ### پکیج‌های خاص
-- **Livewire 3.6**: Real-time interactivity
+- **mix watch**: Real-time interactivity
 - **morilog/jalali**: Persian date conversion
 - **JalaliDatePicker**: Persian calendar widget
 - **FlatPickr**: Alternative date picker (backup)
@@ -65,7 +65,7 @@ id, name, username, password, role, created_at, updated_at
 - **نقش**: جدول مادر تمام کاربران
 - **روابط**: hasMany → requests, hasOne → profile
 
-#### 📋 requests (جدول اصلی کسب‌وکار)
+#### 📋 requests (جدول اصلی درخواست ها از طرف کاربران عادی)
 ```sql
 id, user_id, name, female, grade, nationalcode, phone, address,
 story, imgpath, date, cardnumber, created_at, updated_at

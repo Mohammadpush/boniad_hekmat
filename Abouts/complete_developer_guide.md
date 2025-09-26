@@ -27,14 +27,14 @@ Backend:
 
 Frontend:
   Template: Blade Engine
-  CSS: TailwindCSS + Custom CSS
+  CSS: TailwindCSS + Custom CSS 
   JavaScript: Vanilla JS + External Modules
   Icons: SVG Heroicons
 
 External Dependencies:
   - JalaliDatePicker: Persian calendar
   - morilog/jalali: Date conversion
-  - Livewire 3.6: Real-time components
+  - mix watch: Real-time components
 ```
 
 ### فولدر بندی پروژه
@@ -54,7 +54,6 @@ boniad_hekmat/
 │   └── js/                  → فایل‌های JavaScript
 ├── public/
 │   ├── assets/              → فایل‌های استاتیک
-│   └── uploads/             → آپلودهای کاربران
 ├── routes/
 │   └── web.php              → تعریف Route ها
 └── storage/                 → فایل‌های خصوصی
