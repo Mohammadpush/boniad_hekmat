@@ -6,6 +6,7 @@
 /storage/*.key
 /storage/pail
 /vendor
+/vendor/_laravel_ide
 .env
 .env.backup
 .env.production
