@@ -45,23 +45,10 @@ class UnifiedController extends Controller
             $requests = Auth::user()->requests()->where('story', '!=', 'cancel')->get();
         }
 
-        return view('unified.myrequests', compact('requests'));
+        return view('unified.user.myrequests', compact('requests'));
     }
 
     // Add or Edit Request - All Roles
-    public function addoreditrequests($id = null)
-    {
-        $request = null;
-        if ($id) {
-            if (Auth::user()->role === 'user') {
-                $request = Auth::user()->requests()->findOrFail($id);
-            } else {
-                $request = ModelRequest::findOrFail($id);
-            }
-        }
-
-        return view('unified.addoreditrequests', compact('request'));
-    }
 
     public function storerequest(Request $request)
     {
@@ -148,7 +135,7 @@ class UnifiedController extends Controller
     public function allrequests()
     {
         $requests = ModelRequest::with('user')->where('story', '!=', 'cancel')->get();
-        return view('unified.allrequests', compact('requests'));
+        return view('unified..admin.allrequests', compact('requests'));
     }
 
     // Request Detail - Admin/Master Only
@@ -160,7 +147,7 @@ class UnifiedController extends Controller
             $userrequest->update(['story' => 'check']);
         }
 
-        return view('unified.requestdetail', compact('userrequest'));
+        return view('unified.admin.requestdetail', compact('userrequest'));
     }
 
     // Status Update Methods
@@ -214,13 +201,13 @@ class UnifiedController extends Controller
     public function message($id)
     {
         $scholarships = Scholarship::with('request')->where('request_id', $id)->get();
-        return view('unified.message', compact('scholarships', 'id'));
+        return view('unified.user.message', compact('scholarships', 'id'));
     }
 
     // Add Message - All Roles
     public function addmessage($id)
     {
-        return view('unified.addmessage', compact('id'));
+        return view('unified.user.addmessage', compact('id'));
     }
 
     public function storemessage(Request $request, $id)
@@ -271,7 +258,7 @@ class UnifiedController extends Controller
         }
 
         $requests = ModelRequest::with('user')->where('story', 'accept')->get();
-        return view('unified.acceptes', compact('requests'));
+        return view('unified.admin.acceptes', compact('requests'));
     }
 
     // Users Management - Admin/Master Only
@@ -291,11 +278,11 @@ class UnifiedController extends Controller
             $users = User::where('role', '!=', 'master')->get();
         }
 
-        return view('unified.users', compact('users'));
+        return view('unified.admin.users', compact('users'));
     }
     public function userdetail($id){
         $user = User::with('profile')->find($id);
-        return view('unified.userdetail',compact('user'));
+        return view('unified.admin.userdetail',compact('user'));
     }
     public function deleteuser($id)
     {
@@ -306,7 +293,7 @@ class UnifiedController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
-        return redirect()->route('unified.users')->with('success', 'کاربر حذف شد');
+        return redirect()->route('unified.admin.users')->with('success', 'کاربر حذف شد');
     }
 
     // Master Only - User Role Management
@@ -341,7 +328,7 @@ class UnifiedController extends Controller
     {
         $profile = Auth::user()->profile;
 
-        return view('unified.addprofile',compact('profile'));
+        return view('unified.admin.addprofile',compact('profile'));
     }
 
     public function storeprofile(Request $request)
@@ -369,7 +356,7 @@ class UnifiedController extends Controller
     public function editprofile($id)
     {
         $profile = Profile::findOrFail($id);
-        return view('unified.addprofile', compact('profile'));
+        return view('unified.admin.addprofile', compact('profile'));
     }
 
     public function updateprofile(Request $request, $id)
@@ -401,12 +388,18 @@ class UnifiedController extends Controller
 
         $profile->update($data);
 
-        return redirect()->route('unified.addprofile')->with('success', 'پروفایل با موفقیت ویرایش شد');
+        return redirect()->route('unified.admin.addprofile')->with('success', 'پروفایل با موفقیت ویرایش شد');
     }
     public function requestform()
     {
         $majors = Major::all();
-        return view('unified.requestsForm.index', compact('majors'));
+        return view('unified.user.addrequest', compact('majors'));
+    }
+        public function editrequest($id)
+    {
+        $userrequest = ModelRequest::findOrFail($id);
+        $majors = Major::all();
+        return view('unified.user.editrequest', compact('majors','userrequest'));
     }
 public function storerequestform(Request $request)
 {
@@ -535,5 +528,128 @@ public function storecard(Request $req , $id){
     $request->update();
 
     return redirect()->route('unified.myrequests');
+}
+
+/**
+ * بروزرسانی فیلد مشخص از درخواست
+ */
+public function updateRequestField(Request $request)
+{
+    try {
+        $request->validate([
+            'request_id' => 'required|integer|exists:requests,id',
+            'field_name' => 'required|string',
+            'field_value' => 'required|string'
+        ]);
+
+        $requestModel = ModelRequest::findOrFail($request->request_id);
+
+        // بررسی اجازه دسترسی
+        $user = Auth::user();
+        if ($user->role === 'user' && $requestModel->user_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'شما اجازه ویرایش این درخواست را ندارید'
+            ], 403);
+        }
+
+        // لیست فیلدهای مجاز برای ویرایش
+        $allowedFields = [
+            'name', 'birthdate', 'nationalcode', 'phone', 'telephone',
+            'grade', 'school', 'last_score', 'principal', 'school_telephone',
+            'rental', 'address', 'father_name', 'father_phone', 'father_job',
+            'father_income', 'father_job_address', 'mother_name', 'mother_phone',
+            'mother_job', 'mother_income', 'mother_job_address', 'siblings_count',
+            'siblings_rank', 'english_proficiency', 'know', 'counseling_method',
+            'why_counseling_method', 'motivation', 'spend', 'how_am_i',
+            'favorite_major', 'future', 'help_others', 'suggestion'
+        ];
+
+        if (!in_array($request->field_name, $allowedFields)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'این فیلد قابل ویرایش نیست'
+            ], 400);
+        }
+
+        // اعتبارسنجی خاص برای هر فیلد
+        $fieldValue = $request->field_value;
+
+        switch ($request->field_name) {
+            case 'nationalcode':
+                if (strlen($fieldValue) !== 10 || !is_numeric($fieldValue)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'کد ملی باید 10 رقم باشد'
+                    ], 400);
+                }
+                break;
+
+            case 'phone':
+            case 'father_phone':
+            case 'mother_phone':
+                if (strlen($fieldValue) !== 11 || !preg_match('/^09[0-9]{9}$/', $fieldValue)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'شماره موبایل باید 11 رقم و با 09 شروع شود'
+                    ], 400);
+                }
+                break;
+
+            case 'telephone':
+            case 'school_telephone':
+                if (!empty($fieldValue) && (strlen($fieldValue) !== 11 || !is_numeric($fieldValue))) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'تلفن ثابت باید 11 رقم باشد'
+                    ], 400);
+                }
+                break;
+
+            case 'last_score':
+                if (!is_numeric($fieldValue) || $fieldValue < 0 || $fieldValue > 20) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'معدل باید بین 0 تا 20 باشد'
+                    ], 400);
+                }
+                break;
+
+            case 'english_proficiency':
+                if (!is_numeric($fieldValue) || $fieldValue < 0 || $fieldValue > 100) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'سطح انگلیسی باید بین 0 تا 100 باشد'
+                    ], 400);
+                }
+                break;
+
+            case 'siblings_count':
+            case 'siblings_rank':
+                if (!is_numeric($fieldValue) || $fieldValue < 1) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'مقدار باید عدد مثبت باشد'
+                    ], 400);
+                }
+                break;
+        }
+
+        // بروزرسانی فیلد
+        $requestModel->{$request->field_name} = $fieldValue;
+        $requestModel->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'فیلد با موفقیت بروزرسانی شد',
+            'new_value' => $fieldValue
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'خطا در بروزرسانی: ' . $e->getMessage()
+        ], 500);
+    }
 }
 }

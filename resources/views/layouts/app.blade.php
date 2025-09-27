@@ -9,7 +9,7 @@
     <!-- 1. بارگذاری jQuery -->
     <script src="{{ asset('assets/js/jquesry.js') }}"></script>
     @yield('head')
-    <script src="{{ asset('assets/js/tail.js') }}"></script>
+    <script src="{{ asset('assets/js/libraris/tail.js') }}"></script>
 
 
 </head>

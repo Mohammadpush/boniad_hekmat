@@ -1,68 +1,7 @@
-{{-- استایل‌های انیمیشن --}}
-<style>
-    /* انیمیشن مودال */
-    #requestDetailModal {
-        transition: all 0.3s ease;
-    }
-
-    #requestDetailModal.show {
-        animation: modalFadeIn 0.4s ease-out;
-    }
-
-    #requestDetailModal .modal-content {
-        animation: modalSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    /* انیمیشن کارت */
-    .card-hover {
-        transition: all 0.3s ease;
-        transform-origin: center;
-    }
-
-    .card-hover.animating {
-        z-index: 1000;
-        position: relative;
-    }
-
-    @keyframes modalFadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-
-    @keyframes modalSlideIn {
-        from {
-            opacity: 0;
-            transform: scale(0.8) translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-        }
-    }
-
-    @keyframes cardToCenter {
-        from {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.05);
-        }
-        to {
-            transform: scale(1.1);
-        }
-    }
-
-    .card-animate-to-center {
-        animation: cardToCenter 0.6s ease-out;
-    }
-</style>
+<link rel="stylesheet" href="{{asset('assets/css/request-detail.css')}}">
 
 {{-- مودال جزئیات درخواست برای کاربران --}}
-<div id="requestDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+<div id="requestDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 ">
     <div class="flex items-center justify-center min-h-screen p-2">
         {{-- دکمه بستن کنار مودال (سمت راست بالا) --}}
         <div class="relative w-full max-w-7xl">
@@ -110,7 +49,21 @@
                                     <div class="flex flex-col justify-between flex-1">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-500 mb-1">کد ملی</label>
-                                            <p id="modalNationalCode" class="text-lg font-mono font-semibold text-gray-800"></p>
+                                            <div class="flex items-center justify-between">
+                                                <p id="modalNationalCode" class="text-lg font-mono font-semibold text-gray-800"></p>
+                                                <button type="button"
+                                                        class="edit-field-btn ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                                        data-field="nationalcode"
+                                                        data-field-name="کد ملی"
+                                                        data-field-type="text"
+                                                        data-field-pattern="[0-9]{10}"
+                                                        data-field-maxlength="10"
+                                                        title="ویرایش کد ملی">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium text-gray-500 mb-1">تاریخ تولد</label>
@@ -401,8 +354,18 @@
                     </div>
                 </div>
 
-                {{-- دکمه کنسل --}}
-                <div class="flex justify-center mt-8">
+                {{-- دکمه‌های عملیات --}}
+                <div class="flex justify-center items-center space-x-4 space-x-reverse mt-8">
+                    {{-- دکمه ویرایش --}}
+                    <button type="button" id="editRequestBtn"
+                        class="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-8 rounded-xl hover:from-blue-700 hover:to-blue-800 transition font-medium shadow-lg flex items-center space-x-2 space-x-reverse">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        <span>✏️ ویرایش درخواست</span>
+                    </button>
+
+                    {{-- دکمه کنسل --}}
                     <button type="button" onclick="document.getElementById('closeRequestDetailModal').click()"
                         class="bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-8 rounded-xl hover:from-gray-700 hover:to-gray-800 transition font-medium shadow-lg">
                         ❌ کنسل
@@ -413,171 +376,248 @@
     </div>
 </div>
 
-{{-- اسکریپت مودال --}}
+{{-- مودال ویرایش فیلد --}}
+<div id="editFieldModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-60">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl w-full max-w-md shadow-2xl">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="editFieldTitle" class="text-lg font-bold text-gray-800">ویرایش فیلد</h3>
+                    <button type="button" id="closeEditFieldModal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="editFieldForm">
+                    <div class="mb-4">
+                        <label id="editFieldLabel" class="block text-sm font-medium text-gray-700 mb-2">نام فیلد</label>
+                        <input type="text" id="editFieldInput" class="w-full px-3 text-black py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <p id="editFieldError" class="text-red-500 text-sm mt-1 hidden"></p>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 space-x-reverse">
+                        <button type="button" id="cancelEditField" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            لغو
+                        </button>
+                        <button type="submit" id="saveEditField" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            ذخیره
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{asset('assets/js/request-detail-popup/close.js')}}"></script>
+<script src='{{asset("assets/js/request-detail-popup/popup-functionality.js")}}'></script>
+
 <script>
+// متغیرهای سراسری برای ویرایش فیلد
+let currentEditData = {
+    requestId: null,
+    fieldName: null,
+    currentValue: null,
+    fieldType: null,
+    fieldPattern: null,
+    fieldMaxLength: null
+};
+
+// عملکرد ویرایش فیلد inline
 document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('requestDetailModal');
-    const closeBtn = document.getElementById('closeRequestDetailModal');
-
-    // تابع برای بستن مودال با انیمیشن
-    function closeModal() {
-        modal.classList.remove('show');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }, 300);
-    }
-
-    // بستن مودال با دکمه
-    closeBtn.addEventListener('click', closeModal);
-
-    // بستن مودال با کلیک روی پس‌زمینه
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            closeModal();
+    // Event listener برای دکمه‌های ویرایش
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.edit-field-btn')) {
+            const btn = e.target.closest('.edit-field-btn');
+            openEditFieldModal(btn);
         }
     });
 
-    // بستن مودال با کلید اسکیپ
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-            closeModal();
+    // بستن مودال ویرایش
+    document.getElementById('closeEditFieldModal').addEventListener('click', closeEditFieldModal);
+    document.getElementById('cancelEditField').addEventListener('click', closeEditFieldModal);
+
+    // ذخیره تغییرات
+    document.getElementById('editFieldForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveFieldChanges();
+    });
+
+    // بستن مودال با کلیک خارج از آن
+    document.getElementById('editFieldModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeEditFieldModal();
         }
     });
 });
 
-// تابع برای باز کردن مودال و پر کردن اطلاعات
-function openRequestDetailModal(requestData, cardElement = null) {
-    const modal = document.getElementById('requestDetailModal');
+// باز کردن مودال ویرایش فیلد
+function openEditFieldModal(button) {
+    const field = button.getAttribute('data-field');
+    const fieldName = button.getAttribute('data-field-name');
+    const fieldType = button.getAttribute('data-field-type') || 'text';
+    const fieldPattern = button.getAttribute('data-field-pattern');
+    const fieldMaxLength = button.getAttribute('data-field-maxlength');
 
-    // انیمیشن کارت اگر المان کارت ارسال شده باشد
-    if (cardElement) {
-        cardElement.classList.add('card-animate-to-center');
-        setTimeout(() => {
-            cardElement.classList.remove('card-animate-to-center');
-        }, 600);
+    // پیدا کردن المان نمایش مقدار فیلد
+    let valueElement;
+    if (field === 'nationalcode') {
+        valueElement = document.getElementById('modalNationalCode');
     }
 
-    // پر کردن اطلاعات پروفایل
-    document.getElementById('modalProfileImg').src = requestData.imgpath_url;
-    document.getElementById('modalProfileImg').alt = requestData.name;
-    document.getElementById('modalUserName').textContent = requestData.name;
-    document.getElementById('modalUserGrade').textContent = 'پایه ' + requestData.grade;
-
-    // تنظیم وضعیت
-    const statusBadge = document.getElementById('modalStatusBadge');
-    let statusColor = '';
-    let statusText = '';
-
-    switch(requestData.story) {
-        case 'check':
-            statusColor = 'bg-yellow-500';
-            statusText = 'در انتظار';
-            break;
-        case 'accept':
-            statusColor = 'bg-green-500';
-            statusText = 'تایید شده';
-            break;
-        case 'reject':
-            statusColor = 'bg-red-500';
-            statusText = 'رد شده';
-            break;
-        case 'epointment':
-            statusColor = 'bg-pink-600';
-            statusText = 'قرار ملاقات';
-            break;
-        case 'submit':
-            statusColor = 'bg-blue-500';
-            statusText = 'ارسال شده';
-            break;
-        default:
-            statusColor = 'bg-gray-500';
-            statusText = 'نامشخص';
+    if (!valueElement) {
+        console.error('Value element not found for field:', field);
+        return;
     }
 
-    statusBadge.className = 'status-badge px-3 py-1 text-white text-xs font-bold rounded-full shadow-lg ' + statusColor;
-    statusBadge.textContent = statusText;
+    const currentValue = valueElement.textContent.trim();
 
-    // پر کردن اطلاعات شخصی
-    document.getElementById('modalNationalCode').textContent = requestData.nationalcode || '';
-    document.getElementById('modalBirthdate').textContent = requestData.birthdate || '';
-    document.getElementById('modalPhone').textContent = requestData.phone || '';
-    document.getElementById('modalTelephone').textContent = requestData.telephone || 'وارد نشده';
+    // ذخیره اطلاعات فعلی
+    currentEditData = {
+        requestId: window.currentRequestId || null, // باید از جای دیگری تنظیم شود
+        fieldName: field,
+        currentValue: currentValue,
+        fieldType: fieldType,
+        fieldPattern: fieldPattern,
+        fieldMaxLength: fieldMaxLength,
+        valueElement: valueElement
+    };
 
-    // پر کردن اطلاعات تحصیلی
-    document.getElementById('modalGrade').textContent = requestData.grade || '';
-    document.getElementById('modalSchool').textContent = requestData.school || '';
-    document.getElementById('modalPrincipal').textContent = requestData.principal || '';
-    document.getElementById('modalMajor').textContent = requestData.major_name || 'ندارد';
-    document.getElementById('modalLastScore').textContent = requestData.last_score || '';
-    document.getElementById('modalSchoolTelephone').textContent = requestData.school_telephone || 'وارد نشده';
+    // تنظیم محتوای مودال
+    document.getElementById('editFieldTitle').textContent = 'ویرایش ' + fieldName;
+    document.getElementById('editFieldLabel').textContent = fieldName + ':';
 
-    // تنظیم نوار پیشرفت زبان انگلیسی
-    const englishPercent = requestData.english_proficiency || 0;
-    document.getElementById('modalEnglishBar').style.width = englishPercent + '%';
-    document.getElementById('modalEnglishPercent').textContent = englishPercent + '%';
+    const input = document.getElementById('editFieldInput');
+    input.value = currentValue;
+    input.type = fieldType;
 
-    // نمایش کارنامه اگر وجود دارد
-    if (requestData.gradesheetpath) {
-        document.getElementById('modalGradeSheet').classList.remove('hidden');
-        document.getElementById('modalGradeSheetImg').src = requestData.gradesheetpath_url;
-        document.getElementById('modalGradeSheetLink').href = requestData.gradesheetpath_url;
-    } else {
-        document.getElementById('modalGradeSheet').classList.add('hidden');
+    if (fieldPattern) {
+        input.setAttribute('pattern', fieldPattern);
+    }
+    if (fieldMaxLength) {
+        input.setAttribute('maxlength', fieldMaxLength);
     }
 
-    // پر کردن اطلاعات مسکن
-    document.getElementById('modalRental').textContent = requestData.rental == '0' ? '🏠 ملکی' : '🏠 استیجاری';
-    document.getElementById('modalAddress').textContent = requestData.address || '';
+    // پاک کردن خطاهای قبلی
+    document.getElementById('editFieldError').classList.add('hidden');
 
-    // پر کردن اطلاعات خانوادگی
-    document.getElementById('modalSiblingsCount').textContent = (requestData.siblings_count || '0') + ' نفر';
-    document.getElementById('modalSiblingsRank').textContent = 'فرزند ' + (requestData.siblings_rank || '1') + 'ام';
-    document.getElementById('modalKnow').textContent = requestData.know || '';
-    document.getElementById('modalCounselingMethod').textContent = requestData.counseling_method || '';
+    // نمایش مودال
+    document.getElementById('editFieldModal').classList.remove('hidden');
+    input.focus();
+    input.select();
+}
 
-    if (requestData.why_counseling_method) {
-        document.getElementById('modalWhyCounselingMethodDiv').classList.remove('hidden');
-        document.getElementById('modalWhyCounselingMethod').textContent = requestData.why_counseling_method;
-    } else {
-        document.getElementById('modalWhyCounselingMethodDiv').classList.add('hidden');
+// بستن مودال ویرایش
+function closeEditFieldModal() {
+    document.getElementById('editFieldModal').classList.add('hidden');
+    document.getElementById('editFieldError').classList.add('hidden');
+}
+
+// اعتبارسنجی فیلد
+function validateField(value, fieldName) {
+    const errors = [];
+
+    if (fieldName === 'nationalcode') {
+        if (!value || value.length !== 10) {
+            errors.push('کد ملی باید 10 رقم باشد');
+        }
+        if (!/^[0-9]+$/.test(value)) {
+            errors.push('کد ملی فقط باید شامل اعداد باشد');
+        }
+
+        // اعتبارسنجی کد ملی ایرانی
+        if (value && value.length === 10) {
+            const check = parseInt(value.charAt(9));
+            let sum = 0;
+            for (let i = 0; i < 9; i++) {
+                sum += parseInt(value.charAt(i)) * (10 - i);
+            }
+            const remainder = sum % 11;
+            if (!((remainder < 2 && check === remainder) || (remainder >= 2 && check === 11 - remainder))) {
+                errors.push('کد ملی وارد شده معتبر نیست');
+            }
+        }
     }
 
-    // پر کردن اطلاعات والدین
-    document.getElementById('modalFatherName').textContent = requestData.father_name || '';
-    document.getElementById('modalFatherPhone').textContent = requestData.father_phone || '';
-    document.getElementById('modalFatherJob').textContent = requestData.father_job || '';
-    document.getElementById('modalFatherIncome').textContent = requestData.father_income ? (parseInt(requestData.father_income).toLocaleString() + ' تومان') : '';
-    document.getElementById('modalFatherJobAddress').textContent = requestData.father_job_address || '';
+    return errors;
+}
 
-    document.getElementById('modalMotherName').textContent = requestData.mother_name || '';
-    document.getElementById('modalMotherPhone').textContent = requestData.mother_phone || '';
-    document.getElementById('modalMotherJob').textContent = requestData.mother_job || '';
-    document.getElementById('modalMotherIncome').textContent = requestData.mother_income ? (parseInt(requestData.mother_income).toLocaleString() + ' تومان') : '';
-    document.getElementById('modalMotherJobAddress').textContent = requestData.mother_job_address || '';
+// ذخیره تغییرات فیلد
+function saveFieldChanges() {
+    const newValue = document.getElementById('editFieldInput').value.trim();
+    const errorElement = document.getElementById('editFieldError');
 
-    // پر کردن سوالات نهایی
-    document.getElementById('modalMotivation').textContent = requestData.motivation || '';
-    document.getElementById('modalSpend').textContent = requestData.spend || '';
-    document.getElementById('modalHowAmI').textContent = requestData.how_am_i || '';
-    document.getElementById('modalFuture').textContent = requestData.future || '';
-    document.getElementById('modalFavoriteMajor').textContent = requestData.favorite_major || '';
-    document.getElementById('modalHelpOthers').textContent = requestData.help_others || '';
+    // اعتبارسنجی
+    const errors = validateField(newValue, currentEditData.fieldName);
 
-    if (requestData.suggestion) {
-        document.getElementById('modalSuggestionDiv').classList.remove('hidden');
-        document.getElementById('modalSuggestion').textContent = requestData.suggestion;
-    } else {
-        document.getElementById('modalSuggestionDiv').classList.add('hidden');
+    if (errors.length > 0) {
+        errorElement.textContent = errors[0];
+        errorElement.classList.remove('hidden');
+        return;
     }
 
-    // نمایش مودال با انیمیشن
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden'; // جلوگیری از اسکرول صفحه
+    // اگر مقدار تغییر نکرده
+    if (newValue === currentEditData.currentValue) {
+        closeEditFieldModal();
+        return;
+    }
 
-    // اضافه کردن کلاس انیمیشن بعد از نمایش
+    // ارسال درخواست AJAX برای ذخیره در دیتابیس
+    fetch('/unified/update-request-field', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            request_id: currentEditData.requestId,
+            field_name: currentEditData.fieldName,
+            field_value: newValue
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // بروزرسانی نمایش فیلد
+            currentEditData.valueElement.textContent = newValue;
+
+            // نمایش پیام موفقیت
+            showSuccessMessage('تغییرات با موفقیت ذخیره شد');
+
+            closeEditFieldModal();
+        } else {
+            errorElement.textContent = data.message || 'خطا در ذخیره اطلاعات';
+            errorElement.classList.remove('hidden');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        errorElement.textContent = 'خطا در ارتباط با سرور';
+        errorElement.classList.remove('hidden');
+    });
+}
+
+// نمایش پیام موفقیت
+function showSuccessMessage(message) {
+    // ایجاد المان پیام موقت
+    const messageEl = document.createElement('div');
+    messageEl.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+    messageEl.textContent = message;
+    document.body.appendChild(messageEl);
+
+    // نمایش پیام
     setTimeout(() => {
-        modal.classList.add('show');
-    }, 10);
+        messageEl.classList.remove('translate-x-full');
+    }, 100);
+
+    // حذف پیام بعد از 3 ثانیه
+    setTimeout(() => {
+        messageEl.classList.add('translate-x-full');
+        setTimeout(() => {
+            document.body.removeChild(messageEl);
+        }, 300);
+    }, 3000);
 }
 </script>

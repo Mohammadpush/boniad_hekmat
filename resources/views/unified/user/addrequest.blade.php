@@ -88,7 +88,6 @@
     /* Person icon styles */
     .person-icon svg {
         transition: all 0.2s ease;
-    }
         align-items: center;
         justify-content: center;
     }

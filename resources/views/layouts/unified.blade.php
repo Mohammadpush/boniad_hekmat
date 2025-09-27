@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'پنل مدیریت')</title>
-    @vite(['resources/js/app.js'])
+    <script src="{{ mix('js/app.js') }}"></script>
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/search-box.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/sidebar.css') }}" rel="stylesheet">
-    <script src="{{ asset('assets/js/tail.js') }}"></script>
+    <script src="{{ asset('assets/js/libraris/tail.js') }}"></script>
 
     <!-- Mobile Menu Styles -->
     <style>
@@ -19,7 +20,7 @@
             padding: 10px;
             border: none;
             cursor: pointer;
-            z-index: 60;
+            z-index: 10;
             position: sticky;
             transition: all 0.3s ease-in-out;
         }
@@ -191,7 +192,7 @@
                 <div class="px-6 py-4 h-fit ">
                     <div class="flex justify-between items-center">
                         <!-- Hamburger Menu Button (Mobile Only) -->
-                        <button class="navbar-toggle max-[658px]:block min-[659px]:hidden z-[60]">
+                        <button class="navbar-toggle max-[658px]:block min-[659px]:hidden z-[50]">
                             <span class="bar"></span>
                             <span class="bar"></span>
                             <span class="bar"></span>
@@ -210,7 +211,7 @@
 
             <!-- Mobile Navigation Menu (Hidden by default) -->
             <ul
-                class="navbar-menu max-[658px]:flex min-[659px]:hidden fixed top-0 left-0 w-full h-full bg-white flex-col justify-center items-center text-center z-50 transform translate-x-full transition-transform duration-300">
+                class="navbar-menu max-[658px]:flex min-[659px]:hidden fixed top-0 left-0 w-full h-full bg-white flex-col justify-center items-center text-center z-40 transform translate-x-full transition-transform duration-300">
                 <!-- My Requests - All Roles -->
                 <li><a href="{{ route('unified.myrequests') }}"
                         class="lamp block py-4 text-lg text-gray-700 hover:text-blue-600">درخواست‌های من</a></li>

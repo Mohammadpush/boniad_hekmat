@@ -563,8 +563,8 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('assets/js/jalalidatepicker.js') }}"></script>
-    <script src="{{ asset('assets/js/flatpicker.js') }}"></script>
+    <script src="{{ asset('assets/js/libraris/jalalidatepicker.js') }}"></script>
+    <script src="{{ asset('assets/js/libraris/flatpicker.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize Jalali Datepicker

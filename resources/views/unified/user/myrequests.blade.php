@@ -222,7 +222,7 @@
 
                                                     <!-- دکمه‌های عملکرد -->
                                                     <div class="flex gap-3 w-full">
-                                                        <a href="{{ route('unified.addoreditrequests', ['id' => $request->id]) }}"
+                                                        <a href="{{ route('unified.editrequest', ['id' => $request->id]) }}"
                                                             class="action-btn flex-1 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center py-3 gap-2">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                                 viewBox="0 0 24 24">
@@ -332,12 +332,12 @@
 
 
                     <!-- Modal -->
-                                     
+
                 </div>
             </main>
 
             {{-- اضافه کردن مودال جزئیات درخواست --}}
-            @include('unified.partials.request-detail-for-users')
+            @include('unified.user.request-popup')
 
             <!-- Modal -->
             <div id="popup" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">

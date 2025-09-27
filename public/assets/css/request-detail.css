@@ -1,0 +1,60 @@
+
+    /* انیمیشن مودال */
+    #requestDetailModal {
+        transition: all 0.3s ease;
+    }
+
+    #requestDetailModal.show {
+        animation: modalFadeIn 0.4s ease-out;
+    }
+
+    #requestDetailModal .modal-content {
+        animation: modalSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* انیمیشن کارت */
+    .card-hover {
+        transition: all 0.3s ease;
+        transform-origin: center;
+    }
+
+    .card-hover.animating {
+        z-index: 1000;
+        position: relative;
+    }
+
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @keyframes cardToCenter {
+        from {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        to {
+            transform: scale(1.1);
+        }
+    }
+
+    .card-animate-to-center {
+        animation: cardToCenter 0.6s ease-out;
+    }

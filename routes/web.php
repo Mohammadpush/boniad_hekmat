@@ -57,6 +57,7 @@ Route::middleware(['auth'])->prefix('unified')->name('unified.')->group(function
 
     // Request Detail - Admin/Master Only
     Route::post('/requestdetail/{id}', [UnifiedController::class, 'requestdetail'])->name('requestdetail');
+    Route::post('/update-request-field', [UnifiedController::class, 'updateRequestField'])->name('updateRequestField');
     Route::get('/accept/{id}', [UnifiedController::class, 'accept'])->name('accept');
     Route::get('/reject/{id}', [UnifiedController::class, 'reject'])->name('reject');
     Route::post('/epointment/{id}', [UnifiedController::class, 'epointment'])->name('epointment');
@@ -86,6 +87,7 @@ Route::middleware(['auth'])->prefix('unified')->name('unified.')->group(function
     Route::put('/updateprofile/{id}', [UnifiedController::class, 'updateprofile'])->name('updateprofile');
     //tests
     Route::get('/requestform/{id?}', [UnifiedController::class, 'requestform'])->name('requestform');
+    Route::get('/editrequest/{id?}', [UnifiedController::class, 'editrequest'])->name('editrequest');
     Route::post('/storerequestform', [UnifiedController::class, 'storerequestform'])->name('storerequestform');
 });
 
