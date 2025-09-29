@@ -121,7 +121,7 @@
                                                                 story: '{{ $request->story }}',
                                                                 imgpath_url: '{{ route('img', ['filename' => $request->imgpath]) }}',
                                                                 nationalcode: '{{ addslashes($request->nationalcode) }}',
-                                                                birthdate: '{{ addslashes($request->birthdate) }}',
+                                                                birthdate: '{{ addslashes(Jalalian::fromDateTime($request->birthdate)->format(' Y/m/d ')) }}',
                                                                 phone: '{{ addslashes($request->phone) }}',
                                                                 telephone: '{{ addslashes($request->telephone) }}',
                                                                 school: '{{ addslashes($request->school) }}',

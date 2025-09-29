@@ -476,13 +476,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    setNationalCodeValue(newVal);
+                    // بستن فرم ویرایش
                     form.classList.add('hidden');
                     form.classList.remove('flex');
                     display.classList.remove('hidden');
                     editBtn.classList.remove('hidden');
                     error.classList.add('hidden');
+
+                    // نمایش پیام موفقیت
                     showSuccessMessage('کد ملی با موفقیت ذخیره شد');
+
+                    // بارگیری مجدد اطلاعات از دیتابیس
+                    refreshRequestData();
                 } else {
                     error.textContent = data.message || 'خطا در ذخیره اطلاعات';
                     error.classList.remove('hidden');
@@ -503,6 +508,159 @@ document.addEventListener('DOMContentLoaded', function() {
 function showSuccessMessage(message) {
     const messageEl = document.createElement('div');
     messageEl.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100] transform translate-x-full transition-transform duration-300';
+    messageEl.textContent = message;
+    document.body.appendChild(messageEl);
+
+    setTimeout(() => messageEl.classList.remove('translate-x-full'), 100);
+    setTimeout(() => {
+        messageEl.classList.add('translate-x-full');
+        setTimeout(() => document.body.removeChild(messageEl), 300);
+    }, 3000);
+}
+
+// بارگیری مجدد اطلاعات درخواست از دیتابیس
+function refreshRequestData() {
+    if (!window.currentRequestId) {
+        console.error('شناسه درخواست در دسترس نیست');
+        return;
+    }
+
+    // نمایش loading
+    const loadingEl = document.createElement('div');
+    loadingEl.className = 'fixed top-4 left-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100] flex items-center space-x-2 space-x-reverse';
+    loadingEl.innerHTML = `
+        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>در حال بروزرسانی...</span>
+    `;
+    document.body.appendChild(loadingEl);
+
+    // درخواست AJAX برای دریافت اطلاعات جدید
+    fetch(`/unified/get-request-data/${window.currentRequestId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('خطا در دریافت اطلاعات');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success && data.request) {
+            // بروزرسانی اطلاعات در modal
+            updateModalWithNewData(data.request);
+            showSuccessMessage('اطلاعات بروزرسانی شد');
+        } else {
+            throw new Error(data.message || 'خطا در دریافت اطلاعات');
+        }
+    })
+    .catch(error => {
+        console.error('خطا در بارگیری مجدد اطلاعات:', error);
+        showErrorMessage('خطا در بروزرسانی اطلاعات');
+    })
+    .finally(() => {
+        // حذف loading
+        if (document.body.contains(loadingEl)) {
+            document.body.removeChild(loadingEl);
+        }
+    });
+}
+
+// بروزرسانی modal با اطلاعات جدید
+function updateModalWithNewData(request) {
+    try {
+        // اطلاعات شخصی
+        document.getElementById('modalUserName').textContent = request.name || '';
+        document.getElementById('modalUserGrade').textContent = "پایه "+request.grade || '';
+        document.getElementById('modalNationalCodeDisplay').textContent = request.nationalcode || '';
+        document.getElementById('modalBirthdate').textContent = request.birthdate || '';
+        document.getElementById('modalPhone').textContent = request.phone || '';
+        document.getElementById('modalTelephone').textContent = request.telephone || 'ندارد';
+
+        // اطلاعات تحصیلی
+        document.getElementById('modalGrade').textContent = request.grade || '';
+        document.getElementById('modalSchool').textContent = request.school || '';
+        document.getElementById('modalPrincipal').textContent = request.principal || '';
+        document.getElementById('modalMajor').textContent = request.major_name || 'ندارد';
+        document.getElementById('modalLastScore').textContent = request.last_score || '';
+        document.getElementById('modalSchoolTelephone').textContent = request.school_telephone || 'ندارد';
+
+        // سطح انگلیسی
+        const englishLevel = parseInt(request.english_proficiency) || 0;
+        document.getElementById('modalEnglishPercent').textContent = englishLevel + '%';
+        document.getElementById('modalEnglishBar').style.width = englishLevel + '%';
+
+        // اطلاعات مسکن
+        document.getElementById('modalRental').textContent = request.rental || '';
+        document.getElementById('modalAddress').textContent = request.address || '';
+
+        // اطلاعات خانوادگی
+        document.getElementById('modalSiblingsCount').textContent = request.siblings_count || '';
+        document.getElementById('modalSiblingsRank').textContent = request.siblings_rank || '';
+        document.getElementById('modalKnow').textContent = request.know || '';
+        document.getElementById('modalCounselingMethod').textContent = request.counseling_method || '';
+
+        if (request.why_counseling_method) {
+            document.getElementById('modalWhyCounselingMethod').textContent = request.why_counseling_method;
+            document.getElementById('modalWhyCounselingMethodDiv').classList.remove('hidden');
+        }
+
+        // اطلاعات والدین
+        document.getElementById('modalFatherName').textContent = request.father_name || '';
+        document.getElementById('modalFatherPhone').textContent = request.father_phone || '';
+        document.getElementById('modalFatherJob').textContent = request.father_job || '';
+        document.getElementById('modalFatherIncome').textContent = request.father_income ? request.father_income.toLocaleString('fa-IR') + ' تومان' : '';
+        document.getElementById('modalFatherJobAddress').textContent = request.father_job_address || '';
+
+        document.getElementById('modalMotherName').textContent = request.mother_name || '';
+        document.getElementById('modalMotherPhone').textContent = request.mother_phone || '';
+        document.getElementById('modalMotherJob').textContent = request.mother_job || '';
+        document.getElementById('modalMotherIncome').textContent = request.mother_income ? request.mother_income.toLocaleString('fa-IR') + ' تومان' : '';
+        document.getElementById('modalMotherJobAddress').textContent = request.mother_job_address || '';
+
+        // سوالات نهایی
+        document.getElementById('modalMotivation').textContent = request.motivation || '';
+        document.getElementById('modalSpend').textContent = request.spend || '';
+        document.getElementById('modalHowAmI').textContent = request.how_am_i || '';
+        document.getElementById('modalFuture').textContent = request.future || '';
+        document.getElementById('modalFavoriteMajor').textContent = request.favorite_major || '';
+        document.getElementById('modalHelpOthers').textContent = request.help_others || '';
+
+        if (request.suggestion) {
+            document.getElementById('modalSuggestion').textContent = request.suggestion;
+            document.getElementById('modalSuggestionDiv').classList.remove('hidden');
+        }
+
+        // بروزرسانی تصاویر با استفاده از URL های آماده شده از سرور
+        if (request.imgpath_url) {
+            document.getElementById('modalProfileImg').src = "http://127.0.0.1:8000/private/"+ request.imgpath;
+    ;
+        }
+
+        if (request.gradesheetpath_url) {
+            document.getElementById('modalGradeSheetImg').src = request.gradesheetpath_url;
+            document.getElementById('modalGradeSheetLink').href = request.gradesheetpath_url;
+            document.getElementById('modalGradeSheet').classList.remove('hidden');
+        }
+
+        console.log('اطلاعات modal با موفقیت بروزرسانی شد');
+    } catch (error) {
+        console.error('خطا در بروزرسانی اطلاعات modal:', error);
+        showErrorMessage('خطا در نمایش اطلاعات جدید');
+    }
+}
+
+// نمایش پیام خطا
+function showErrorMessage(message) {
+    const messageEl = document.createElement('div');
+    messageEl.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100] transform translate-x-full transition-transform duration-300';
     messageEl.textContent = message;
     document.body.appendChild(messageEl);
 

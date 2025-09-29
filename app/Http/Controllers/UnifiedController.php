@@ -637,7 +637,7 @@ public function updateRequestField(Request $request)
 
         // بروزرسانی فیلد
         $requestModel->{$request->field_name} = $fieldValue;
-        $requestModel->save();
+        $requestModel->update();
 
         return response()->json([
             'success' => true,
@@ -649,6 +649,90 @@ public function updateRequestField(Request $request)
         return response()->json([
             'success' => false,
             'message' => 'خطا در بروزرسانی: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+/**
+ * دریافت اطلاعات جدید درخواست برای بروزرسانی modal
+ */
+public function getRequestData($id)
+{
+    try {
+        $requestModel = ModelRequest::with(['user', 'major'])->findOrFail($id);
+
+        // بررسی اجازه دسترسی
+        $user = Auth::user();
+        if ($user->role === 'user' && $requestModel->user_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'شما اجازه دسترسی به این درخواست را ندارید'
+            ], 403);
+        }
+
+        // آماده‌سازی اطلاعات برای فرستادن
+        $imgUrl = $requestModel->imgpath ? route('img', ['filename' => $requestModel->imgpath]) : null;
+        $gradeSheetUrl = $requestModel->gradesheetpath ? route('img', ['filename' => $requestModel->gradesheetpath]) : null;
+
+        // Debug log
+        \Log::info('Generated URLs - Image: ' . $imgUrl . ', GradeSheet: ' . $gradeSheetUrl);
+
+        $requestData = [
+            'id' => $requestModel->id,
+            'name' => $requestModel->name,
+            'birthdate' =>  Jalalian::fromDateTime($requestModel->birthdate)->format(' Y/m/d ') ,
+            'nationalcode' => $requestModel->nationalcode,
+            'phone' => $requestModel->phone,
+            'telephone' => $requestModel->telephone,
+            'grade' => $requestModel->grade,
+            'school' => $requestModel->school,
+            'last_score' => $requestModel->last_score,
+            'principal' => $requestModel->principal,
+            'school_telephone' => $requestModel->school_telephone,
+            'major_name' => $requestModel->major ? $requestModel->major->name : null,
+            'english_proficiency' => $requestModel->english_proficiency,
+            'rental' => $requestModel->rental,
+            'address' => $requestModel->address,
+            'siblings_count' => $requestModel->siblings_count,
+            'siblings_rank' => $requestModel->siblings_rank,
+            'know' => $requestModel->know,
+            'counseling_method' => $requestModel->counseling_method,
+            'why_counseling_method' => $requestModel->why_counseling_method,
+            'father_name' => $requestModel->father_name,
+            'father_phone' => $requestModel->father_phone,
+            'father_job' => $requestModel->father_job,
+            'father_income' => $requestModel->father_income,
+            'father_job_address' => $requestModel->father_job_address,
+            'mother_name' => $requestModel->mother_name,
+            'mother_phone' => $requestModel->mother_phone,
+            'mother_job' => $requestModel->mother_job,
+            'mother_income' => $requestModel->mother_income,
+            'mother_job_address' => $requestModel->mother_job_address,
+            'motivation' => $requestModel->motivation,
+            'spend' => $requestModel->spend,
+            'how_am_i' => $requestModel->how_am_i,
+            'favorite_major' => $requestModel->favorite_major,
+            'future' => $requestModel->future,
+            'help_others' => $requestModel->help_others,
+            'suggestion' => $requestModel->suggestion,
+            'imgpath' => $requestModel->imgpath,
+            'imgpath_url' => $requestModel->imgpath ? route('img', ['filename' => $requestModel->imgpath]) : null,
+            'gradesheetpath' => $requestModel->gradesheetpath,
+            'gradesheetpath_url' => $requestModel->gradesheetpath ? route('img', ['filename' => $requestModel->gradesheetpath]) : null,
+            'story' => $requestModel->story,
+            'created_at' => $requestModel->created_at,
+            'updated_at' => $requestModel->updated_at,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'request' => $requestData
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'خطا در دریافت اطلاعات: ' . $e->getMessage()
         ], 500);
     }
 }

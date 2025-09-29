@@ -10,33 +10,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/pages/allrequests/styles.css') }}">
 @endsection
 
-        .control-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        /* انیمیشن برای تغییر دسته‌بندی */
-        .category-transition {
-            animation: fadeInUp 0.4s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* استایل‌های رنگی برای گروه‌های مختلف */
-        .bg-orange-100 { background-color: #fed7aa; }
-        .text-orange-700 { color: #c2410c; }
-        .bg-orange-500 { background-color: #f97316; }
-    </style>
-@endsection
 
 @section('page-title', 'درخواست‌های من')
 
@@ -567,7 +540,7 @@
 
     <!-- اسکریپت مخصوص کارت بانکی (مشترک) -->
     <script src="{{ asset('assets/js/pages/myrequests/card-manager.js') }}"></script>
-@endsection
+<script>
 
                     // انیمیشن موفقیت
                     setTimeout(() => {
