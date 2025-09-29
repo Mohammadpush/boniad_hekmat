@@ -1,5 +1,14 @@
 @extends('layouts.unified')
 
+@section('head')
+    <!-- استایل‌های عمومی -->
+    <link rel="stylesheet" href="{{ asset('assets/css/common/forms.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/common/ui-elements.css') }}">
+
+    <!-- استایل‌های مخصوص این صفحه -->
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/addmessage/styles.css') }}">
+@endsection
+
 @section('page-title', 'افزودن پیام جدید')
 
 @section('content')
@@ -96,15 +105,7 @@
     </div>
 </main>
 
-<script>
-    // Auto-resize textarea
-    document.addEventListener('DOMContentLoaded', function() {
-        const textarea = document.getElementById('description');
-
-        textarea.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 'px';
-        });
-    });
-</script>
+@section('scripts')
+    <!-- اسکریپت مخصوص این صفحه -->
+    <script src="{{ asset('assets/js/pages/addmessage/form-manager.js') }}"></script>
 @endsection

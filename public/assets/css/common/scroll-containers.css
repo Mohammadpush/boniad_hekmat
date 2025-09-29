@@ -1,0 +1,86 @@
+/* استایل‌های کانتینر اسکرول افقی */
+.scroll-wrapper {
+    width: 100%;
+    position: relative;
+    container-type: inline-size;
+}
+
+.horizontal-scroll-container {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 320px;
+    gap: 1.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    padding: 1rem 0;
+    scrollbar-width: none;
+    width: 100%;
+    max-width: 100%;
+    -ms-overflow-style: none;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* کارت‌ها در اسکرول افقی */
+.horizontal-card {
+    min-width: 300px;
+    flex-shrink: 0;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    padding: 1rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* دکمه‌های اسکرول */
+.scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.scroll-btn:hover {
+    background: #f9fafb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.scroll-btn.left {
+    left: -20px;
+}
+
+.scroll-btn.right {
+    right: -20px;
+}
+
+/* تنظیمات ریسپانسیو */
+@container (max-width: 768px) {
+    .horizontal-scroll-container {
+        grid-auto-columns: 280px;
+        gap: 1rem;
+    }
+
+    .scroll-btn {
+        display: none;
+    }
+}
+
+@container (max-width: 480px) {
+    .horizontal-scroll-container {
+        grid-auto-columns: 260px;
+    }
+}

@@ -1,103 +1,16 @@
 @extends('layouts.unified')
 @section('head')
-<link rel="stylesheet" href="{{ asset('assets/css/jalalydatepicker.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/flatpicker.css') }}">
-<style>
-    .step-badge {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    .status-badge {
-        animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-    .progress-ring {
-        width: 120px;
-        height: 120px;
-    }
-    .progress-ring-circle {
-        stroke-width: 8;
-        fill: transparent;
-        stroke-dasharray: 283;
-        stroke-dashoffset: 283;
-        transform: rotate(-90deg);
-        transform-origin: 50% 50%;
-        transition: stroke-dashoffset 0.35s;
-    }
-    .icon-wrapper {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
+    <!-- استایل‌های خارجی -->
+    <link rel="stylesheet" href="{{ asset('assets/css/jalalydatepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/flatpicker.css') }}">
 
-    /* Print Styles */
-    @media print {
-        /* Hide elements with .hide class */
-        .hide,#sidebar {
-            display: none !important;
-        }
+    <!-- استایل‌های عمومی -->
+    <link rel="stylesheet" href="{{ asset('assets/css/common/animations.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/common/progress.css') }}">
 
-        /* Page setup */
-        @page {
-            size: A4;
-            margin: 1cm;
-        }
-
-        /* Body styles for print */
-        body {
-            font-size: 12pt;
-            line-height: 1.4;
-            color: #000 !important;
-            background: white !important;
-        }
-
-        /* Main layout adjustments */
-        main {
-            padding: 0 !important;
-            background: white !important;
-        }
-
-        /* Card styles for print */
-        .info-card {
-            box-shadow: none !important;
-            border: 1px solid #ddd !important;
-            margin-bottom: 1rem !important;
-            page-break-inside: avoid;
-        }
-
-        /* Grid adjustments */
-        .grid {
-            display: block !important;
-        }
-
-        .xl\:col-span-1, .xl\:col-span-2 {
-            width: 100% !important;
-        }
-
-        /* Typography adjustments */
-        h1, h2, h3 {
-            color: #000 !important;
-        }
-
-        /* Remove gradients and shadows */
-        .bg-gradient-to-r,
-        .icon-wrapper {
-            background: #666 !important;
-        }
-
-        /* Status badge */
-        .status-badge {
-            background: #666 !important;
-            animation: none !important;
-        }
-
-        /* Progress bar adjustments */
-        .bg-gradient-to-r {
-            background: #666 !important;
-        }
-
-    }
-</style>
+    <!-- استایل‌های مخصوص این صفحه -->
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/requestdetail/styles.css') }}">
+@endsection
 @endsection
 
 @section('page-title', 'جزئیات درخواست')
@@ -563,47 +476,10 @@
 @endsection
 
 @section('scripts')
+    <!-- کتابخانه‌های تاریخ -->
     <script src="{{ asset('assets/js/libraris/jalalidatepicker.js') }}"></script>
     <script src="{{ asset('assets/js/libraris/flatpicker.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Jalali Datepicker
-            jalaliDatepicker.startWatch({
-                selector: 'input[data-jdp]',
-                persianDigits: true,
-                date: true,                    // فعال کردن انتخاب تاریخ
-                time: true,                    // فعال کردن انتخاب زمان
-                hasSecond: true,               // فعال کردن انتخاب ثانیه
-                minDate: 'today',              // حداقل تاریخ از امروز
-                showTodayBtn: true,            // نمایش دکمه امروز
-                showEmptyBtn: true,            // نمایش دکمه خالی
-                showCloseBtn: true,            // نمایش دکمه بستن
-                autoHide: true,                // بستن خودکار پس از انتخاب
-                hideAfterChange: false         // عدم بستن خودکار برای تنظیم زمان
-            });
 
-            var openPopup = document.getElementById('openpopup');
-            var popup = document.getElementById('popup');
-            var closePopup = document.getElementById('closepopup');
-
-            openPopup.addEventListener('click', function() {
-                popup.classList.remove('hidden');
-                popup.classList.add('flex', 'flex-col');
-            });
-
-            closePopup.addEventListener('click', function(e) {
-                e.preventDefault();
-                popup.classList.add('hidden');
-                popup.classList.remove('flex', 'flex-col');
-            });
-
-            // Close popup when clicking outside
-            popup.addEventListener('click', function(e) {
-                if (e.target === popup) {
-                    popup.classList.add('hidden');
-                    popup.classList.remove('flex', 'flex-col');
-                }
-            });
-        });
-    </script>
+    <!-- اسکریپت مخصوص این صفحه -->
+    <script src="{{ asset('assets/js/pages/requestdetail/detail-manager.js') }}"></script>
 @endsection

@@ -1,103 +1,14 @@
 @extends('layouts.unified')
 
 @section('head')
-    <style>
+    <!-- استایل‌های عمومی -->
+    <link rel="stylesheet" href="{{ asset('assets/css/common/animations.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/common/scroll-containers.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/common/ui-elements.css') }}">
 
-
-        /* انیمیشن smooth scroll */
-        .scroll-container {
-            scroll-behavior: smooth;
-        }
-
-        /* افکت hover برای کارت‌ها */
-        .card-hover:hover {
-            transform: translateY(-4px);
-
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        /* استایل دکمه مشاهده همه */
-        .view-all-btn svg {
-            transition: transform 0.2s ease;
-        }
-
-        .view-all-btn.expanded svg {
-            transform: rotate(180deg);
-        }
-
-        /* کانتینر اسکرول افقی */
-        .scroll-wrapper {
-            width:100%;
-            position: relative;
-            container-type: inline-size;
-        }
-
-        .horizontal-scroll-container {
-            display: grid;
-            grid-auto-flow: column;
-            grid-auto-columns: 320px;
-            gap: 1.5rem;
-            overflow-x: auto;
-            overflow-y: hidden;
-            scroll-behavior: smooth;
-            padding: 1rem 0;
-            scrollbar-width: none;
-            width: 100%;
-            max-width: 100%;
-        }
-
-
-        /* کارت‌ها در اسکرول افقی */
-        .horizontal-scroll-container .card-hover {
-            width: 320px;
-            min-width: 320px;
-            max-width: 320px;
-            flex-shrink: 0;
-            animation: none;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        /* جلوگیری از شکستگی layout */
-        .overflow-x-auto {
-            max-width: 100%;
-            position: relative;
-        }
-
-        /* تضمین عدم تاثیر بر کل صفحه */
-        .space-y-8 {
-            max-width: 100%;
-            overflow: visible;
-        }
-
-        /* نمایش اسکرول بار در حالت مشاهده همه */
-        .show-scrollbar {
-            scrollbar-width: thin;
-            -ms-overflow-style: auto;
-        }
-
-        .show-scrollbar::-webkit-scrollbar {
-            display: block;
-            height: 8px;
-        }
-
-        .show-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        .show-scrollbar::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 4px;
-        }
-
-        .show-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
-        }
-
-        /* استایل‌های دکمه‌های کنترل */
-        .control-btn {
-            transition: all 0.2s ease;
-        }
+    <!-- استایل‌های مخصوص این صفحه -->
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/allrequests/styles.css') }}">
+@endsection
 
         .control-btn:hover {
             transform: translateY(-1px);
@@ -649,50 +560,14 @@
     </main>
 @endsection
 @section('scripts')
+    <!-- اسکریپت‌های عمومی -->
     <script src="{{ asset('assets/js/search-functionality.js') }}"></script>
     <script src="{{ asset('assets/js/popup-functionality.js') }}"></script>
     <script src="{{ asset('assets/js/input-validation.js') }}"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const digits = document.querySelectorAll('.card-digit');
-            const hiddenInput = document.getElementById('cardNumberInput');
-            const finalInput = document.getElementById('cardNumberFinal');
-            const popup = document.getElementById('popup');
-            let currentIndex = 0;
-            let cardNumber = ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'];
-
-            // فوکس روی اولین مستطیل
-            function focusCurrentDigit() {
-                digits.forEach((digit, index) => {
-                    if (index === currentIndex) {
-                        digit.classList.add('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
-                        digit.classList.remove('border-gray-300', 'bg-gray-50');
-                    } else {
-                        digit.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
-                        if (cardNumber[index] !== '0') {
-                            digit.classList.add('border-green-500', 'bg-green-50');
-                            digit.classList.remove('border-gray-300', 'bg-gray-50');
-                        } else {
-                            digit.classList.add('border-gray-300', 'bg-gray-50');
-                            digit.classList.remove('border-green-500', 'bg-green-50');
-                        }
-                    }
-                });
-            }
-
-            // بررسی تکمیل همه ارقام
-            function checkCompletion() {
-                const isComplete = cardNumber.every(digit => digit !== '0');
-                if (isComplete) {
-                    digits.forEach(digit => {
-                        digit.classList.remove('border-gray-300', 'bg-gray-50', 'border-blue-500',
-                            'bg-blue-50');
-                        digit.classList.add('border-green-500', 'bg-green-100', 'animate-pulse');
-                    });
-
-                    // ارسال شماره کارت نهایی
-                    finalInput.value = cardNumber.join('');
+    <!-- اسکریپت مخصوص کارت بانکی (مشترک) -->
+    <script src="{{ asset('assets/js/pages/myrequests/card-manager.js') }}"></script>
+@endsection
 
                     // انیمیشن موفقیت
                     setTimeout(() => {

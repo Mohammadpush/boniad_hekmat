@@ -50,15 +50,14 @@
                                         <div>
                                             <label class="block text-sm font-medium text-gray-500 mb-1">کد ملی</label>
                                             <div class="flex items-center justify-between">
-                                                <p id="modalNationalCode" class="text-lg font-mono font-semibold text-gray-800"></p>
-                                                <button type="button"
-                                                        class="edit-field-btn ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
-                                                        data-field="nationalcode"
-                                                        data-field-name="کد ملی"
-                                                        data-field-type="text"
-                                                        data-field-pattern="[0-9]{10}"
-                                                        data-field-maxlength="10"
-                                                        title="ویرایش کد ملی">
+                                                <span id="modalNationalCodeDisplay" class="text-lg font-mono font-semibold text-gray-800 "></span>
+                                                <form id="modalNationalCodeForm" class="hidden items-center space-x-2 space-x-reverse" style="margin:0;">
+                                                    <input type="text" id="modalNationalCodeInput" class="border num-input border-gray-300 text-black rounded px-2 py-1 w-32 text-lg font-mono" maxlength="10" pattern="[0-9]{10}" autocomplete="off">
+                                                    <button type="submit" class="bg-blue-500 text-white rounded px-2 py-1 text-sm ml-1">ذخیره</button>
+                                                    <button type="button" id="cancelNationalCodeEdit" class="text-gray-400 hover:text-red-500 text-sm">لغو</button>
+                                                    <span id="modalNationalCodeError" class="text-red-500 text-xs ml-2 hidden"></span>
+                                                </form>
+                                                <button type="button" id="editNationalCodeBtn" class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors" title="ویرایش کد ملی">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                     </svg>
@@ -376,248 +375,141 @@
     </div>
 </div>
 
-{{-- مودال ویرایش فیلد --}}
-<div id="editFieldModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-60">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-xl w-full max-w-md shadow-2xl">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 id="editFieldTitle" class="text-lg font-bold text-gray-800">ویرایش فیلد</h3>
-                    <button type="button" id="closeEditFieldModal" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-
-                <form id="editFieldForm">
-                    <div class="mb-4">
-                        <label id="editFieldLabel" class="block text-sm font-medium text-gray-700 mb-2">نام فیلد</label>
-                        <input type="text" id="editFieldInput" class="w-full px-3 text-black py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <p id="editFieldError" class="text-red-500 text-sm mt-1 hidden"></p>
-                    </div>
-
-                    <div class="flex justify-end space-x-3 space-x-reverse">
-                        <button type="button" id="cancelEditField" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
-                            لغو
-                        </button>
-                        <button type="submit" id="saveEditField" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                            ذخیره
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script src="{{asset('assets/js/request-detail-popup/close.js')}}"></script>
 <script src='{{asset("assets/js/request-detail-popup/popup-functionality.js")}}'></script>
-
+<script src="{{asset('assets/js/numinput.js')}}"></script>
 <script>
-// متغیرهای سراسری برای ویرایش فیلد
-let currentEditData = {
-    requestId: null,
-    fieldName: null,
-    currentValue: null,
-    fieldType: null,
-    fieldPattern: null,
-    fieldMaxLength: null
-};
-
-// عملکرد ویرایش فیلد inline
+// ویرایش اینلاین کد ملی
 document.addEventListener('DOMContentLoaded', function() {
-    // Event listener برای دکمه‌های ویرایش
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.edit-field-btn')) {
-            const btn = e.target.closest('.edit-field-btn');
-            openEditFieldModal(btn);
-        }
-    });
+    // اطمینان از آماده بودن المان‌ها
+    function initializeNationalCodeEdit() {
+        const display = document.getElementById('modalNationalCodeDisplay');
+        const form = document.getElementById('modalNationalCodeForm');
+        const input = document.getElementById('modalNationalCodeInput');
+        const error = document.getElementById('modalNationalCodeError');
+        const editBtn = document.getElementById('editNationalCodeBtn');
+        const cancelBtn = document.getElementById('cancelNationalCodeEdit');
 
-    // بستن مودال ویرایش
-    document.getElementById('closeEditFieldModal').addEventListener('click', closeEditFieldModal);
-    document.getElementById('cancelEditField').addEventListener('click', closeEditFieldModal);
-
-    // ذخیره تغییرات
-    document.getElementById('editFieldForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        saveFieldChanges();
-    });
-
-    // بستن مودال با کلیک خارج از آن
-    document.getElementById('editFieldModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeEditFieldModal();
-        }
-    });
-});
-
-// باز کردن مودال ویرایش فیلد
-function openEditFieldModal(button) {
-    const field = button.getAttribute('data-field');
-    const fieldName = button.getAttribute('data-field-name');
-    const fieldType = button.getAttribute('data-field-type') || 'text';
-    const fieldPattern = button.getAttribute('data-field-pattern');
-    const fieldMaxLength = button.getAttribute('data-field-maxlength');
-
-    // پیدا کردن المان نمایش مقدار فیلد
-    let valueElement;
-    if (field === 'nationalcode') {
-        valueElement = document.getElementById('modalNationalCode');
-    }
-
-    if (!valueElement) {
-        console.error('Value element not found for field:', field);
-        return;
-    }
-
-    const currentValue = valueElement.textContent.trim();
-
-    // ذخیره اطلاعات فعلی
-    currentEditData = {
-        requestId: window.currentRequestId || null, // باید از جای دیگری تنظیم شود
-        fieldName: field,
-        currentValue: currentValue,
-        fieldType: fieldType,
-        fieldPattern: fieldPattern,
-        fieldMaxLength: fieldMaxLength,
-        valueElement: valueElement
-    };
-
-    // تنظیم محتوای مودال
-    document.getElementById('editFieldTitle').textContent = 'ویرایش ' + fieldName;
-    document.getElementById('editFieldLabel').textContent = fieldName + ':';
-
-    const input = document.getElementById('editFieldInput');
-    input.value = currentValue;
-    input.type = fieldType;
-
-    if (fieldPattern) {
-        input.setAttribute('pattern', fieldPattern);
-    }
-    if (fieldMaxLength) {
-        input.setAttribute('maxlength', fieldMaxLength);
-    }
-
-    // پاک کردن خطاهای قبلی
-    document.getElementById('editFieldError').classList.add('hidden');
-
-    // نمایش مودال
-    document.getElementById('editFieldModal').classList.remove('hidden');
-    input.focus();
-    input.select();
-}
-
-// بستن مودال ویرایش
-function closeEditFieldModal() {
-    document.getElementById('editFieldModal').classList.add('hidden');
-    document.getElementById('editFieldError').classList.add('hidden');
-}
-
-// اعتبارسنجی فیلد
-function validateField(value, fieldName) {
-    const errors = [];
-
-    if (fieldName === 'nationalcode') {
-        if (!value || value.length !== 10) {
-            errors.push('کد ملی باید 10 رقم باشد');
-        }
-        if (!/^[0-9]+$/.test(value)) {
-            errors.push('کد ملی فقط باید شامل اعداد باشد');
+        // بررسی وجود تمام المان‌ها
+        if (!display || !form || !input || !error || !editBtn || !cancelBtn) {
+            console.log('بعضی المان‌های مورد نیاز برای ویرایش کد ملی یافت نشدند');
+            return;
         }
 
-        // اعتبارسنجی کد ملی ایرانی
-        if (value && value.length === 10) {
-            const check = parseInt(value.charAt(9));
+        // مقدار اولیه را تنظیم کن
+        function setNationalCodeValue(val) {
+            if (display && input) {
+                display.textContent = val;
+                input.value = val;
+            }
+        }
+
+        // نمایش فرم ویرایش
+        editBtn.addEventListener('click', function() {
+            const currentVal = display.textContent.trim();
+            input.value = currentVal;
+            display.classList.add('hidden');
+            editBtn.classList.add('hidden');
+            form.classList.remove('hidden');
+            form.classList.add('flex');
+            error.classList.add('hidden');
+            input.focus();
+            input.select();
+        });
+
+        // لغو ویرایش
+        cancelBtn.addEventListener('click', function() {
+            form.classList.add('hidden');
+            form.classList.remove('flex');
+            display.classList.remove('hidden');
+            editBtn.classList.remove('hidden');
+            error.classList.add('hidden');
+        });
+
+        // اعتبارسنجی کد ملی
+        function validateNationalCode(val) {
+            if (!val || val.length !== 10) return 'کد ملی باید 10 رقم باشد';
+            if (!/^[0-9]+$/.test(val)) return 'کد ملی فقط باید شامل اعداد باشد';
+            // الگوریتم صحت کد ملی
+            const check = parseInt(val.charAt(9));
             let sum = 0;
-            for (let i = 0; i < 9; i++) {
-                sum += parseInt(value.charAt(i)) * (10 - i);
-            }
-            const remainder = sum % 11;
-            if (!((remainder < 2 && check === remainder) || (remainder >= 2 && check === 11 - remainder))) {
-                errors.push('کد ملی وارد شده معتبر نیست');
-            }
+            for (let i = 0; i < 9; i++) sum += parseInt(val.charAt(i)) * (10 - i);
+            const rem = sum % 11;
+            if (!((rem < 2 && check === rem) || (rem >= 2 && check === 11 - rem))) return 'کد ملی معتبر نیست';
+            return '';
         }
+
+        // ذخیره تغییرات
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newVal = input.value.trim();
+            const errMsg = validateNationalCode(newVal);
+
+            if (errMsg) {
+                error.textContent = errMsg;
+                error.classList.remove('hidden');
+                return;
+            }
+
+            if (newVal === display.textContent.trim()) {
+                // مقدار تغییر نکرده
+                form.classList.add('hidden');
+                form.classList.remove('flex');
+                display.classList.remove('hidden');
+                editBtn.classList.remove('hidden');
+                return;
+            }
+
+            // ارسال AJAX
+            fetch('/unified/update-request-field', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    request_id: window.currentRequestId,
+                    field_name: 'nationalcode',
+                    field_value: newVal
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setNationalCodeValue(newVal);
+                    form.classList.add('hidden');
+                    form.classList.remove('flex');
+                    display.classList.remove('hidden');
+                    editBtn.classList.remove('hidden');
+                    error.classList.add('hidden');
+                    showSuccessMessage('کد ملی با موفقیت ذخیره شد');
+                } else {
+                    error.textContent = data.message || 'خطا در ذخیره اطلاعات';
+                    error.classList.remove('hidden');
+                }
+            })
+            .catch(() => {
+                error.textContent = 'خطا در ارتباط با سرور';
+                error.classList.remove('hidden');
+            });
+        });
     }
 
-    return errors;
-}
-
-// ذخیره تغییرات فیلد
-function saveFieldChanges() {
-    const newValue = document.getElementById('editFieldInput').value.trim();
-    const errorElement = document.getElementById('editFieldError');
-
-    // اعتبارسنجی
-    const errors = validateField(newValue, currentEditData.fieldName);
-
-    if (errors.length > 0) {
-        errorElement.textContent = errors[0];
-        errorElement.classList.remove('hidden');
-        return;
-    }
-
-    // اگر مقدار تغییر نکرده
-    if (newValue === currentEditData.currentValue) {
-        closeEditFieldModal();
-        return;
-    }
-
-    // ارسال درخواست AJAX برای ذخیره در دیتابیس
-    fetch('/unified/update-request-field', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-            request_id: currentEditData.requestId,
-            field_name: currentEditData.fieldName,
-            field_value: newValue
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // بروزرسانی نمایش فیلد
-            currentEditData.valueElement.textContent = newValue;
-
-            // نمایش پیام موفقیت
-            showSuccessMessage('تغییرات با موفقیت ذخیره شد');
-
-            closeEditFieldModal();
-        } else {
-            errorElement.textContent = data.message || 'خطا در ذخیره اطلاعات';
-            errorElement.classList.remove('hidden');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        errorElement.textContent = 'خطا در ارتباط با سرور';
-        errorElement.classList.remove('hidden');
-    });
-}
+    // اجرای تابع init بعد از بارگذاری کامل
+    setTimeout(initializeNationalCodeEdit, 100);
+});
 
 // نمایش پیام موفقیت
 function showSuccessMessage(message) {
-    // ایجاد المان پیام موقت
     const messageEl = document.createElement('div');
-    messageEl.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+    messageEl.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100] transform translate-x-full transition-transform duration-300';
     messageEl.textContent = message;
     document.body.appendChild(messageEl);
 
-    // نمایش پیام
-    setTimeout(() => {
-        messageEl.classList.remove('translate-x-full');
-    }, 100);
-
-    // حذف پیام بعد از 3 ثانیه
+    setTimeout(() => messageEl.classList.remove('translate-x-full'), 100);
     setTimeout(() => {
         messageEl.classList.add('translate-x-full');
-        setTimeout(() => {
-            document.body.removeChild(messageEl);
-        }, 300);
+        setTimeout(() => document.body.removeChild(messageEl), 300);
     }, 3000);
 }
 </script>

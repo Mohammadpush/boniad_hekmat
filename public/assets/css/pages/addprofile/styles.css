@@ -1,0 +1,64 @@
+/* استایل‌های مخصوص صفحه افزودن/ویرایش پروفایل */
+
+.numinput::-webkit-outer-spin-button,
+.numinput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.numinput[type=number] {
+    -moz-appearance: textfield;
+}
+
+input:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Profile image preview */
+.profile-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.profile-image-container:hover {
+    transform: scale(1.05);
+}
+
+/* Form animations */
+.form-field {
+    transition: all 0.3s ease;
+}
+
+.form-field:focus-within {
+    transform: translateY(-2px);
+}
+
+/* File input custom style */
+input[type="file"] {
+    transition: all 0.2s ease;
+}
+
+input[type="file"]:hover {
+    background-color: #f9fafb;
+}
+
+/* Button hover effects */
+.btn-primary {
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-secondary {
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

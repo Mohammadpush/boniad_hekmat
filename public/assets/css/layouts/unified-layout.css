@@ -1,0 +1,177 @@
+/* استایل‌های Layout اصلی */
+
+/* Mobile Menu Styles */
+.navbar-toggle {
+    display: none;
+    background: transparent;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    position: sticky;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar-toggle.active {
+    transform: translateX(-50vh);
+}
+
+.bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    background-color: #374151;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar-toggle.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.navbar-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.navbar-toggle.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+.navbar-menu {
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Layout grid */
+.layout-container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    min-height: 100vh;
+    transition: grid-template-columns 0.3s ease;
+}
+
+.layout-sidebar {
+    background: #ffffff;
+    border-left: 1px solid #e5e7eb;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 250px;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 40;
+}
+
+.layout-main {
+    margin-right: 250px;
+    min-height: 100vh;
+    background: #f9fafb;
+    transition: margin-right 0.3s ease;
+}
+
+/* Header */
+.layout-header {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+}
+
+/* Content area */
+.layout-content {
+    padding: 2rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 658px) {
+    .navbar-toggle {
+        display: block;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 50;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .layout-container {
+        grid-template-columns: 1fr;
+    }
+
+    .layout-sidebar {
+        transform: translateX(100%);
+        width: 80vw;
+        max-width: 300px;
+    }
+
+    .layout-sidebar.active {
+        transform: translateX(0);
+    }
+
+    .layout-main {
+        margin-right: 0;
+    }
+
+    .layout-content {
+        padding: 1rem;
+    }
+
+    .layout-header {
+        padding: 1rem;
+        padding-left: 4rem; /* Space for hamburger menu */
+    }
+}
+
+@media (max-width: 480px) {
+    .layout-sidebar {
+        width: 100vw;
+    }
+
+    .layout-content {
+        padding: 0.75rem;
+    }
+}
+
+/* Overlay for mobile */
+.mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 35;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .layout-sidebar {
+        background: #1f2937;
+        border-left-color: #374151;
+    }
+
+    .layout-main {
+        background: #111827;
+    }
+
+    .layout-header {
+        background: #1f2937;
+        border-bottom-color: #374151;
+        color: #f9fafb;
+    }
+
+    .bar {
+        background-color: #f9fafb;
+    }
+}

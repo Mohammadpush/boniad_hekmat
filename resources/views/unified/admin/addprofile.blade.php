@@ -1,5 +1,14 @@
 @extends('layouts.unified')
 
+@section('head')
+    <!-- استایل‌های عمومی -->
+    <link rel="stylesheet" href="{{ asset('assets/css/common/forms.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/common/ui-elements.css') }}">
+
+    <!-- استایل‌های مخصوص این صفحه -->
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/addprofile/styles.css') }}">
+@endsection
+
 @section('title', isset($profile) ? 'ویرایش پروفایل' : 'تکمیل پروفایل')
 
 @section('page-title')
@@ -187,59 +196,7 @@
     </div>
 </div>
 
-<!-- Custom Styles -->
-<style>
-    .numinput::-webkit-outer-spin-button,
-    .numinput::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-    .numinput[type=number] {
-        -moz-appearance: textfield;
-    }
-
-    input:focus {
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-</style>
-
-<script>
-    // Numeric input validation
-    const numInputs = document.querySelectorAll('.numinput');
-
-    numInputs.forEach(input => {
-        input.addEventListener('paste', function(e) {
-            const pastedData = e.clipboardData.getData('text');
-            if (!/^\d+$/.test(pastedData)) {
-                e.preventDefault();
-            }
-        });
-
-        input.addEventListener('input', function(e) {
-            const value = e.target.value;
-            if (!/^\d*$/.test(value)) {
-                e.target.value = value.replace(/\D/g, '');
-            }
-        });
-    });
-
-    // Image preview functionality
-    const imageInput = document.getElementById('imgpath');
-    if (imageInput) {
-        imageInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.querySelector('img');
-                    if (preview) {
-                        preview.src = e.target.result;
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-</script>
+@section('scripts')
+    <!-- اسکریپت مخصوص این صفحه -->
+    <script src="{{ asset('assets/js/pages/addprofile/profile-manager.js') }}"></script>
 @endsection

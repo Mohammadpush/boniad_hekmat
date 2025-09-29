@@ -1,0 +1,103 @@
+/* انیمیشن‌های عمومی */
+
+/* انیمیشن smooth scroll */
+.scroll-container {
+    scroll-behavior: smooth;
+}
+
+/* افکت hover برای کارت‌ها */
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+/* انیمیشن دکمه‌ها */
+.view-all-btn svg {
+    transition: transform 0.2s ease;
+}
+
+.view-all-btn.expanded svg {
+    transform: rotate(180deg);
+}
+
+/* انیمیشن pulse */
+.status-badge {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* انیمیشن فرم‌ها */
+.form-section {
+    display: none;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.3s ease;
+}
+
+.form-section.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* انیمیشن step circles */
+.step-circle {
+    transition: all 0.3s ease;
+}
+
+.step-circle.active {
+    background: #3b82f6;
+    color: white;
+    transform: scale(1.1);
+}
+
+.step-circle.completed {
+    background: #10b981;
+    color: white;
+}
+
+/* انیمیشن hover */
+.person-icon svg {
+    transition: all 0.2s ease;
+    align-items: center;
+    justify-content: center;
+}
+
+.person-icon:hover {
+    transform: scale(1.05);
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+/* انیمیشن فیدآوت */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.slide-up {
+    transform: translateY(20px);
+    opacity: 0;
+    animation: slideUp 0.3s ease forwards;
+}
+
+@keyframes slideUp {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

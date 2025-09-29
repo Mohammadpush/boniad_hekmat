@@ -3,9 +3,16 @@
 @section('page-title', 'پیام‌ها')
 
 @section('head')
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
         integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- استایل‌های عمومی -->
+    <link rel="stylesheet" href="{{ asset('assets/css/common/ui-elements.css') }}">
+
+    <!-- استایل‌های مخصوص این صفحه -->
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/message/styles.css') }}">
 @endsection
 
 @section('content')
@@ -105,44 +112,7 @@
         </div>
     </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchInput');
-
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const messageContainers = document.querySelectorAll('.space-y-4 > div');
-
-            messageContainers.forEach(container => {
-                const title = container.querySelector('.font-bold')?.textContent.toLowerCase() || '';
-                const description = container.querySelector('.text-sm')?.textContent.toLowerCase() || '';
-
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                    container.style.display = '';
-                } else {
-                    container.style.display = 'none';
-                }
-            });
-        });
-    });
-
-    function smartGoBack() {
-        // بررسی تعداد صفحات موجود در history
-        if (window.history.length > 1) {
-            // بررسی آدرس فعلی
-            const currentUrl = window.location.href;
-
-            // اگر از addmessage اومدیم، دو قدم برگرد
-            if (document.referrer.includes('addmessage')) {
-                window.history.go(-2);
-            } else {
-                // در غیر این صورت یک قدم
-                window.history.back();
-            }
-        } else {
-            // اگر history خالی است، به صفحه پیش‌فرض برو
-            window.location.href = '/unified/allrequests';
-        }
-    }
-</script>
+@section('scripts')
+    <!-- اسکریپت مخصوص این صفحه -->
+    <script src="{{ asset('assets/js/pages/message/message-manager.js') }}"></script>
 @endsection

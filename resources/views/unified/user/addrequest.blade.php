@@ -2,146 +2,8 @@
 
 @section('page-title', 'فرم درخواست بورسیه')
 
-@section('head')
-<style>
-    .progress-bar {
-        background: linear-gradient(to right, #3b82f6 0%, #3b82f6 var(--progress), #e5e7eb var(--progress), #e5e7eb 100%);
-        transition: all 0.3s ease;
-    }
-    .step-circle {
-        transition: all 0.3s ease;
-    }
-    .step-circle.active {
-        background: #3b82f6;
-        color: white;
-        transform: scale(1.1);
-    }
-    .step-circle.completed {
-        background: #10b981;
-        color: white;
-    }
-    .form-section {
-        display: none;
-        opacity: 0;
-        transform: translateX(20px);
-        transition: all 0.3s ease;
-    }
-    .form-section.active {
-        display: block;
-        opacity: 1;
-        transform: translateX(0);
-    }
-    .field-error {
-        border-color: #ef4444 !important;
-        background-color: #fef2f2 !important;
-    }
-    .error-message {
-        color: #ef4444;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
-
-    /* Custom Slider Styles */
-    .slider {
-        -webkit-appearance: none;
-        appearance: none;
-        background: linear-gradient(to left, #3b82f6 0%, #3b82f6 50%, #e5e7eb 50%, #e5e7eb 100%);
-        outline: none;
-        border-radius: 6px;
-        direction: rtl;
-    }
-
-    .slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: #3b82f6;
-        cursor: pointer;
-        border: 2px solid #ffffff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        transition: all 0.2s ease;
-    }
-
-    .slider::-webkit-slider-thumb:hover {
-        transform: scale(1.1);
-        background: #2563eb;
-    }
-
-    .slider::-moz-range-thumb {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: #3b82f6;
-        cursor: pointer;
-        border: 2px solid #ffffff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        transition: all 0.2s ease;
-    }
-
-    .slider::-moz-range-thumb:hover {
-        transform: scale(1.1);
-        background: #2563eb;
-    }
-
-    /* Person icon styles */
-    .person-icon svg {
-        transition: all 0.2s ease;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .person-icon:hover {
-        transform: scale(1.05);
-        background: #f3f4f6;
-        border-color: #d1d5db;
-    }
-
-    .person-icon.selected {
-        background: #3b82f6;
-        color: white;
-        border-color: #2563eb;
-        transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
-
-    .person-icon.selected::after {
-        content: '';
-        position: absolute;
-        bottom: -6px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 6px;
-        height: 6px;
-        background: #10b981;
-        border-radius: 50%;
-        border: 2px solid white;
-    }
-
-    .person-number {
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 10px;
-        font-weight: bold;
-        color: #374151;
-        background: white;
-        border-radius: 50%;
-        width: 16px;
-        height: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid #d1d5db;
-    }
-
-    .person-icon.selected .person-number {
-        color: #3b82f6;
-        border-color: #3b82f6;
-    }
-</style>
+@section('page-styles')
+    <link href="{{ asset('assets/css/pages/request-form/styles.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -752,9 +614,8 @@
 @endsection
 
 @section('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    let currentStep = 1;
+<script src="{{ asset('assets/js/pages/request-form/form-manager.js') }}"></script>
+@endsection
     const totalSteps = 6;
 
     const steps = [17, 34, 50, 67, 84, 100]; // Progress percentages

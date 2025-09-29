@@ -1,0 +1,87 @@
+/* استایل‌های مخصوص صفحه درخواست‌های من */
+
+/* کارت‌ها در اسکرول افقی - مخصوص myrequests */
+.horizontal-scroll-container .card-hover {
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
+    flex-shrink: 0;
+    animation: none;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+/* جلوگیری از شکستگی layout */
+.overflow-x-auto {
+    max-width: 100%;
+    position: relative;
+}
+
+/* تضمین عدم تاثیر بر کل صفحه */
+.space-y-8 {
+    max-width: 100%;
+    overflow: visible;
+}
+
+/* نمایش اسکرول بار در حالت مشاهده همه */
+.show-scrollbar {
+    scrollbar-width: thin;
+    -ms-overflow-style: auto;
+}
+
+.show-scrollbar::-webkit-scrollbar {
+    display: block;
+    height: 8px;
+}
+
+.show-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.show-scrollbar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.show-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* استایل‌های دکمه‌های کنترل */
+.control-btn {
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* انیمیشن برای تغییر دسته‌بندی */
+.category-transition {
+    animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* استایل‌های رنگی برای گروه‌های مختلف */
+.bg-orange-100 {
+    background-color: #fed7aa;
+}
+
+.text-orange-700 {
+    color: #c2410c;
+}
+
+.bg-orange-500 {
+    background-color: #f97316;
+}

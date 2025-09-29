@@ -1,0 +1,104 @@
+/* استایل‌های مخصوص صفحه جزئیات درخواست */
+
+.step-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.status-badge {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.progress-ring {
+    width: 120px;
+    height: 120px;
+}
+
+.progress-ring-circle {
+    stroke-width: 8;
+    fill: transparent;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 0.35s;
+}
+
+.icon-wrapper {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Print Styles */
+@media print {
+    /* Hide elements with .hide class */
+    .hide, #sidebar {
+        display: none !important;
+    }
+
+    /* Page setup */
+    @page {
+        size: A4;
+        margin: 1cm;
+    }
+
+    /* Body styles for print */
+    body {
+        font-size: 12pt;
+        line-height: 1.4;
+        color: #000 !important;
+        background: white !important;
+    }
+
+    /* Main layout adjustments */
+    main {
+        padding: 0 !important;
+        background: white !important;
+    }
+
+    /* Card styles for print */
+    .info-card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        margin-bottom: 1rem !important;
+        page-break-inside: avoid;
+    }
+
+    /* Grid adjustments */
+    .grid {
+        display: block !important;
+    }
+
+    .xl\:col-span-1, .xl\:col-span-2 {
+        width: 100% !important;
+    }
+
+    /* Typography adjustments */
+    h1, h2, h3 {
+        color: #000 !important;
+    }
+
+    /* Remove gradients and shadows */
+    .bg-gradient-to-r,
+    .icon-wrapper {
+        background: #666 !important;
+    }
+
+    /* Status badge */
+    .status-badge {
+        background: #666 !important;
+        animation: none !important;
+    }
+
+    /* Progress bar adjustments */
+    .bg-gradient-to-r {
+        background: #666 !important;
+    }
+}

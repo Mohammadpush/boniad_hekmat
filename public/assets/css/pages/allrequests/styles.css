@@ -1,0 +1,94 @@
+/* استایل‌های مخصوص صفحه همه درخواست‌ها */
+
+/* کارت‌ها در اسکرول افقی - مخصوص allrequests */
+.horizontal-scroll-container .card-hover {
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
+    flex-shrink: 0;
+    animation: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* استایل‌های دکمه‌های کنترل */
+.control-btn {
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* استایل فیلتر */
+.filter-btn {
+    transition: all 0.3s ease;
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+/* استایل جدول */
+.request-table th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #374151;
+}
+
+.request-table tr:hover {
+    background: #f9fafb;
+}
+
+/* استایل‌های پیجینیشن */
+.pagination-btn {
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #e5e7eb;
+    transform: translateY(-1px);
+}
+
+.pagination-btn.active {
+    background: #3b82f6;
+    color: white;
+}
+
+/* استایل‌های Modal */
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* استایل‌های وضعیت */
+.status-pending {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.status-approved {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.status-rejected {
+    background: #fee2e2;
+    color: #dc2626;
+}

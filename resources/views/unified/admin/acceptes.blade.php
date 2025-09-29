@@ -1,5 +1,14 @@
 @extends('layouts.unified')
 
+@section('head')
+    <!-- استایل‌های عمومی -->
+    <link rel="stylesheet" href="{{ asset('assets/css/common/progress.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/common/ui-elements.css') }}">
+
+    <!-- استایل‌های مخصوص این صفحه -->
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/acceptes/styles.css') }}">
+@endsection
+
 @section('page-title', 'درخواست‌های پذیرفته شده')
 
 @section('content')
@@ -265,17 +274,23 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('assets/js/price-input.js') }}"></script>
-<script>
-    // Check for Laravel success message
-    @if(session('success'))
-        document.addEventListener('DOMContentLoaded', function() {
-            showSuccessPopup('{{ session('success') }}');
-        });
-    @endif
-</script>
-<script src='{{ asset("assets/js/copytext.js") }}'></script>
-<script src="{{asset('assers/js/aceeptes/popup.js')}}"></script>
-<script src="{{asset('assers/js/aceeptes/modal.js')}}"></script>
+    <!-- اسکریپت‌های عمومی -->
+    <script src="{{ asset('assets/js/price-input.js') }}"></script>
+    <script src="{{ asset('assets/js/copytext.js') }}"></script>
 
+    <!-- اسکریپت‌های مخصوص این صفحه -->
+    <script src="{{ asset('assets/js/pages/acceptes/accepted-manager.js') }}"></script>
+
+    <script>
+        // Check for Laravel success message
+        @if(session('success'))
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize manager if not already done
+                if (typeof acceptedManager === 'undefined') {
+                    window.acceptedManager = new AcceptedStudentsManager();
+                }
+                acceptedManager.showSuccessPopup('{{ session('success') }}');
+            });
+        @endif
+    </script>
 @endsection

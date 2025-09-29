@@ -8,47 +8,24 @@
     <title>@yield('title', 'پنل مدیریت')</title>
     <script src="{{ mix('js/app.js') }}"></script>
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+
+    <!-- Common Styles -->
+    <link href="{{ asset('assets/css/common/animations.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/common/forms.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/common/progress.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/common/badges.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/common/scroll-containers.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/common/ui-elements.css') }}" rel="stylesheet">
+
+    <!-- Layout Styles -->
+    <link href="{{ asset('assets/css/layouts/unified-layout.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/search-box.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/sidebar.css') }}" rel="stylesheet">
+
+    <!-- Page Specific Styles -->
+    @yield('page-styles')
+
     <script src="{{ asset('assets/js/libraris/tail.js') }}"></script>
-
-    <!-- Mobile Menu Styles -->
-    <style>
-        .navbar-toggle {
-            display: none;
-            background: transparent;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            z-index: 10;
-            position: sticky;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .navbar-toggle.active {
-            transform: translateX(-50vh);
-        }
-
-        .bar {
-            display: block;
-            width: 25px;
-            height: 3px;
-            margin: 5px auto;
-            background-color: #374151;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .navbar-toggle.active .bar:nth-child(1) {
-            transform: translateY(8px) rotate(45deg);
-        }
-
-        .navbar-toggle.active .bar:nth-child(2) {
-            opacity: 0;
-        }
-
-        .navbar-toggle.active .bar:nth-child(3) {
-            transform: translateY(-8px) rotate(-45deg);
-        }
 
         .navbar-menu.active {
             transform: translateX(0) !important;
@@ -248,42 +225,14 @@
     <!-- Load Sidebar JavaScript -->
     <script src="{{ asset('assets/js/sidebar.js') }}"></script>
 
-    <!-- Search Functionality JavaScript -->
+    <!-- Common JavaScript -->
+    <script src="{{ asset('assets/js/common/form-validation.js') }}"></script>
+    <script src="{{ asset('assets/js/common/ui-components.js') }}"></script>
+    <script src="{{ asset('assets/js/common/scroll-utils.js') }}"></script>
+
+    <!-- Layout JavaScript -->
+    <script src="{{ asset('assets/js/layouts/unified-layout.js') }}"></script>
     <script src="{{ asset('assets/js/search-functionality.js') }}"></script>
-
-
-    <!-- Mobile Menu JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const navbarToggle = document.querySelector('.navbar-toggle');
-            const navbarMenu = document.querySelector('.navbar-menu');
-
-            if (navbarToggle && navbarMenu) {
-                // Toggle menu با کلیک روی hamburger
-                navbarToggle.addEventListener('click', () => {
-                    navbarToggle.classList.toggle('active');
-                    navbarMenu.classList.toggle('active');
-                });
-
-                // Close menu when clicking on a link
-                const menuLinks = navbarMenu.querySelectorAll('.lamp');
-                menuLinks.forEach(link => {
-                    link.addEventListener('click', () => {
-                        navbarToggle.classList.remove('active');
-                        navbarMenu.classList.remove('active');
-                    });
-                });
-
-                // Close menu when window is resized above 658px
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth > 658) {
-                        navbarToggle.classList.remove('active');
-                        navbarMenu.classList.remove('active');
-                    }
-                });
-            }
-        });
-    </script>
 
     @yield('scripts')
 </body>

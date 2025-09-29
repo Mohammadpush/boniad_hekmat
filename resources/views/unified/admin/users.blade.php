@@ -1,5 +1,13 @@
 @extends('layouts.unified')
 
+@section('head')
+    <!-- استایل‌های عمومی -->
+    <link rel="stylesheet" href="{{ asset('assets/css/common/ui-elements.css') }}">
+
+    <!-- استایل‌های مخصوص این صفحه -->
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/users/styles.css') }}">
+@endsection
+
 @section('page-title', 'مدیریت کاربران')
 
 @section('content')
@@ -194,38 +202,7 @@
         </div>
     </div> --}}
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchInput');
-
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const tableRows = document.querySelectorAll('tbody tr');
-
-            tableRows.forEach(row => {
-                const name = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
-                const email = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
-                const role = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
-
-                if (name.includes(searchTerm) || email.includes(searchTerm) || role.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-    });
-
-    function changeRole(userId, currentRole) {
-        document.getElementById('roleForm').action = `/unified/users/${userId}/role`;
-        document.getElementById('role').value = currentRole;
-        document.getElementById('roleModal').classList.remove('hidden');
-        document.getElementById('roleModal').classList.add('flex');
-    }
-
-    function closeRoleModal() {
-        document.getElementById('roleModal').classList.add('hidden');
-        document.getElementById('roleModal').classList.remove('flex');
-    }
-</script>
+@section('scripts')
+    <!-- اسکریپت مخصوص این صفحه -->
+    <script src="{{ asset('assets/js/pages/users/user-manager.js') }}"></script>
 @endsection

@@ -54,7 +54,7 @@ function openRequestDetailModal(requestData, cardElement = null) {
     statusBadge.textContent = statusText;
 
     // پر کردن اطلاعات شخصی
-    document.getElementById('modalNationalCode').textContent = requestData.nationalcode || '';
+    document.getElementById('modalNationalCodeDisplay').textContent = requestData.nationalcode || '';
     document.getElementById('modalBirthdate').textContent = requestData.birthdate || '';
     document.getElementById('modalPhone').textContent = requestData.phone || '';
     document.getElementById('modalTelephone').textContent = requestData.telephone || 'وارد نشده';
