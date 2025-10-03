@@ -1,0 +1,28 @@
+/* استایل برای progress bar انگلیسی */
+.english-progress-bar {
+    transition: all 0.5s ease;
+}
+
+.english-progress-bar.level-beginner {
+    background: linear-gradient(270deg, #ef4444 0%, #dc2626 100%) !important;
+}
+
+.english-progress-bar.level-basic {
+    background: linear-gradient(270deg, #f97316 0%, #ea580c 100%) !important;
+}
+
+.english-progress-bar.level-intermediate {
+    background: linear-gradient(270deg, #eab308 0%, #ca8a04 100%) !important;
+}
+
+.english-progress-bar.level-good {
+    background: linear-gradient(270deg, #22c55e 0%, #16a34a 100%) !important;
+}
+
+.english-progress-bar.level-excellent {
+    background: linear-gradient(270deg, #3b82f6 0%, #2563eb 100%) !important;
+}
+
+.english-progress-bar.level-master {
+    background: linear-gradient(270deg, #8b5cf6 0%, #7c3aed 100%) !important;
+}

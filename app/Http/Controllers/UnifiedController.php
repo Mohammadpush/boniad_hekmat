@@ -535,6 +535,14 @@ public function storecard(Request $req , $id){
  */
 public function updateRequestField(Request $request)
 {
+    \Log::info('Update Request Field - Received Request', [
+        'request_id' => $request->request_id,
+        'field_name' => $request->field_name,
+        'field_value' => $request->field_value,
+        'user_id' => Auth::id(),
+        'all_data' => $request->all()
+    ]);
+
     try {
         $request->validate([
             'request_id' => 'required|integer|exists:requests,id',
@@ -576,6 +584,37 @@ public function updateRequestField(Request $request)
         $fieldValue = $request->field_value;
 
         switch ($request->field_name) {
+            case 'name':
+                if (empty($fieldValue) || strlen(trim($fieldValue)) < 2) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'نام باید حداقل 2 کاراکتر باشد'
+                    ], 400);
+                }
+                if (strlen($fieldValue) > 75) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'نام نباید بیشتر از 75 کاراکتر باشد'
+                    ], 400);
+                }
+                break;
+
+            case 'birthdate':
+                if (empty($fieldValue)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'تاریخ تولد الزامی است'
+                    ], 400);
+                }
+                // اعتبارسنجی فرمت تاریخ شمسی
+                if (!preg_match('/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/', $fieldValue)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'فرمت تاریخ صحیح نیست (مثال: ۱۴۰۰/۰۱/۰۱)'
+                    ], 400);
+                }
+                break;
+
             case 'nationalcode':
                 if (strlen($fieldValue) !== 10 || !is_numeric($fieldValue)) {
                     return response()->json([
@@ -633,6 +672,55 @@ public function updateRequestField(Request $request)
                     ], 400);
                 }
                 break;
+
+            case 'grade':
+                if (empty($fieldValue)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'پایه تحصیلی الزامی است'
+                    ], 400);
+                }
+                break;
+
+            case 'school':
+            case 'principal':
+                if (empty($fieldValue) || strlen(trim($fieldValue)) < 2) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'این فیلد باید حداقل 2 کاراکتر باشد'
+                    ], 400);
+                }
+                break;
+
+            case 'rental':
+                if ($fieldValue !== '0' && $fieldValue !== '1') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'وضعیت مسکن نامعتبر است'
+                    ], 400);
+                }
+                break;
+
+            case 'address':
+                if (empty($fieldValue) || strlen(trim($fieldValue)) < 10) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'آدرس باید حداقل 10 کاراکتر باشد'
+                    ], 400);
+                }
+                break;
+
+            case 'know':
+            case 'counseling_method':
+                if (empty($fieldValue)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'انتخاب این گزینه الزامی است'
+                    ], 400);
+                }
+                break;
+
+
         }
 
         // بروزرسانی فیلد

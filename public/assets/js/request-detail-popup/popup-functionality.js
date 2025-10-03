@@ -54,18 +54,19 @@ function openRequestDetailModal(requestData, cardElement = null) {
     statusBadge.textContent = statusText;
 
     // پر کردن اطلاعات شخصی
+    document.getElementById('modalNameDisplay').textContent = requestData.name || '';
     document.getElementById('modalNationalCodeDisplay').textContent = requestData.nationalcode || '';
-    document.getElementById('modalBirthdate').textContent = requestData.birthdate || '';
-    document.getElementById('modalPhone').textContent = requestData.phone || '';
-    document.getElementById('modalTelephone').textContent = requestData.telephone || 'وارد نشده';
+    document.getElementById('modalBirthdateDisplay').textContent = requestData.birthdate || '';
+    document.getElementById('modalPhoneDisplay').textContent = requestData.phone || '';
+    document.getElementById('modalTelephoneDisplay').textContent = requestData.telephone || 'وارد نشده';
 
     // پر کردن اطلاعات تحصیلی
-    document.getElementById('modalGrade').textContent = requestData.grade || '';
-    document.getElementById('modalSchool').textContent = requestData.school || '';
-    document.getElementById('modalPrincipal').textContent = requestData.principal || '';
+    document.getElementById('modalGradeDisplay').textContent = requestData.grade || '';
+    document.getElementById('modalSchoolDisplay').textContent = requestData.school || '';
+    document.getElementById('modalPrincipalDisplay').textContent = requestData.principal || '';
     document.getElementById('modalMajor').textContent = requestData.major_name || 'ندارد';
-    document.getElementById('modalLastScore').textContent = requestData.last_score || '';
-    document.getElementById('modalSchoolTelephone').textContent = requestData.school_telephone || 'وارد نشده';
+    document.getElementById('modalLastScoreDisplay').textContent = requestData.last_score || '';
+    document.getElementById('modalSchoolTelephoneDisplay').textContent = requestData.school_telephone || 'وارد نشده';
 
     // تنظیم نوار پیشرفت زبان انگلیسی
     const englishPercent = requestData.english_proficiency || 0;
@@ -82,14 +83,14 @@ function openRequestDetailModal(requestData, cardElement = null) {
     }
 
     // پر کردن اطلاعات مسکن
-    document.getElementById('modalRental').textContent = requestData.rental == '0' ? '🏠 ملکی' : '🏠 استیجاری';
-    document.getElementById('modalAddress').textContent = requestData.address || '';
+    document.getElementById('modalRentalDisplay').textContent = requestData.rental == '0' ? '🏠 ملکی' : '🏠 استیجاری';
+    document.getElementById('modalAddressDisplay').textContent = requestData.address || '';
 
     // پر کردن اطلاعات خانوادگی
-    document.getElementById('modalSiblingsCount').textContent = (requestData.siblings_count || '0') + ' نفر';
-    document.getElementById('modalSiblingsRank').textContent = 'فرزند ' + (requestData.siblings_rank || '1') + 'ام';
-    document.getElementById('modalKnow').textContent = requestData.know || '';
-    document.getElementById('modalCounselingMethod').textContent = requestData.counseling_method || '';
+    document.getElementById('modalSiblingsCountDisplay').textContent = (requestData.siblings_count || '0') + ' نفر';
+    document.getElementById('modalSiblingsRankDisplay').textContent = 'فرزند ' + (requestData.siblings_rank || '1') + 'ام';
+    document.getElementById('modalKnowDisplay').textContent = requestData.know || '';
+    document.getElementById('modalCounselingMethodDisplay').textContent = requestData.counseling_method || '';
 
     if (requestData.why_counseling_method) {
         document.getElementById('modalWhyCounselingMethodDiv').classList.remove('hidden');
@@ -134,4 +135,65 @@ function openRequestDetailModal(requestData, cardElement = null) {
     setTimeout(() => {
         modal.classList.add('show');
     }, 10);
+}
+
+// بروزرسانی modal با اطلاعات جدید - تابع ساده شده
+function updateModalWithNewData(request) {
+    try {
+        console.log('🔄 Updating modal with new data...');
+
+        // اطلاعات اصلی
+        const updates = [
+            { id: 'modalUserName', value: request.name },
+            { id: 'modalUserGrade', value: 'پایه ' + request.grade },
+            { id: 'modalNameDisplay', value: request.name },
+            { id: 'modalNationalCodeDisplay', value: request.nationalcode },
+            { id: 'modalBirthdateDisplay', value: request.birthdate },
+            { id: 'modalPhoneDisplay', value: request.phone },
+            { id: 'modalTelephoneDisplay', value: request.telephone || 'ندارد' },
+            { id: 'modalGrade', value: request.grade },
+            { id: 'modalSchool', value: request.school },
+            { id: 'modalPrincipal', value: request.principal },
+            { id: 'modalMajor', value: request.major_name || 'ندارد' },
+            { id: 'modalLastScore', value: request.last_score },
+            { id: 'modalSchoolTelephone', value: request.school_telephone || 'ندارد' },
+            { id: 'modalRental', value: request.rental },
+            { id: 'modalAddress', value: request.address },
+            { id: 'modalSiblingsCount', value: request.siblings_count },
+            { id: 'modalSiblingsRank', value: request.siblings_rank },
+            { id: 'modalKnow', value: request.know },
+            { id: 'modalCounselingMethod', value: request.counseling_method }
+        ];
+
+        // بروزرسانی المنت‌ها
+        updates.forEach(update => {
+            const element = document.getElementById(update.id);
+            if (element && update.value) {
+                element.textContent = update.value;
+            }
+        });
+
+        // سطح انگلیسی
+        const englishLevel = parseInt(request.english_level || request.english_proficiency) || 0;
+        const englishPercentElement = document.getElementById('modalEnglishPercent');
+        if (englishPercentElement) {
+            englishPercentElement.textContent = englishLevel + '%';
+        }
+
+        // progress bar
+        const progressBar = document.getElementById('modalEnglishBar');
+        if (progressBar) {
+            progressBar.style.width = englishLevel + '%';
+            if (typeof updateProgressBarColor === 'function') {
+                updateProgressBarColor(progressBar, englishLevel);
+            }
+        }
+
+        console.log('✅ Modal updated successfully');
+    } catch (error) {
+        console.error('❌ Error updating modal:', error);
+        if (typeof showErrorMessage === 'function') {
+            showErrorMessage('خطا در نمایش اطلاعات جدید');
+        }
+    }
 }
