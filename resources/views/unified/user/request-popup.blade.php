@@ -6,13 +6,12 @@
     <div class="flex items-center justify-center min-h-screen p-2">
         {{-- دکمه بستن کنار مودال (سمت راست بالا) --}}
         <div class="relative w-full max-w-7xl">
-            <a type="button" href="{{ route('unified.myrequests') }}"
-                class="absolute -top-4 -right-4 bg-red-400 hover:bg-red-700 text-white rounded-full size-12 flex items-center justify-center shadow-lg transition-colors z-10">
-                <svg class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
+            <button type="button" id="closeRequestDetailModal"
+                class="absolute -top-4 -right-4 bg-red-400 hover:bg-red-700 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-colors z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
-            </a>
+            </button>
 
             <div class="bg-white rounded-2xl w-full max-h-[95vh] overflow-y-auto shadow-2xl modal-content p-[24px]">
                 {{-- محتوای مودال --}}
@@ -1146,13 +1145,7 @@
     </div>
 
     {{-- JavaScript فایل‌ها --}}
-    <script src="{{ asset('assets/js/request-detail-popup/close.js') }}"></script>
-    <script src='{{ asset('assets/js/request-detail-popup/popup-functionality.js') }}'></script>
-    <script src="{{ asset('assets/js/numinput.js') }}"></script>
-
-    {{-- اسکریپت‌های بهینه شده --}}
-    <script src="{{ asset('assets/js/request-detail-popup/data-manager.js') }}"></script>
-    <script src="{{ asset('assets/js/request-detail-popup/field-editors.js') }}"></script>
-    <script src="{{ asset('assets/js/request-detail-popup/field-initializers.js') }}"></script>
-    <script src="{{ asset('assets/js/request-detail-popup/upload-handlers.js') }}"></script>
-    <script src="{{ asset('assets/js/request-detail-popup/main-initializer.js') }}"></script>
+    <script src="{{ asset('assets/js/request-detail-popup/utils.js') }}"></script>
+    <script src="{{ asset('assets/js/request-detail-popup/modal-core.js') }}"></script>
+    <script src="{{ asset('assets/js/request-detail-popup/field-management.js') }}"></script>
+    <script src="{{ asset('assets/js/request-detail-popup/data-upload.js') }}"></script>
