@@ -18,6 +18,16 @@
                                                 class="status-badge px-3 py-1 text-white text-xs font-bold rounded-full shadow-lg">
                                             </span>
                                         </div>
+                                        <div class="absolute bottom-0 right-0">
+                                            <button type="button" id="uploadProfileImgBtn"
+                                                class="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-2 shadow-lg transition-colors"
+                                                title="آپلود عکس پروفایل جدید">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                </svg>
+                                            </button>
+                                            <input type="file" id="profileImgInput" accept="image/*" class="hidden">
+                                        </div>
                                     </div>
 
                                     <h2 id="modalUserName" class="text-2xl font-bold text-gray-800 mb-2"></h2>
@@ -594,6 +604,12 @@
                                             class="w-16 h-16 object-cover rounded-lg border-2 border-gray-300">
                                         <a id="modalGradeSheetLink" href="" target="_blank"
                                             class="text-blue-600 hover:text-blue-800 font-medium">مشاهده کارنامه</a>
+                                        <button type="button" id="uploadGradeSheetBtn"
+                                            class="bg-green-500 hover:bg-green-600 text-white rounded-lg px-3 py-1 text-sm shadow-lg transition-colors"
+                                            title="آپلود کارنامه جدید">
+                                            آپلود مجدد
+                                        </button>
+                                        <input type="file" id="gradeSheetInput" accept="image/*,application/pdf" class="hidden">
                                     </div>
                                 </div>
                             </div>

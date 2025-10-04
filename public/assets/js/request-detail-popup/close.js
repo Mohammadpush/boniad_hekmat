@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
+
+            // مخفی کردن کارنامه هنگام بستن مودال
+            const gradeSheetDiv = document.getElementById('modalGradeSheet');
+            if (gradeSheetDiv) {
+                gradeSheetDiv.classList.add('hidden');
+            }
         }, 300);
     }
 

@@ -339,5 +339,6 @@
 
     <!-- اسکریپت مخصوص این صفحه -->
     <script src="{{ asset('assets/js/pages/myrequests/card-manager.js') }}"></script>
+    <script src="{{ asset('assets/js/pages/myrequests/live-update.js') }}"></script>
 @endsection
 

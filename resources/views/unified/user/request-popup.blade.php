@@ -330,8 +330,43 @@
                                     <div id="modalWhyCounselingMethodDiv" class="hidden">
                                         <label class="block text-sm font-medium text-gray-500 mb-1">دلیل انتخاب روش
                                             مشاوره</label>
-                                        <p id="modalWhyCounselingMethod" class="text-lg font-semibold text-gray-800">
-                                        </p>
+                                        <div class="flex items-center justify-between">
+                                            <p id="modalWhyCounselingMethod" class="text-lg font-semibold text-gray-800">
+                                            </p>
+                                            <form id="modalWhyCounselingMethodForm"
+                                                class="hidden items-center space-x-2 space-x-reverse"
+                                                style="margin:0;">
+                                                <textarea id="modalWhyCounselingMethodInput"
+                                                    class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-64 h-20 resize-none"
+                                                    placeholder="دلیل انتخاب روش مشاوره را توضیح دهید..."></textarea>
+                                                <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                        stroke="currentColor"
+                                                        class="size-5 text-gray-400 hover:text-green-500">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                    </svg></button>
+                                                <button type="button" id="cancelWhyCounselingMethodEdit"><svg
+                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                        class="size-5 text-gray-400 hover:text-red-500">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                    </svg></button>
+                                                <span id="modalWhyCounselingMethodError"
+                                                    class="text-red-500 text-xs ml-2 hidden"></span>
+                                            </form>
+                                            <button type="button" id="editWhyCounselingMethodBtn"
+                                                class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                                title="ویرایش دلیل روش مشاوره">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -358,25 +393,200 @@
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-1">نام پدر</label>
-                                    <p id="modalFatherName" class="text-lg font-semibold text-gray-800"></p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalFatherName" class="text-lg font-semibold text-gray-800"></p>
+                                        <form id="modalFatherNameForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <input type="text" id="modalFatherNameInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
+                                                placeholder="نام پدر">
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelFatherNameEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalFatherNameError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editFatherNameBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش نام پدر">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-1">شماره موبایل</label>
-                                    <p id="modalFatherPhone" class="text-lg font-semibold text-gray-800 font-mono">
-                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalFatherPhone" class="text-lg font-semibold text-gray-800 font-mono">
+                                        </p>
+                                        <form id="modalFatherPhoneForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <input type="text" id="modalFatherPhoneInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
+                                                placeholder="09123456789">
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelFatherPhoneEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalFatherPhoneError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editFatherPhoneBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش شماره موبایل پدر">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-1">شغل</label>
-                                    <p id="modalFatherJob" class="text-lg font-semibold text-gray-800"></p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalFatherJob" class="text-lg font-semibold text-gray-800"></p>
+                                        <form id="modalFatherJobForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <input type="text" id="modalFatherJobInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
+                                                placeholder="شغل پدر">
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelFatherJobEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalFatherJobError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editFatherJobBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش شغل پدر">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-1">درآمد ماهانه</label>
-                                    <p id="modalFatherIncome" class="text-lg font-semibold text-gray-800"></p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalFatherIncome" class="text-lg font-semibold text-gray-800"></p>
+                                        <form id="modalFatherIncomeForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <input type="number" id="modalFatherIncomeInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
+                                                placeholder="درآمد به تومان" min="0">
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelFatherIncomeEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalFatherIncomeError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editFatherIncomeBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش درآمد پدر">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-1">آدرس محل کار</label>
-                                    <p id="modalFatherJobAddress"
-                                        class="text-lg font-semibold text-gray-800 leading-relaxed"></p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalFatherJobAddress"
+                                            class="text-lg font-semibold text-gray-800 leading-relaxed"></p>
+                                        <form id="modalFatherJobAddressForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <textarea id="modalFatherJobAddressInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48 h-20 resize-none"
+                                                placeholder="آدرس محل کار پدر"></textarea>
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelFatherJobAddressEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalFatherJobAddressError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editFatherJobAddressBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش آدرس محل کار پدر">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -399,25 +609,200 @@
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-1">نام مادر</label>
-                                    <p id="modalMotherName" class="text-lg font-semibold text-gray-800"></p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalMotherName" class="text-lg font-semibold text-gray-800"></p>
+                                        <form id="modalMotherNameForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <input type="text" id="modalMotherNameInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
+                                                placeholder="نام مادر">
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelMotherNameEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalMotherNameError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editMotherNameBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش نام مادر">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-1">شماره موبایل</label>
-                                    <p id="modalMotherPhone" class="text-lg font-semibold text-gray-800 font-mono">
-                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalMotherPhone" class="text-lg font-semibold text-gray-800 font-mono">
+                                        </p>
+                                        <form id="modalMotherPhoneForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <input type="text" id="modalMotherPhoneInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
+                                                placeholder="09123456789">
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelMotherPhoneEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalMotherPhoneError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editMotherPhoneBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش شماره موبایل مادر">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-1">شغل</label>
-                                    <p id="modalMotherJob" class="text-lg font-semibold text-gray-800"></p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalMotherJob" class="text-lg font-semibold text-gray-800"></p>
+                                        <form id="modalMotherJobForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <input type="text" id="modalMotherJobInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
+                                                placeholder="شغل مادر">
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelMotherJobEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalMotherJobError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editMotherJobBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش شغل مادر">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-1">درآمد ماهانه</label>
-                                    <p id="modalMotherIncome" class="text-lg font-semibold text-gray-800"></p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalMotherIncome" class="text-lg font-semibold text-gray-800"></p>
+                                        <form id="modalMotherIncomeForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <input type="number" id="modalMotherIncomeInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
+                                                placeholder="درآمد به تومان" min="0">
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelMotherIncomeEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalMotherIncomeError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editMotherIncomeBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش درآمد مادر">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-1">آدرس محل کار</label>
-                                    <p id="modalMotherJobAddress"
-                                        class="text-lg font-semibold text-gray-800 leading-relaxed"></p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalMotherJobAddress"
+                                            class="text-lg font-semibold text-gray-800 leading-relaxed"></p>
+                                        <form id="modalMotherJobAddressForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <textarea id="modalMotherJobAddressInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48 h-20 resize-none"
+                                                placeholder="آدرس محل کار مادر"></textarea>
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelMotherJobAddressEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalMotherJobAddressError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editMotherJobAddressBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش آدرس محل کار مادر">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -443,7 +828,42 @@
                                 <label class="block text-sm font-medium text-gray-500 mb-2">انگیزه درخواست
                                     بورسیه</label>
                                 <div class="bg-gray-50 rounded-xl p-4">
-                                    <p id="modalMotivation" class="text-gray-800 leading-relaxed"></p>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p id="modalMotivation" class="text-gray-800 leading-relaxed flex-1"></p>
+                                        <button type="button" id="editMotivationBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش انگیزه">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <form id="modalMotivationForm"
+                                        class="hidden items-center space-x-2 space-x-reverse"
+                                        style="margin:0;">
+                                        <textarea id="modalMotivationInput"
+                                            class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-full h-32 resize-none"
+                                            placeholder="انگیزه خود را توضیح دهید..."></textarea>
+                                        <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                stroke="currentColor"
+                                                class="size-5 text-gray-400 hover:text-green-500">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg></button>
+                                        <button type="button" id="cancelMotivationEdit"><svg
+                                                xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                class="size-5 text-gray-400 hover:text-red-500">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg></button>
+                                        <span id="modalMotivationError"
+                                            class="text-red-500 text-xs ml-2 hidden"></span>
+                                    </form>
                                 </div>
                             </div>
 
@@ -451,7 +871,42 @@
                                 <label class="block text-sm font-medium text-gray-500 mb-2">نحوه استفاده از کمک
                                     مالی</label>
                                 <div class="bg-gray-50 rounded-xl p-4">
-                                    <p id="modalSpend" class="text-gray-800 leading-relaxed"></p>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p id="modalSpend" class="text-gray-800 leading-relaxed flex-1"></p>
+                                        <button type="button" id="editSpendBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش نحوه استفاده">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <form id="modalSpendForm"
+                                        class="hidden items-center space-x-2 space-x-reverse"
+                                        style="margin:0;">
+                                        <textarea id="modalSpendInput"
+                                            class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-full h-32 resize-none"
+                                            placeholder="نحوه استفاده از کمک مالی را توضیح دهید..."></textarea>
+                                        <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                stroke="currentColor"
+                                                class="size-5 text-gray-400 hover:text-green-500">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg></button>
+                                        <button type="button" id="cancelSpendEdit"><svg
+                                                xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                class="size-5 text-gray-400 hover:text-red-500">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg></button>
+                                        <span id="modalSpendError"
+                                            class="text-red-500 text-xs ml-2 hidden"></span>
+                                    </form>
                                 </div>
                             </div>
 
@@ -459,7 +914,42 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-2">معرفی خود</label>
                                     <div class="bg-gray-50 rounded-xl p-4">
-                                        <p id="modalHowAmI" class="text-gray-800 leading-relaxed"></p>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <p id="modalHowAmI" class="text-gray-800 leading-relaxed flex-1"></p>
+                                            <button type="button" id="editHowAmIBtn"
+                                                class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                                title="ویرایش معرفی خود">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <form id="modalHowAmIForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <textarea id="modalHowAmIInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-full h-32 resize-none"
+                                                placeholder="خود را معرفی کنید..."></textarea>
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelHowAmIEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalHowAmIError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
                                     </div>
                                 </div>
 
@@ -467,7 +957,42 @@
                                     <label class="block text-sm font-medium text-gray-500 mb-2">برنامه‌های
                                         آینده</label>
                                     <div class="bg-gray-50 rounded-xl p-4">
-                                        <p id="modalFuture" class="text-gray-800 leading-relaxed"></p>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <p id="modalFuture" class="text-gray-800 leading-relaxed flex-1"></p>
+                                            <button type="button" id="editFutureBtn"
+                                                class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                                title="ویرایش برنامه‌های آینده">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <form id="modalFutureForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <textarea id="modalFutureInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-full h-32 resize-none"
+                                                placeholder="برنامه‌های آینده خود را توضیح دهید..."></textarea>
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelFutureEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalFutureError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -476,13 +1001,87 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-2">رشته مورد
                                         علاقه</label>
-                                    <p id="modalFavoriteMajor" class="text-lg font-semibold text-gray-800"></p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalFavoriteMajor" class="text-lg font-semibold text-gray-800"></p>
+                                        <form id="modalFavoriteMajorForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <input type="text" id="modalFavoriteMajorInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
+                                                placeholder="رشته مورد علاقه">
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelFavoriteMajorEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalFavoriteMajorError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editFavoriteMajorBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش رشته مورد علاقه">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-2">آمادگی کمک به
                                         دیگران</label>
-                                    <p id="modalHelpOthers" class="text-lg font-semibold text-gray-800"></p>
+                                    <div class="flex items-center justify-between">
+                                        <p id="modalHelpOthers" class="text-lg font-semibold text-gray-800"></p>
+                                        <form id="modalHelpOthersForm"
+                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            style="margin:0;">
+                                            <select id="modalHelpOthersInput"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm">
+                                                <option value="">انتخاب کنید</option>
+                                                <option value="بله">بله</option>
+                                                <option value="خیر">خیر</option>
+                                                <option value="در صورت امکان">در صورت امکان</option>
+                                            </select>
+                                            <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                    stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-green-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <button type="button" id="cancelHelpOthersEdit"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                    class="size-5 text-gray-400 hover:text-red-500">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg></button>
+                                            <span id="modalHelpOthersError"
+                                                class="text-red-500 text-xs ml-2 hidden"></span>
+                                        </form>
+                                        <button type="button" id="editHelpOthersBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش آمادگی کمک">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -490,7 +1089,42 @@
                                 <label class="block text-sm font-medium text-gray-500 mb-2">پیشنهادات برای بهتر شدن
                                     عملکرد بنیاد</label>
                                 <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                                    <p id="modalSuggestion" class="text-gray-800 leading-relaxed"></p>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p id="modalSuggestion" class="text-gray-800 leading-relaxed flex-1"></p>
+                                        <button type="button" id="editSuggestionBtn"
+                                            class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            title="ویرایش پیشنهادات">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <form id="modalSuggestionForm"
+                                        class="hidden items-center space-x-2 space-x-reverse"
+                                        style="margin:0;">
+                                        <textarea id="modalSuggestionInput"
+                                            class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-full h-32 resize-none"
+                                            placeholder="پیشنهادات خود را بیان کنید..."></textarea>
+                                        <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                stroke="currentColor"
+                                                class="size-5 text-gray-400 hover:text-green-500">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg></button>
+                                        <button type="button" id="cancelSuggestionEdit"><svg
+                                                xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                class="size-5 text-gray-400 hover:text-red-500">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg></button>
+                                        <span id="modalSuggestionError"
+                                            class="text-red-500 text-xs ml-2 hidden"></span>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -498,16 +1132,7 @@
 
                     {{-- دکمه‌های عملیات --}}
                     <div class="flex justify-center items-center space-x-4 space-x-reverse mt-8">
-                        {{-- دکمه ویرایش --}}
-                        <button type="button" id="editRequestBtn"
-                            class="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-8 rounded-xl hover:from-blue-700 hover:to-blue-800 transition font-medium shadow-lg flex items-center space-x-2 space-x-reverse">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            <span>✏️ ویرایش درخواست</span>
-                        </button>
+
 
                         {{-- دکمه کنسل --}}
                         <button type="button" onclick="document.getElementById('closeRequestDetailModal').click()"
@@ -529,4 +1154,5 @@
     <script src="{{ asset('assets/js/request-detail-popup/data-manager.js') }}"></script>
     <script src="{{ asset('assets/js/request-detail-popup/field-editors.js') }}"></script>
     <script src="{{ asset('assets/js/request-detail-popup/field-initializers.js') }}"></script>
+    <script src="{{ asset('assets/js/request-detail-popup/upload-handlers.js') }}"></script>
     <script src="{{ asset('assets/js/request-detail-popup/main-initializer.js') }}"></script>

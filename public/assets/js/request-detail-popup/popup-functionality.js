@@ -127,6 +127,26 @@ function openRequestDetailModal(requestData, cardElement = null) {
         document.getElementById('modalSuggestionDiv').classList.add('hidden');
     }
 
+    // نمایش کارنامه اگر وجود داشته باشد
+    const gradeSheetDiv = document.getElementById('modalGradeSheet');
+    if (requestData.gradesheetpath) {
+        gradeSheetDiv.classList.remove('hidden');
+        const gradeSheetImg = document.getElementById('modalGradeSheetImg');
+        const gradeSheetLink = document.getElementById('modalGradeSheetLink');
+
+        if (requestData.gradesheetpath.toLowerCase().endsWith('.pdf')) {
+            gradeSheetImg.style.display = 'none';
+            gradeSheetLink.textContent = 'مشاهده کارنامه (PDF)';
+        } else {
+            gradeSheetImg.src = requestData.gradesheetpath_url || `/private/${requestData.gradesheetpath}`;
+            gradeSheetImg.style.display = 'block';
+            gradeSheetLink.textContent = 'مشاهده کارنامه';
+        }
+        gradeSheetLink.href = requestData.gradesheetpath_url || `/private/${requestData.gradesheetpath}`;
+    } else {
+        gradeSheetDiv.classList.add('hidden');
+    }
+
     // نمایش مودال با انیمیشن
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden'; // جلوگیری از اسکرول صفحه
@@ -134,6 +154,24 @@ function openRequestDetailModal(requestData, cardElement = null) {
     // اضافه کردن کلاس انیمیشن بعد از نمایش
     setTimeout(() => {
         modal.classList.add('show');
+
+        // راه‌اندازی مجدد initializerها بعد از نمایش modal با تأخیر بیشتر
+        console.log('🔄 Re-initializing editors after modal show...');
+        setTimeout(() => {
+            initializeNationalCodeEdit();
+            setTimeout(initializeBasicFields, 100);
+            setTimeout(initializeEducationFields, 200);
+            setTimeout(initializeHousingFields, 300);
+            setTimeout(initializeFamilyFields, 400);
+            setTimeout(initializeParentFields, 500);
+            setTimeout(initializeFinalQuestionsFields, 600);
+            setTimeout(initializeEnglishLevelEdit, 700);
+            // آپلود handlers را در آخر اجرا کنیم تا المنت‌ها نمایش داده شوند
+            setTimeout(() => {
+                initializeProfileImageUpload();
+                setTimeout(initializeGradeSheetUpload, 100);
+            }, 800);
+        }, 500); // تأخیر بیشتر برای اطمینان از نمایش کامل modal
     }, 10);
 }
 
@@ -189,11 +227,55 @@ function updateModalWithNewData(request) {
             }
         }
 
+        // بروزرسانی تصاویر
+        if (request.imgpath) {
+            const profileImg = document.getElementById('modalProfileImg');
+            if (profileImg) {
+                profileImg.src = `/private/${request.imgpath}`;
+            }
+        }
+
+        if (request.gradesheetpath) {
+            const gradeSheetImg = document.getElementById('modalGradeSheetImg');
+            const gradeSheetLink = document.getElementById('modalGradeSheetLink');
+            if (gradeSheetImg && gradeSheetLink) {
+                if (request.gradesheetpath.toLowerCase().endsWith('.pdf')) {
+                    gradeSheetImg.style.display = 'none';
+                    gradeSheetLink.textContent = 'مشاهده کارنامه (PDF)';
+                } else {
+                    gradeSheetImg.src = `/private/${request.gradesheetpath}`;
+                    gradeSheetImg.style.display = 'block';
+                    gradeSheetLink.textContent = 'مشاهده کارنامه';
+                }
+                gradeSheetLink.href = `/private/${request.gradesheetpath}`;
+            }
+        }
+
         console.log('✅ Modal updated successfully');
     } catch (error) {
         console.error('❌ Error updating modal:', error);
         if (typeof showErrorMessage === 'function') {
             showErrorMessage('خطا در نمایش اطلاعات جدید');
         }
+    }
+}
+
+// تابع برای بروزرسانی رنگ نوار پیشرفت انگلیسی
+function updateProgressBarColor(progressBar, percentage) {
+    if (!progressBar) return;
+
+    // حذف کلاس‌های قبلی
+    progressBar.classList.remove('english-low', 'english-medium', 'english-high');
+
+    // اضافه کردن کلاس بر اساس درصد
+    if (percentage <= 30) {
+        progressBar.classList.add('english-low');
+        progressBar.style.background = 'linear-gradient(270deg, #ef4444 0%, #dc2626 100%)'; // قرمز
+    } else if (percentage <= 70) {
+        progressBar.classList.add('english-medium');
+        progressBar.style.background = 'linear-gradient(270deg, #f59e0b 0%, #d97706 100%)'; // زرد-نارنجی
+    } else {
+        progressBar.classList.add('english-high');
+        progressBar.style.background = 'linear-gradient(270deg, #10b981 0%, #059669 100%)'; // سبز
     }
 }

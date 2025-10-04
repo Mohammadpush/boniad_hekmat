@@ -44,6 +44,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::middleware(['auth'])->prefix('unified')->name('unified.')->group(function () {
     // My Requests - All Roles
     Route::get('/myrequests', [UnifiedController::class, 'myrequests'])->name('myrequests');
+    Route::get('/myrequests-data', [UnifiedController::class, 'getMyRequestsData'])->name('myrequestsData');
     Route::post('/storecard/{id}', [UnifiedController::class ,'storecard'])->name('storecard');
     // Add/Edit Requests - All Roles
     Route::get('/addoreditrequests/{id?}', [UnifiedController::class, 'addoreditrequests'])->name('addoreditrequests');
@@ -58,6 +59,7 @@ Route::middleware(['auth'])->prefix('unified')->name('unified.')->group(function
     // Request Detail - Admin/Master Only
     Route::post('/requestdetail/{id}', [UnifiedController::class, 'requestdetail'])->name('requestdetail');
     Route::post('/update-request-field', [UnifiedController::class, 'updateRequestField'])->name('updateRequestField');
+    Route::post('/upload-file', [UnifiedController::class, 'uploadFile'])->name('uploadFile');
     Route::get('/get-request-data/{id}', [UnifiedController::class, 'getRequestData'])->name('getRequestData');
     Route::get('/accept/{id}', [UnifiedController::class, 'accept'])->name('accept');
     Route::get('/reject/{id}', [UnifiedController::class, 'reject'])->name('reject');

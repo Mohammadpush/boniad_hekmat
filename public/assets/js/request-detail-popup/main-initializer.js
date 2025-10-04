@@ -7,7 +7,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initializeBasicFields, 200);
     setTimeout(initializeEducationFields, 300);
     setTimeout(initializeHousingFields, 400);
-    // اضافه کردن این خط:
-    setTimeout(initializeEnglishLevelEdit, 500);
+    setTimeout(initializeFamilyFields, 500);
+    setTimeout(initializeParentFields, 600);
+    setTimeout(initializeFinalQuestionsFields, 700);
+    setTimeout(initializeEnglishLevelEdit, 800);
+    setTimeout(initializeProfileImageUpload, 900);
+    setTimeout(initializeGradeSheetUpload, 1000);
     console.log('⏰ All initialization functions scheduled');
 });

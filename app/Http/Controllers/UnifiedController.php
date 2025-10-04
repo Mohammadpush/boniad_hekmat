@@ -21,7 +21,7 @@ class UnifiedController extends Controller
         $this->middleware('auth');
         $this->middleware('role:user,admin,master')->only([
             'myrequests', 'addoreditrequests', 'storerequest', 'updaterequest',
-            'deleterequest', 'message', 'addmessage', 'storemessage'
+            'deleterequest', 'message', 'addmessage', 'storemessage', 'uploadFile'
         ]);
         $this->middleware('role:admin,master')->only([
             'allrequests', 'requestdetail', 'accept', 'reject', 'epointment',
@@ -46,6 +46,75 @@ class UnifiedController extends Controller
         }
 
         return view('unified.user.myrequests', compact('requests'));
+    }
+
+    // Get My Requests Data for AJAX
+    public function getMyRequestsData()
+    {
+        $userRole = Auth::user()->role;
+
+        if ($userRole === 'user') {
+            $requests = Auth::user()->requests()->where('story', '!=', 'cancel')->get();
+        } else {
+            // Admin/Master see their own requests if any
+            $requests = Auth::user()->requests()->where('story', '!=', 'cancel')->get();
+        }
+
+        $requestsData = $requests->map(function ($request) {
+            return [
+                'id' => $request->id,
+                'name' => $request->name,
+                'grade' => $request->grade,
+                'story' => $request->story,
+                'imgpath' => $request->imgpath,
+                'imgpath_url' => route('img', ['filename' => $request->imgpath]),
+                'nationalcode' => $request->nationalcode,
+                'birthdate' => Jalalian::fromDateTime($request->birthdate)->format('Y/m/d'),
+                'phone' => $request->phone,
+                'telephone' => $request->telephone,
+                'school' => $request->school,
+                'principal' => $request->principal,
+                'major_name' => $request->major ? $request->major->name : '',
+                'last_score' => $request->last_score,
+                'school_telephone' => $request->school_telephone,
+                'english_proficiency' => $request->english_proficiency ?? 0,
+                'gradesheetpath' => $request->gradesheetpath,
+                'gradesheetpath_url' => $request->gradesheetpath ? route('img', ['filename' => $request->gradesheetpath]) : '',
+                'rental' => $request->rental,
+                'address' => $request->address,
+                'siblings_count' => $request->siblings_count,
+                'siblings_rank' => $request->siblings_rank,
+                'know' => $request->know,
+                'counseling_method' => $request->counseling_method,
+                'why_counseling_method' => $request->why_counseling_method,
+                'father_name' => $request->father_name,
+                'father_phone' => $request->father_phone,
+                'father_job' => $request->father_job,
+                'father_income' => $request->father_income,
+                'father_job_address' => $request->father_job_address,
+                'mother_name' => $request->mother_name,
+                'mother_phone' => $request->mother_phone,
+                'mother_job' => $request->mother_job,
+                'mother_income' => $request->mother_income,
+                'mother_job_address' => $request->mother_job_address,
+                'motivation' => $request->motivation,
+                'spend' => $request->spend,
+                'how_am_i' => $request->how_am_i,
+                'future' => $request->future,
+                'favorite_major' => $request->favorite_major,
+                'help_others' => $request->help_others,
+                'suggestion' => $request->suggestion,
+                'created_at' => $request->created_at->format('Y-m-d H:i:s'),
+                'updated_at' => $request->updated_at->format('Y-m-d H:i:s'),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'requests' => $requestsData,
+            'has_requests' => $requests->isNotEmpty(),
+            'last_updated' => now()->format('Y-m-d H:i:s')
+        ]);
     }
 
     // Add or Edit Request - All Roles
@@ -779,6 +848,7 @@ public function getRequestData($id)
             'school_telephone' => $requestModel->school_telephone,
             'major_name' => $requestModel->major ? $requestModel->major->name : null,
             'english_proficiency' => $requestModel->english_proficiency,
+            'english_level' => $requestModel->english_proficiency, // برای سازگاری با کد JS
             'rental' => $requestModel->rental,
             'address' => $requestModel->address,
             'siblings_count' => $requestModel->siblings_count,
@@ -821,6 +891,105 @@ public function getRequestData($id)
         return response()->json([
             'success' => false,
             'message' => 'خطا در دریافت اطلاعات: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+/**
+ * آپلود فایل برای درخواست‌ها (عکس پروفایل و کارنامه)
+ */
+public function uploadFile(Request $request)
+{
+    \Log::info('Upload File - Received Request', [
+        'request_id' => $request->request_id,
+        'field_name' => $request->field_name,
+        'user_id' => Auth::id(),
+        'file_info' => $request->hasFile('file') ? [
+            'name' => $request->file('file')->getClientOriginalName(),
+            'size' => $request->file('file')->getSize(),
+            'mime' => $request->file('file')->getMimeType()
+        ] : null
+    ]);
+
+    try {
+        $request->validate([
+            'request_id' => 'required|integer|exists:requests,id',
+            'field_name' => 'required|string|in:imgpath,gradesheetpath',
+            'file' => 'required|file|max:5120' // حداکثر 5MB
+        ]);
+
+        $requestModel = ModelRequest::findOrFail($request->request_id);
+
+        // بررسی اجازه دسترسی
+        $user = Auth::user();
+        if ($user->role === 'user' && $requestModel->user_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'شما اجازه آپلود فایل برای این درخواست را ندارید'
+            ], 403);
+        }
+
+        $fieldName = $request->field_name;
+        $file = $request->file('file');
+
+        // اعتبارسنجی نوع فایل بر اساس فیلد
+        if ($fieldName === 'imgpath') {
+            // فقط تصاویر برای عکس پروفایل
+            $request->validate([
+                'file' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // حداکثر 2MB
+            ]);
+            $folder = 'userimage';
+        } elseif ($fieldName === 'gradesheetpath') {
+            // تصاویر و PDF برای کارنامه
+            $request->validate([
+                'file' => 'mimes:jpeg,png,jpg,gif,pdf|max:5120' // حداکثر 5MB
+            ]);
+            $folder = 'gradesheets';
+        }
+
+        // حذف فایل قبلی اگر وجود داشته باشد
+        if (!empty($requestModel->$fieldName) && $requestModel->$fieldName !== 'userimage/default.png') {
+            Storage::disk('private')->delete($requestModel->$fieldName);
+        }
+
+        // ذخیره فایل جدید
+        $path = $file->store($folder, 'private');
+
+        // بروزرسانی رکورد در دیتابیس
+        $requestModel->update([$fieldName => $path]);
+
+        // تولید URL فایل برای نمایش
+        $fileUrl = route('img', ['filename' => $path]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'فایل با موفقیت آپلود شد',
+            'file_url' => $fileUrl,
+            'file_path' => $path
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        $errors = $e->errors();
+        $errorMessage = 'خطا در اعتبارسنجی فایل';
+
+        if (isset($errors['file'])) {
+            $errorMessage = implode(', ', $errors['file']);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => $errorMessage
+        ], 422);
+
+    } catch (\Exception $e) {
+        \Log::error('Upload File Error', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'خطا در آپلود فایل: ' . $e->getMessage()
         ], 500);
     }
 }
