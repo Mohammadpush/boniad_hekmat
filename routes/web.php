@@ -60,6 +60,7 @@ Route::middleware(['auth'])->prefix('unified')->name('unified.')->group(function
     Route::post('/requestdetail/{id}', [UnifiedController::class, 'requestdetail'])->name('requestdetail');
     Route::post('/update-request-field', [UnifiedController::class, 'updateRequestField'])->name('updateRequestField');
     Route::post('/upload-file', [UnifiedController::class, 'uploadFile'])->name('uploadFile');
+    Route::post('/upload-pdf', [UnifiedController::class, 'uploadpdf'])->name('uploadpdf');
     Route::get('/get-request-data/{id}', [UnifiedController::class, 'getRequestData'])->name('getRequestData');
     Route::get('/accept/{id}', [UnifiedController::class, 'accept'])->name('accept');
     Route::get('/reject/{id}', [UnifiedController::class, 'reject'])->name('reject');
@@ -92,6 +93,13 @@ Route::middleware(['auth'])->prefix('unified')->name('unified.')->group(function
     Route::get('/requestform/{id?}', [UnifiedController::class, 'requestform'])->name('requestform');
     Route::get('/editrequest/{id?}', [UnifiedController::class, 'editrequest'])->name('editrequest');
     Route::post('/storerequestform', [UnifiedController::class, 'storerequestform'])->name('storerequestform');
+
+
+
+
+
+
+    Route::get('/cancel/{id?}', [UnifiedController::class, 'cancel'])->name('cancel');
 });
 
 

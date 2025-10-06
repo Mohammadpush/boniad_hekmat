@@ -1,6 +1,10 @@
 // Field Management
 // Combines field-editors.js, field-initializers.js, and main-initializer.js
 
+// Track multiple editing fields
+let editingFields = new Set(); // Use Set to store field names being edited
+window.editingFields = editingFields; // Make it globally accessible
+
 // Generic field editor creator
 function createFieldEditor(config) {
     console.log(`📝 Creating field editor for: ${config.fieldName}`);
@@ -29,6 +33,10 @@ function createFieldEditor(config) {
         form.classList.add('flex');
         error.classList.add('hidden');
 
+        // Add to editing fields
+        editingFields.add(config.fieldName);
+        updateEditingPopup();
+
         input.focus();
         input.select();
     });
@@ -40,6 +48,10 @@ function createFieldEditor(config) {
         display.classList.remove('hidden');
         editBtn.classList.remove('hidden');
         error.classList.add('hidden');
+
+        // Remove from editing fields
+        editingFields.delete(config.fieldName);
+        updateEditingPopup();
     });
 
     // Save changes
@@ -70,6 +82,10 @@ function createFieldEditor(config) {
                     display.classList.remove('hidden');
                     editBtn.classList.remove('hidden');
                     error.classList.add('hidden');
+
+                    // Remove from editing fields
+                    editingFields.delete(config.fieldName);
+                    updateEditingPopup();
 
                     // Show success message
                     showSuccessMessage(config.successMessage || 'اطلاعات با موفقیت ذخیره شد');

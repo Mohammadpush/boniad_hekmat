@@ -4,13 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const openpopups = document.querySelectorAll('[id*="openpopup"]');
     const popup = document.getElementById('popup');
     const closepopup = document.getElementById('closepopup');
-    
+
     if (closepopup && popup) {
         closepopup.addEventListener('click', function() {
             popup.classList.add('hidden');
         });
     }
-    
+
     if (openpopups.length > 0 && popup) {
         openpopups.forEach(openpopup => {
             openpopup.addEventListener('click', function() {
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
+
     // Close popup when clicking outside
     if (popup) {
         popup.addEventListener('click', function(e) {
@@ -47,7 +47,7 @@ function showPopup(message, type) {
     popup.className = `popup ${type}`;
     popup.innerText = message;
     document.body.appendChild(popup);
-    
+
     setTimeout(() => {
         popup.classList.add('show');
         setTimeout(() => {

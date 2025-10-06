@@ -21,7 +21,7 @@ class UnifiedController extends Controller
         $this->middleware('auth');
         $this->middleware('role:user,admin,master')->only([
             'myrequests', 'addoreditrequests', 'storerequest', 'updaterequest',
-            'deleterequest', 'message', 'addmessage', 'storemessage', 'uploadFile'
+            'deleterequest', 'message', 'addmessage', 'storemessage', 'uploadFile','cancel'
         ]);
         $this->middleware('role:admin,master')->only([
             'allrequests', 'requestdetail', 'accept', 'reject', 'epointment',
@@ -31,6 +31,7 @@ class UnifiedController extends Controller
         $this->middleware('role:admin')->only([
             'addprofile', 'storeprofile', 'editprofile', 'updateprofile'
         ]);
+        ;
     }
 
     // My Requests - All Roles
@@ -900,97 +901,101 @@ public function getRequestData($id)
  */
 public function uploadFile(Request $request)
 {
-    \Log::info('Upload File - Received Request', [
-        'request_id' => $request->request_id,
-        'field_name' => $request->field_name,
-        'user_id' => Auth::id(),
-        'file_info' => $request->hasFile('file') ? [
-            'name' => $request->file('file')->getClientOriginalName(),
-            'size' => $request->file('file')->getSize(),
-            'mime' => $request->file('file')->getMimeType()
-        ] : null
-    ]);
-
     try {
         $request->validate([
-            'request_id' => 'required|integer|exists:requests,id',
-            'field_name' => 'required|string|in:imgpath,gradesheetpath',
-            'file' => 'required|file|max:5120' // حداکثر 5MB
+            'id' => 'required|exists:requests,id',
+            'imgpath' => 'required|image|mimes:jpeg,png,jpg,gif|max:20408'
         ]);
 
-        $requestModel = ModelRequest::findOrFail($request->request_id);
+        $profile = ModelRequest::findOrFail($request->id);
 
-        // بررسی اجازه دسترسی
-        $user = Auth::user();
-        if ($user->role === 'user' && $requestModel->user_id !== $user->id) {
+        // حذف فایل قبلی
+        if ($profile->imgpath && $profile->imgpath !== 'userimage/default.png') {
+            Storage::disk('private')->delete($profile->imgpath);
+        }
+
+        if ($request->hasFile('imgpath')) {
+            $path = $request->file('imgpath')->store('userimage', 'private');
+            $profile->imgpath = $path;
+            $profile->save();
+
             return response()->json([
-                'success' => false,
-                'message' => 'شما اجازه آپلود فایل برای این درخواست را ندارید'
-            ], 403);
-        }
-
-        $fieldName = $request->field_name;
-        $file = $request->file('file');
-
-        // اعتبارسنجی نوع فایل بر اساس فیلد
-        if ($fieldName === 'imgpath') {
-            // فقط تصاویر برای عکس پروفایل
-            $request->validate([
-                'file' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // حداکثر 2MB
+                'success' => true,
+                'message' => 'فایل با موفقیت آپلود شد',
+                'file_url' => route('img', ['filename' => $path]),
+                'file_path' => $path
             ]);
-            $folder = 'userimage';
-        } elseif ($fieldName === 'gradesheetpath') {
-            // تصاویر و PDF برای کارنامه
-            $request->validate([
-                'file' => 'mimes:jpeg,png,jpg,gif,pdf|max:5120' // حداکثر 5MB
-            ]);
-            $folder = 'gradesheets';
-        }
-
-        // حذف فایل قبلی اگر وجود داشته باشد
-        if (!empty($requestModel->$fieldName) && $requestModel->$fieldName !== 'userimage/default.png') {
-            Storage::disk('private')->delete($requestModel->$fieldName);
-        }
-
-        // ذخیره فایل جدید
-        $path = $file->store($folder, 'private');
-
-        // بروزرسانی رکورد در دیتابیس
-        $requestModel->update([$fieldName => $path]);
-
-        // تولید URL فایل برای نمایش
-        $fileUrl = route('img', ['filename' => $path]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'فایل با موفقیت آپلود شد',
-            'file_url' => $fileUrl,
-            'file_path' => $path
-        ]);
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        $errors = $e->errors();
-        $errorMessage = 'خطا در اعتبارسنجی فایل';
-
-        if (isset($errors['file'])) {
-            $errorMessage = implode(', ', $errors['file']);
         }
 
         return response()->json([
             'success' => false,
-            'message' => $errorMessage
-        ], 422);
+            'message' => 'فایلی برای آپلود یافت نشد'
+        ], 400);
 
     } catch (\Exception $e) {
-        \Log::error('Upload File Error', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-
         return response()->json([
             'success' => false,
             'message' => 'خطا در آپلود فایل: ' . $e->getMessage()
         ], 500);
     }
 }
+
+public function uploadpdf(Request $request)
+{
+    \Log::info('Upload PDF Request', $request->all());
+
+    try {
+        $request->validate([
+            'id' => 'required|exists:requests,id',
+            'gradesheetpath' => 'required|file|mimes:jpeg,png,jpg,gif,pdf|max:20408'
+        ]);
+
+        $profile = ModelRequest::findOrFail($request->id);
+
+        // حذف فایل قبلی اگر وجود داشته باشد
+        if ($profile->gradesheetpath) {
+            Storage::disk('private')->delete($profile->gradesheetpath);
+        }
+
+        if ($request->hasFile('gradesheetpath')) {
+            $file = $request->file('gradesheetpath');
+            \Log::info('Uploading gradesheet', [
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize()
+            ]);
+
+            $path = $file->store('usergradesheet', 'private');
+            $profile->gradesheetpath = $path;
+            $profile->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'فایل با موفقیت آپلود شد',
+                'file_url' => route('img', ['filename' => $path]),
+                'file_path' => $path
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'فایلی برای آپلود یافت نشد'
+        ], 400);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'خطا در آپلود فایل: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+public function cancel ($id){
+
+    $request = modelrequest::findOrFail($id);
+    $request['story'] = 'cancel';
+    $request->save();
+    return redirect()->route('unified.myrequests');
+}
+
 }

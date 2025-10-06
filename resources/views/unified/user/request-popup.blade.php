@@ -1134,18 +1134,49 @@
 
 
                         {{-- دکمه کنسل --}}
-                        <button type="button" onclick="document.getElementById('closeRequestDetailModal').click()"
-                            class="bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-8 rounded-xl hover:from-gray-700 hover:to-gray-800 transition font-medium shadow-lg">
+                        <a
+                            class="bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-8 rounded-xl hover:from-gray-700 hover:to-gray-800 transition font-medium shadow-lg warning" id="warning-open">
                             ❌ کنسل
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-[60] hidden" id="waning-popup">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-200">
+                <div class="text-center">
+                    <!-- آیکون هشدار -->
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+                        <svg class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                    </div>
+
+                    <!-- عنوان -->
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">تأیید کنسل کردن</h3>
+
+                    <!-- متن -->
+                    <p class="text-sm text-gray-600 mb-6">آیا مطمئن هستید که می‌خواهید این درخواست را کنسل کنید؟ این عمل قابل بازگشت نیست.</p>
+
+                    <!-- دکمه‌ها -->
+                    <div class="flex space-x-3 space-x-reverse justify-center">
+                        <button id="warning-closepopup" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition duration-200">
+                            خیر، انصراف
+                        </button>
+                        <a href="{{ route('unified.cancel', $request->id) }}" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 text-center">
+                            بله، کنسل کن
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     {{-- JavaScript فایل‌ها --}}
     <script src="{{ asset('assets/js/request-detail-popup/utils.js') }}"></script>
     <script src="{{ asset('assets/js/request-detail-popup/modal-core.js') }}"></script>
     <script src="{{ asset('assets/js/request-detail-popup/field-management.js') }}"></script>
     <script src="{{ asset('assets/js/request-detail-popup/data-upload.js') }}"></script>
+    <script src="{{ asset('assets/js/popup-functionality.js') }}"></script>

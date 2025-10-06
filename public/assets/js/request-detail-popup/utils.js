@@ -246,3 +246,272 @@ function hideLoadingIndicator(loadingEl) {
         document.body.removeChild(loadingEl);
     }
 }
+
+// Update editing popup
+function updateEditingPopup() {
+    // Remove existing popup
+    const existingPopup = document.querySelector('.editing-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    // If no fields are being edited, don't show popup
+    if (!window.editingFields || window.editingFields.size === 0) {
+        return;
+    }
+
+    // Create popup
+    const popup = document.createElement('div');
+    popup.className = 'editing-popup fixed top-4 right-4 bg-blue-500 text-white px-4 py-3 rounded-lg shadow-lg z-[100] flex items-center space-x-2 space-x-reverse';
+    popup.innerHTML = `
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+        </svg>
+        <span>${window.editingFields.size} فیلد در حال ویرایش</span>
+        <button id="saveAllFieldsBtn" class="bg-white text-blue-500 px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition-colors">
+            ویرایش همه
+        </button>
+    `;
+
+    document.body.appendChild(popup);
+
+    // Add event listener to save all button
+    document.getElementById('saveAllFieldsBtn').addEventListener('click', saveAllEditingFields);
+}
+
+// Save all editing fields
+function saveAllEditingFields() {
+    if (!window.editingFields || window.editingFields.size === 0) return;
+
+    const loadingEl = showLoadingIndicator('در حال ذخیره همه فیلدها...');
+    let completed = 0;
+    const total = window.editingFields.size;
+
+    // Create a promise for each field
+    const promises = Array.from(window.editingFields).map(fieldName => {
+        // Find the form for this field
+        const formId = getFormIdForField(fieldName);
+        const form = document.getElementById(formId);
+        if (!form) return Promise.resolve();
+
+        // Get input value
+        const input = form.querySelector('input, select, textarea');
+        if (!input) return Promise.resolve();
+
+        const newVal = input.value.trim();
+
+        // Send update request
+        return updateRequestField(fieldName, newVal)
+            .then(response => {
+                if (response.success) {
+                    // Update display
+                    const displayId = getDisplayIdForField(fieldName);
+                    const display = document.getElementById(displayId);
+                    if (display) {
+                        display.textContent = newVal || 'ندارد';
+                    }
+
+                    // Hide form and show display
+                    form.classList.add('hidden');
+                    form.classList.remove('flex');
+                    const displayEl = document.getElementById(displayId);
+                    if (displayEl) displayEl.classList.remove('hidden');
+                    const editBtn = document.getElementById(getEditBtnIdForField(fieldName));
+                    if (editBtn) editBtn.classList.remove('hidden');
+
+                    completed++;
+                }
+            })
+            .catch(() => {}); // Continue even on error
+    });
+
+    // Wait for all to complete
+    Promise.all(promises).then(() => {
+        hideLoadingIndicator(loadingEl);
+        window.editingFields.clear();
+        updateEditingPopup();
+        showSuccessMessage(`همه ${total} فیلد با موفقیت ذخیره شد`);
+        // Refresh modal data
+        if (typeof refreshRequestData === 'function') {
+            setTimeout(refreshRequestData, 500);
+        }
+    });
+}
+
+// Confirmation popup functions for cancel action
+function showCancelConfirmation() {
+    const popup = document.getElementById('waning-popup');
+    if (popup) {
+        popup.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+}
+
+function hideCancelConfirmation() {
+    const popup = document.getElementById('waning-popup');
+    if (popup) {
+        popup.classList.add('hidden');
+        document.body.style.overflow = ''; // Restore scrolling
+    }
+}
+
+// Initialize cancel popup functionality
+function initializeCancelPopup() {
+    const openBtn = document.getElementById('warning-open');
+    const closeBtn = document.getElementById('warning-closepopup');
+
+    if (openBtn) {
+        openBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showCancelConfirmation();
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', hideCancelConfirmation);
+    }
+
+    // Close on background click
+    const popup = document.getElementById('waning-popup');
+    if (popup) {
+        popup.addEventListener('click', function(e) {
+            if (e.target === popup) {
+                hideCancelConfirmation();
+            }
+        });
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !popup.classList.contains('hidden')) {
+            hideCancelConfirmation();
+        }
+    });
+}
+
+// Call initialization when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeCancelPopup);
+
+// Helper function to get form ID for a field
+function getFormIdForField(fieldName) {
+    const fieldMappings = {
+        'name': 'modalNameForm',
+        'birthdate': 'modalBirthdateForm',
+        'phone': 'modalPhoneForm',
+        'telephone': 'modalTelephoneForm',
+        'grade': 'modalGradeForm',
+        'school': 'modalSchoolForm',
+        'principal': 'modalPrincipalForm',
+        'last_score': 'modalLastScoreForm',
+        'school_telephone': 'modalSchoolTelephoneForm',
+        'rental': 'modalRentalForm',
+        'address': 'modalAddressForm',
+        'siblings_count': 'modalSiblingsCountForm',
+        'siblings_rank': 'modalSiblingsRankForm',
+        'know': 'modalKnowForm',
+        'counseling_method': 'modalCounselingMethodForm',
+        'father_name': 'modalFatherNameForm',
+        'father_phone': 'modalFatherPhoneForm',
+        'father_job': 'modalFatherJobForm',
+        'father_income': 'modalFatherIncomeForm',
+        'father_job_address': 'modalFatherJobAddressForm',
+        'mother_name': 'modalMotherNameForm',
+        'mother_phone': 'modalMotherPhoneForm',
+        'mother_job': 'modalMotherJobForm',
+        'mother_income': 'modalMotherIncomeForm',
+        'mother_job_address': 'modalMotherJobAddressForm',
+        'motivation': 'modalMotivationForm',
+        'spend': 'modalSpendForm',
+        'how_am_i': 'modalHowAmIForm',
+        'future': 'modalFutureForm',
+        'favorite_major': 'modalFavoriteMajorForm',
+        'help_others': 'modalHelpOthersForm',
+        'suggestion': 'modalSuggestionForm',
+        'nationalcode': 'modalNationalCodeForm',
+        'english_proficiency': 'modalEnglishForm'
+    };
+    return fieldMappings[fieldName] || '';
+}
+
+// Helper function to get display ID for a field
+function getDisplayIdForField(fieldName) {
+    const fieldMappings = {
+        'name': 'modalNameDisplay',
+        'birthdate': 'modalBirthdateDisplay',
+        'phone': 'modalPhoneDisplay',
+        'telephone': 'modalTelephoneDisplay',
+        'grade': 'modalGradeDisplay',
+        'school': 'modalSchoolDisplay',
+        'principal': 'modalPrincipalDisplay',
+        'last_score': 'modalLastScoreDisplay',
+        'school_telephone': 'modalSchoolTelephoneDisplay',
+        'rental': 'modalRentalDisplay',
+        'address': 'modalAddressDisplay',
+        'siblings_count': 'modalSiblingsCountDisplay',
+        'siblings_rank': 'modalSiblingsRankDisplay',
+        'know': 'modalKnowDisplay',
+        'counseling_method': 'modalCounselingMethodDisplay',
+        'father_name': 'modalFatherName',
+        'father_phone': 'modalFatherPhone',
+        'father_job': 'modalFatherJob',
+        'father_income': 'modalFatherIncome',
+        'father_job_address': 'modalFatherJobAddress',
+        'mother_name': 'modalMotherName',
+        'mother_phone': 'modalMotherPhone',
+        'mother_job': 'modalMotherJob',
+        'mother_income': 'modalMotherIncome',
+        'mother_job_address': 'modalMotherJobAddress',
+        'motivation': 'modalMotivation',
+        'spend': 'modalSpend',
+        'how_am_i': 'modalHowAmI',
+        'future': 'modalFuture',
+        'favorite_major': 'modalFavoriteMajor',
+        'help_others': 'modalHelpOthers',
+        'suggestion': 'modalSuggestion',
+        'nationalcode': 'modalNationalCodeDisplay',
+        'english_proficiency': 'modalEnglishPercent'
+    };
+    return fieldMappings[fieldName] || '';
+}
+
+// Helper function to get edit button ID for a field
+function getEditBtnIdForField(fieldName) {
+    const fieldMappings = {
+        'name': 'editNameBtn',
+        'birthdate': 'editBirthdateBtn',
+        'phone': 'editPhoneBtn',
+        'telephone': 'editTelephoneBtn',
+        'grade': 'editGradeBtn',
+        'school': 'editSchoolBtn',
+        'principal': 'editPrincipalBtn',
+        'last_score': 'editLastScoreBtn',
+        'school_telephone': 'editSchoolTelephoneBtn',
+        'rental': 'editRentalBtn',
+        'address': 'editAddressBtn',
+        'siblings_count': 'editSiblingsCountBtn',
+        'siblings_rank': 'editSiblingsRankBtn',
+        'know': 'editKnowBtn',
+        'counseling_method': 'editCounselingMethodBtn',
+        'father_name': 'editFatherNameBtn',
+        'father_phone': 'editFatherPhoneBtn',
+        'father_job': 'editFatherJobBtn',
+        'father_income': 'editFatherIncomeBtn',
+        'father_job_address': 'editFatherJobAddressBtn',
+        'mother_name': 'editMotherNameBtn',
+        'mother_phone': 'editMotherPhoneBtn',
+        'mother_job': 'editMotherJobBtn',
+        'mother_income': 'editMotherIncomeBtn',
+        'mother_job_address': 'editMotherJobAddressBtn',
+        'motivation': 'editMotivationBtn',
+        'spend': 'editSpendBtn',
+        'how_am_i': 'editHowAmIBtn',
+        'future': 'editFutureBtn',
+        'favorite_major': 'editFavoriteMajorBtn',
+        'help_others': 'editHelpOthersBtn',
+        'suggestion': 'editSuggestionBtn',
+        'nationalcode': 'editNationalCodeBtn',
+        'english_proficiency': 'editEnglishBtn'
+    };
+    return fieldMappings[fieldName] || '';
+}
+

@@ -260,24 +260,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 });
-
-// Modal live update functions
-function startModalLiveUpdate(requestId) {
-    if (modalLiveUpdateInterval) {
-        stopModalLiveUpdate();
-    }
-
-    console.log('🔄 Starting modal live update for request:', requestId);
-
-    // Check immediately at start
-    checkModalForUpdates(requestId);
-
-    // Set interval to check every 15 seconds (faster than main page)
-    modalLiveUpdateInterval = setInterval(() => {
-        checkModalForUpdates(requestId);
-    }, 15000);
-}
-
 function stopModalLiveUpdate() {
     if (modalLiveUpdateInterval) {
         console.log('⏹️ Stopping modal live update...');
