@@ -26,7 +26,7 @@
     @yield('page-styles')
 
     <script src="{{ asset('assets/js/libraris/tail.js') }}"></script>
-
+<style>
         .navbar-menu.active {
             transform: translateX(0) !important;
         }
@@ -49,9 +49,6 @@
 
 <body class="bg-gray-100 m-0 p-0">
     <div class="flex min-h-screen w-full">
-        <!-- Mobile Overlay -->
-        <div id="mobileOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
-
         <!-- Sidebar -->
         <div id="sidebar"
             class="fixed h-screen flex flex-col w-16 bg-slate-50 border-l border-gray-200 shadow-lg transition-all duration-300 ease-in-out overflow-hidden z-10 transform translate-x-full
@@ -165,23 +162,23 @@
 
         <!-- Main Content -->
         <div class="flex-1 min-[658px]:mr-[63px]  w-full ">
-            <div class="bg-white shadow hide">
-                <div class="px-6 py-4 h-fit ">
-                    <div class="flex justify-between items-center">
-                        <!-- Hamburger Menu Button (Mobile Only) -->
-                        <button class="navbar-toggle max-[658px]:block min-[659px]:hidden z-[50]">
-                            <span class="bar"></span>
-                            <span class="bar"></span>
-                            <span class="bar"></span>
-                        </button>
-<div class="w-full h-full">
+            <div class=" shadow hide max-[342px]:h-[80px]">
+                <div class="px-3 py-4  ">
+                    <button class="navbar-toggle max-[658px]:block min-[659px]:hidden z-[50]">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </button>
+                    <div class="flex justify-between gap-6 w-[calc(100vw_-_80px)] mr-auto ">
+                        <h1 class="text-black text-[clamp(1rem,3.5vw,1.25rem)] font-bold h-fit my-auto">
+                            @yield('title')
+                        </h1>
+                <a href="{{ route('unified.requestform') }}" class="bg-green-500 text-center rounded-3xl flex w-[clamp(100px,25vw,150px)] max-[342px]:fixed max-[342px]:bottom-0 max-[342px]:w-[100vw] max-[342px]:left-0  max-[342px]:rounded-none z-20 h-[50px] justify-center ">
 
-    <div class="mb-4 max-[600px]:w-full">
+                <span class="h-fit m-auto text-[clamp(0.5rem,3vw,1rem)] max-[342px]:text-base">افزودن درخواست +</span>
+                </a>
+                </div>
 
-    </div>
-</div>
-
-                    </div>
                 </div>
 
             </div>

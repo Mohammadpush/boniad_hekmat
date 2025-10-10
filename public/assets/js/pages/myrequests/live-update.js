@@ -1,53 +1,14 @@
 // Live Update برای صفحه درخواست‌های من
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Initializing live update for my requests...');
+    console.log('🚀 Initializing page update handler...');
 
-    // متغیرهای global برای مدیریت live update
-    let lastUpdateTime = null;
-    let isUpdating = false;
-    let updateInterval = null;
-
-    // شروع live update
-    startLiveUpdate();
-
-    // توقف live update وقتی صفحه مخفی می‌شود
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            stopLiveUpdate();
-        } else {
-            startLiveUpdate();
-        }
-    });
-
-    // توقف live update وقتی پنجره بسته می‌شود
-    window.addEventListener('beforeunload', function() {
-        stopLiveUpdate();
-    });
-
-    function startLiveUpdate() {
-        if (updateInterval) return; // اگر قبلاً شروع شده، دوباره شروع نکن
-
-        console.log('🔄 Starting live update every 30 seconds...');
-
-        // بررسی فوری در شروع
+    // تعریف تابع بروزرسانی به صورت global برای دسترسی از سایر فایل‌ها
+    window.updatePageData = function() {
+        console.log('🔄 Updating page data...');
         checkForUpdates();
-
-        // تنظیم interval برای بررسی هر 30 ثانیه
-        updateInterval = setInterval(checkForUpdates, 30000); // 30 ثانیه
-    }
-
-    function stopLiveUpdate() {
-        if (updateInterval) {
-            console.log('⏹️ Stopping live update...');
-            clearInterval(updateInterval);
-            updateInterval = null;
-        }
-    }
+    };
 
     function checkForUpdates() {
-        if (isUpdating) return; // اگر در حال بروزرسانی هستیم، صبر کن
-
-        isUpdating = true;
 
         fetch('/unified/myrequests-data', {
             method: 'GET',
@@ -60,29 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // بررسی اینکه آیا داده‌ها تغییر کرده‌اند
-                const currentUpdateTime = data.last_updated;
-                const hasNewData = !lastUpdateTime || currentUpdateTime !== lastUpdateTime;
-
-                if (hasNewData) {
-                    console.log('📡 New data detected, updating page...');
-                    lastUpdateTime = currentUpdateTime;
-
-                    // بروزرسانی صفحه با داده‌های جدید
                     updatePageWithNewData(data);
-                } else {
-                    console.log('✅ Data is up to date');
-                }
-            } else {
-                console.error('❌ Failed to fetch requests data:', data);
+
             }
         })
-        .catch(error => {
-            console.error('❌ Error checking for updates:', error);
-        })
-        .finally(() => {
-            isUpdating = false;
-        });
     }
 
     function updatePageWithNewData(data) {

@@ -13,7 +13,7 @@
 }
 
 .navbar-toggle.active {
-    transform: translateX(-50vh);
+    transform: translateX(calc(-100vw + 78px));
 }
 
 .bar {
@@ -90,9 +90,9 @@
         display: block;
         position: fixed;
         top: 1rem;
-        left: 1rem;
+
         z-index: 50;
-        background: white;
+
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
@@ -172,6 +172,6 @@
     }
 
     .bar {
-        background-color: #f9fafb;
+        background-color: #333434;
     }
 }

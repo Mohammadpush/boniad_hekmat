@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/pages/myrequests/styles.css') }}">
 @endsection
 
-@section('page-title', 'درخواست‌های من')
+@section('title', 'درخواست‌های من')
 
 @section('content')
     @php
@@ -329,5 +329,6 @@
     <!-- اسکریپت مخصوص این صفحه -->
     <script src="{{ asset('assets/js/pages/myrequests/card-manager.js') }}"></script>
     <script src="{{ asset('assets/js/pages/myrequests/live-update.js') }}"></script>
+    <script src="{{ asset('assets/js/numinput.js') }}"></script>
 @endsection
 

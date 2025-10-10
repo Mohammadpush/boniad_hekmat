@@ -41,7 +41,7 @@
                                 </div>
 
                                 {{-- بخش اطلاعات شخصی --}}
-                                <div class="border-t pt-8">
+                                <div class="border-t pt-8 relative">
                                     <div class="flex items-center">
                                         <div class="icon-wrapper w-10 h-10 rounded-lg flex items-center justify-center mr-4"
                                             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -109,7 +109,7 @@
                                                     style="margin:0;">
                                                     <input type="text" id="modalNationalCodeInput"
                                                         class="border border-gray-300 text-black rounded  w-28 text-lg num-input"
-                                                        maxlength="10" pattern="[0-9]{10}" autocomplete="off">
+                                                      >
                                                     <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
                                                             fill="none" viewBox="0 0 24 24" stroke-width="2.5"
                                                             stroke="currentColor"
@@ -127,8 +127,8 @@
                                                                 d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                                         </svg>
                                                     </button>
-                                                    <span id="modalNationalCodeError"
-                                                        class="text-red-500 text-xs ml-2 hidden"></span>
+                                                <span id="modalNationalCodeError"
+                                                    class="text-red-500 text-xs ml-2 hidden absolute left-44 bottom-[146px]"></span>
                                                 </form>
                                                 <button type="button" id="editNationalCodeBtn"
                                                     class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
@@ -187,18 +187,20 @@
                                         </div>
 
                                         <!-- شماره موبایل -->
-                                        <div class="mt-[-36px] w-fit mr-auto">
+                                        <div class="mt-[-36px] w-fit mr-auto ">
 
-                                            <label class=" text-sm font-medium text-gray-500 mb-1">شماره موبایل</label>
+                                            <label class=" text-sm font-medium text-gray-500 mb-1 ">شماره موبایل</label>
                                             <div class=" items-center justify-between">
                                                 <span id="modalPhoneDisplay"
-                                                    class="text-base font-mono font-semibold text-gray-800"></span>
+                                                class="text-base font-mono font-semibold text-gray-800"></span>
                                                 <form id="modalPhoneForm"
-                                                    class="hidden items-center space-x-2 space-x-reverse"
-                                                    style="margin:0;">
-                                                    <input type="text" id="modalPhoneInput"
+                                                class="hidden items-center space-x-2 space-x-reverse "
+                                                style="margin:0;">
+                                                <span id="modalPhoneError"
+                                                    class="text-red-500 text-xs ml-2 hidden absolute left-44 bottom-[54px]"></span>
+                                                <input type="text" id="modalPhoneInput"
                                                         class="border border-gray-300 text-black rounded  w-28 text-lg num-input"
-                                                        maxlength="11" pattern="09[0-9]{9}" autocomplete="off">
+                                                        >
                                                     <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
                                                             fill="none" viewBox="0 0 24 24" stroke-width="2.5"
                                                             stroke="currentColor"
@@ -214,8 +216,6 @@
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                                         </svg></button>
-                                                    <span id="modalPhoneError"
-                                                        class="text-red-500 text-xs ml-2 hidden"></span>
                                                 </form>
                                                 <button type="button" id="editPhoneBtn"
                                                     class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
@@ -512,7 +512,7 @@
                                                     style="margin:0;">
                                                     <input type="text" id="modalSchoolTelephoneInput"
                                                         class="border border-gray-300 text-black rounded px-2 py-1 w-28 text-sm num-input"
-                                                        maxlength="11" autocomplete="off">
+                                                        >
                                                     <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
                                                             fill="none" viewBox="0 0 24 24" stroke-width="2.5"
                                                             stroke="currentColor"

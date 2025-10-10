@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/pages/addmessage/styles.css') }}">
 @endsection
 
-@section('page-title', 'افزودن پیام جدید')
+@section('title', 'افزودن پیام جدید')
 
 @section('content')
 <main class="flex-1 p-8">

@@ -438,7 +438,7 @@
                                             class="hidden items-center space-x-2 space-x-reverse"
                                             style="margin:0;">
                                             <input type="text" id="modalFatherPhoneInput"
-                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48 num-input"
                                                 placeholder="09123456789">
                                             <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
                                                     fill="none" viewBox="0 0 24 24" stroke-width="2.5"
@@ -654,7 +654,7 @@
                                             class="hidden items-center space-x-2 space-x-reverse"
                                             style="margin:0;">
                                             <input type="text" id="modalMotherPhoneInput"
-                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
+                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48 num-input"
                                                 placeholder="09123456789">
                                             <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
                                                     fill="none" viewBox="0 0 24 24" stroke-width="2.5"
@@ -1003,11 +1003,11 @@
                                     <div class="flex items-center justify-between">
                                         <p id="modalFavoriteMajor" class="text-lg font-semibold text-gray-800"></p>
                                         <form id="modalFavoriteMajorForm"
-                                            class="hidden items-center space-x-2 space-x-reverse"
+                                            class="hidden items-center space-x-2 space-x-reverse w-full"
                                             style="margin:0;">
-                                            <input type="text" id="modalFavoriteMajorInput"
-                                                class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-48"
-                                                placeholder="رشته مورد علاقه">
+                                        <textarea id="modalFavoriteMajorInput"
+                                            class="border border-gray-300 text-black rounded px-2 py-1 text-sm w-full h-32 resize-none"
+                                            placeholder="انگیزه خود را توضیح دهید..."></textarea>
                                             <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
                                                     fill="none" viewBox="0 0 24 24" stroke-width="2.5"
                                                     stroke="currentColor"
@@ -1040,7 +1040,7 @@
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-500 mb-2">آمادگی کمک به
-                                        دیگران</label>
+                                        دیگران در آینده</label>
                                     <div class="flex items-center justify-between">
                                         <p id="modalHelpOthers" class="text-lg font-semibold text-gray-800"></p>
                                         <form id="modalHelpOthersForm"
@@ -1052,6 +1052,10 @@
                                                 <option value="بله">بله</option>
                                                 <option value="خیر">خیر</option>
                                                 <option value="در صورت امکان">در صورت امکان</option>
+<option value="هرکسی باید با تکیه بر توانایی های خود به دنبال موفقیت باشد و کمک در این راه لزومی ندارد"
+        title="متن کامل: هرکسی باید با تکیه بر توانایی های خود به دنبال موفقیت باشد و کمک در این راه لزومی ندارد">
+    هرکسی باید با تکیه بر توانایی‌های خود موفق شود (کمک لازم نیست)
+</option>
                                             </select>
                                             <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
                                                     fill="none" viewBox="0 0 24 24" stroke-width="2.5"

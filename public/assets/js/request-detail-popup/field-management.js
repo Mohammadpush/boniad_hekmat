@@ -5,9 +5,15 @@
 let editingFields = new Set(); // Use Set to store field names being edited
 window.editingFields = editingFields; // Make it globally accessible
 
+// Update editing popup UI (placeholder function)
+function updateEditingPopup() {
+
+    // Add logic here if needed to update UI based on editing fields
+}
+
 // Generic field editor creator
 function createFieldEditor(config) {
-    console.log(`📝 Creating field editor for: ${config.fieldName}`);
+
 
     const display = document.getElementById(config.displayId);
     const form = document.getElementById(config.formId);
@@ -16,11 +22,14 @@ function createFieldEditor(config) {
     const editBtn = document.getElementById(config.editBtnId);
     const cancelBtn = document.getElementById(config.cancelBtnId);
 
-    // Check if all elements exist
-    if (!display || !form || !input || !error || !editBtn || !cancelBtn) {
-        console.log(`❌ Missing elements for ${config.fieldName}`);
-        return;
-    }
+// Check if all elements exist
+const elements = { display, form, input, error, editBtn, cancelBtn };
+const missing = Object.keys(elements).filter(key => !elements[key]);
+
+if (missing.length > 0) {
+    console.log(`❌ Missing elements for ${config.fieldName}: ${missing.join(', ')}`);
+    return;
+}
 
     // Show edit form
     editBtn.addEventListener('click', function() {
@@ -94,6 +103,11 @@ function createFieldEditor(config) {
                     if (typeof refreshRequestData === 'function') {
                         setTimeout(refreshRequestData, 500);
                     }
+
+                    // Update page data if needed
+                    if (typeof window.updatePageData === 'function') {
+                        setTimeout(window.updatePageData, 1000);
+                    }
                 } else {
                     throw new Error(response.message || 'خطا در ذخیره اطلاعات');
                 }
@@ -118,7 +132,6 @@ function validateRequired(value, fieldName) {
 }
 
 function validatePhone(value) {
-    if (!value) return '';
     if (!/^09\d{9}$/.test(value)) {
         return 'شماره موبایل باید 11 رقم و با 09 شروع شود';
     }
@@ -140,17 +153,23 @@ function validateNationalCode(value) {
 }
 
 function validateNumber(value, min = 0, max = 100) {
-    if (!value) return '';
     const num = parseInt(value);
     if (isNaN(num) || num < min || num > max) {
         return `عدد باید بین ${min} و ${max} باشد`;
     }
     return '';
 }
+function validateWordConut(value){
+    const wordconut = value.trim().split('/s/+/').length;
+    if(wordconut){
+        return 'تعداد کلمات باید حداقل 30 کلمه باشد.'
+    }
+    return '';
+}
 
 // Field initializers
 function initializeNationalCodeEdit() {
-    console.log('🆔 Initializing national code edit...');
+
 
     createFieldEditor({
         displayId: 'modalNationalCodeDisplay',
@@ -166,7 +185,7 @@ function initializeNationalCodeEdit() {
 }
 
 function initializeBasicFields() {
-    console.log('📝 Initializing basic fields...');
+
 
     // Name
     createFieldEditor({
@@ -203,7 +222,7 @@ function initializeBasicFields() {
         editBtnId: 'editPhoneBtn',
         cancelBtnId: 'cancelPhoneEdit',
         fieldName: 'phone',
-        validateFn: validatePhone,
+        validateFn: (val) =>validateRequired(val,'شماره تلفن')||validatePhone(val),
         successMessage: 'شماره موبایل با موفقیت ذخیره شد'
     });
 
@@ -221,7 +240,7 @@ function initializeBasicFields() {
 }
 
 function initializeEducationFields() {
-    console.log('🎓 Initializing education fields...');
+
 
     // Grade
     createFieldEditor({
@@ -289,7 +308,7 @@ function initializeEducationFields() {
 }
 
 function initializeHousingFields() {
-    console.log('🏠 Initializing housing fields...');
+
 
     // Rental status
     const rentalDisplay = document.getElementById('modalRentalDisplay');
@@ -361,13 +380,13 @@ function initializeHousingFields() {
         editBtnId: 'editAddressBtn',
         cancelBtnId: 'cancelAddressEdit',
         fieldName: 'address',
-        validateFn: (val) => validateRequired(val, 'آدرس'),
+        validateFn: (val) => validateRequired(val, 'آدرس')||validateWordConut,
         successMessage: 'آدرس با موفقیت ذخیره شد'
     });
 }
 
 function initializeFamilyFields() {
-    console.log('👨‍👩‍👧‍👦 Initializing family fields...');
+
 
     // Siblings count
     createFieldEditor({
@@ -478,7 +497,7 @@ function initializeFamilyFields() {
 }
 
 function initializeParentFields() {
-    console.log('👨‍👩‍👧 Initializing parent fields...');
+
 
     const parentFields = [
         { prefix: 'Father', field: 'father_name', label: 'نام پدر' },
@@ -495,19 +514,20 @@ function initializeParentFields() {
 
     parentFields.forEach(({ prefix, field, label }) => {
         const config = {
-            displayId: `modal${prefix}${field.replace(/_(.)/g, (_, letter) => letter.toUpperCase())}`,
-            formId: `modal${prefix}${field.replace(/_(.)/g, (_, letter) => letter.toUpperCase())}Form`,
-            inputId: `modal${prefix}${field.replace(/_(.)/g, (_, letter) => letter.toUpperCase())}Input`,
-            errorId: `modal${prefix}${field.replace(/_(.)/g, (_, letter) => letter.toUpperCase())}Error`,
-            editBtnId: `edit${prefix}${field.replace(/_(.)/g, (_, letter) => letter.toUpperCase())}Btn`,
-            cancelBtnId: `cancel${prefix}${field.replace(/_(.)/g, (_, letter) => letter.toUpperCase())}Edit`,
+            displayId: `modal${field.replace(/(^|_)(.)/g, (match, sep, letter) => letter.toUpperCase())}`,
+            formId: `modal${field.replace(/(^|_)(.)/g, (match, sep, letter) => letter.toUpperCase())}Form`,
+            inputId: `modal${field.replace(/(^|_)(.)/g, (match, sep, letter) => letter.toUpperCase())}Input`,
+            errorId: `modal${field.replace(/(^|_)(.)/g, (match, sep, letter) => letter.toUpperCase())}Error`,
+            editBtnId: `edit${field.replace(/(^|_)(.)/g, (match, sep, letter) => letter.toUpperCase())}Btn`,
+            cancelBtnId: `cancel${field.replace(/(^|_)(.)/g, (match, sep, letter) => letter.toUpperCase())}Edit`,
             fieldName: field,
             successMessage: `${label} با موفقیت ذخیره شد`
         };
 
         // Special validation for phone fields
         if (field.includes('phone')) {
-            config.validateFn = validatePhone;
+
+            config.validateFn = (val)=> validatePhone(val)||validateRequired(val, label);
         } else if (field.includes('income')) {
             config.validateFn = (val) => val ? validateNumber(val, 0, 1000000000) : '';
         } else {
@@ -519,78 +539,159 @@ function initializeParentFields() {
 }
 
 function initializeFinalQuestionsFields() {
-    console.log('❓ Initializing final questions fields...');
 
-    const questionFields = [
-        { field: 'motivation', label: 'انگیزه' },
-        { field: 'spend', label: 'نحوه گذران اوقات فراغت' },
-        { field: 'how_am_i', label: 'نحوه توصیف خود' },
-        { field: 'future', label: 'برنامه آینده' },
-        { field: 'favorite_major', label: 'رشته مورد علاقه' },
-        { field: 'help_others', label: 'کمک به دیگران' },
-        { field: 'suggestion', label: 'پیشنهاد' }
-    ];
+// Motivation
+createFieldEditor({
+    displayId: 'modalMotivation',
+    formId: 'modalMotivationForm',
+    inputId: 'modalMotivationInput',
+    errorId: 'modalMotivationError',
+    editBtnId: 'editMotivationBtn',
+    cancelBtnId: 'cancelMotivationEdit',
+    fieldName: 'motivation',
+    validateFn: (val) => validateRequired(val, 'انگیزه'),
+    successMessage: 'انگیزه با موفقیت ذخیره شد'
+});
 
-    questionFields.forEach(({ field, label }) => {
-        createFieldEditor({
-            displayId: `modal${field.charAt(0).toUpperCase() + field.slice(1)}`,
-            formId: `modal${field.charAt(0).toUpperCase() + field.slice(1)}Form`,
-            inputId: `modal${field.charAt(0).toUpperCase() + field.slice(1)}Input`,
-            errorId: `modal${field.charAt(0).toUpperCase() + field.slice(1)}Error`,
-            editBtnId: `edit${field.charAt(0).toUpperCase() + field.slice(1)}Btn`,
-            cancelBtnId: `cancel${field.charAt(0).toUpperCase() + field.slice(1)}Edit`,
-            fieldName: field,
-            validateFn: (val) => validateRequired(val, label),
-            successMessage: `${label} با موفقیت ذخیره شد`
-        });
-    });
+// Spend
+createFieldEditor({
+    displayId: 'modalSpend',
+    formId: 'modalSpendForm',
+    inputId: 'modalSpendInput',
+    errorId: 'modalSpendError',
+    editBtnId: 'editSpendBtn',
+    cancelBtnId: 'cancelSpendEdit',
+    fieldName: 'spend',
+    validateFn: (val) => validateRequired(val, 'نحوه گذران اوقات فراغت'),
+    successMessage: 'نحوه گذران اوقات فراغت با موفقیت ذخیره شد'
+});
+
+// How Am I
+createFieldEditor({
+    displayId: 'modalHowAmI',
+    formId: 'modalHowAmIForm',
+    inputId: 'modalHowAmIInput',
+    errorId: 'modalHowAmIError',
+    editBtnId: 'editHowAmIBtn',
+    cancelBtnId: 'cancelHowAmIEdit',
+    fieldName: 'how_am_i',
+    validateFn: (val) => validateRequired(val, 'نحوه توصیف خود'),
+    successMessage: 'نحوه توصیف خود با موفقیت ذخیره شد'
+});
+
+// Future
+createFieldEditor({
+    displayId: 'modalFuture',
+    formId: 'modalFutureForm',
+    inputId: 'modalFutureInput',
+    errorId: 'modalFutureError',
+    editBtnId: 'editFutureBtn',
+    cancelBtnId: 'cancelFutureEdit',
+    fieldName: 'future',
+    validateFn: (val) => validateRequired(val, 'برنامه آینده'),
+    successMessage: 'برنامه آینده با موفقیت ذخیره شد'
+});
+
+// Favorite Major
+createFieldEditor({
+    displayId: 'modalFavoriteMajor',
+    formId: 'modalFavoriteMajorForm',
+    inputId: 'modalFavoriteMajorInput',
+    errorId: 'modalFavoriteMajorError',
+    editBtnId: 'editFavoriteMajorBtn',
+    cancelBtnId: 'cancelFavoriteMajorEdit',
+    fieldName: 'favorite_major',
+    validateFn: (val) => validateRequired(val, 'رشته مورد علاقه'),
+    successMessage: 'رشته مورد علاقه با موفقیت ذخیره شد'
+});
+
+// Help Others
+createFieldEditor({
+    displayId: 'modalHelpOthers',
+    formId: 'modalHelpOthersForm',
+    inputId: 'modalHelpOthersInput',
+    errorId: 'modalHelpOthersError',
+    editBtnId: 'editHelpOthersBtn',
+    cancelBtnId: 'cancelHelpOthersEdit',
+    fieldName: 'help_others',
+    validateFn: (val) => validateRequired(val, 'کمک به دیگران'),
+    successMessage: 'کمک به دیگران با موفقیت ذخیره شد'
+});
+
+// Suggestion
+createFieldEditor({
+    displayId: 'modalSuggestion',
+    formId: 'modalSuggestionForm',
+    inputId: 'modalSuggestionInput',
+    errorId: 'modalSuggestionError',
+    editBtnId: 'editSuggestionBtn',
+    cancelBtnId: 'cancelSuggestionEdit',
+    fieldName: 'suggestion',
+    validateFn: (val) => validateRequired(val, 'پیشنهاد'),
+    successMessage: 'پیشنهاد با موفقیت ذخیره شد'
+});
 }
 
 function initializeEnglishLevelEdit() {
-    console.log('🇬🇧 Initializing English level edit...');
 
+
+    const display = document.getElementById('modalEnglishDisplay');
+    const editDiv = document.getElementById('modalEnglishEdit');
+    const slider = document.getElementById('modalEnglishSlider');
+    const sliderValue = document.getElementById('modalEnglishSliderValue');
     const bar = document.getElementById('modalEnglishBar');
     const percent = document.getElementById('modalEnglishPercent');
-    const form = document.getElementById('modalEnglishForm');
-    const input = document.getElementById('modalEnglishInput');
-    const error = document.getElementById('modalEnglishError');
     const editBtn = document.getElementById('editEnglishBtn');
-    const cancelBtn = document.getElementById('cancelEnglishEdit');
+    const saveBtn = document.getElementById('saveEnglishBtn');
+    const cancelBtn = document.getElementById('cancelEnglishBtn');
 
-    if (!bar || !percent || !form || !input || !error || !editBtn || !cancelBtn) {
-        console.log('❌ Missing elements for English level edit');
+    if (!display || !editDiv || !slider || !sliderValue || !bar || !percent || !editBtn || !saveBtn || !cancelBtn) {
+
         return;
     }
 
+    // Edit button click
     editBtn.addEventListener('click', function() {
-        const currentVal = percent.textContent.replace('%', '');
-        input.value = currentVal;
 
-        bar.parentElement.classList.add('hidden');
+        const currentVal = parseInt(percent.textContent.replace('%', ''));
+        slider.value = currentVal;
+        sliderValue.textContent = currentVal + '%';
+        slider.style.background = `linear-gradient(270deg, #8b5cf6 0%, #7c3aed ${currentVal}%, #e5e7eb ${currentVal}%)`;
+
+        display.classList.add('hidden');
         editBtn.classList.add('hidden');
-        form.classList.remove('hidden');
-        form.classList.add('flex');
-        error.classList.add('hidden');
+        editDiv.classList.remove('hidden');
+        editDiv.classList.add('flex');
+        saveBtn.classList.remove('hidden');
+        cancelBtn.classList.remove('hidden');
 
-        input.focus();
-        input.select();
+        // Add to editing fields
+        editingFields.add('english_proficiency');
+        updateEditingPopup();
+
+        slider.focus();
     });
 
-    cancelBtn.addEventListener('click', function() {
-        form.classList.add('hidden');
-        form.classList.remove('flex');
-        bar.parentElement.classList.remove('hidden');
-        editBtn.classList.remove('hidden');
-        error.classList.add('hidden');
+    // Slider input change
+    slider.addEventListener('input', function() {
+        const val = slider.value;
+        sliderValue.textContent = val + '%';
+        slider.style.background = `linear-gradient(270deg, #8b5cf6 0%, #7c3aed ${val}%, #e5e7eb ${val}%)`;
     });
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const newVal = parseInt(input.value);
+    // Save button click
+    saveBtn.addEventListener('click', function() {
+
+
+        // Prevent multiple clicks
+        if (saveBtn.disabled) return;
+        saveBtn.disabled = true;
+
+        const newVal = parseInt(slider.value);
 
         if (isNaN(newVal) || newVal < 0 || newVal > 100) {
-            error.textContent = 'سطح زبان باید بین 0 تا 100 باشد';
-            error.classList.remove('hidden');
+            showErrorMessage('سطح زبان باید بین 0 تا 100 باشد');
+            saveBtn.disabled = false;
             return;
         }
 
@@ -601,12 +702,18 @@ function initializeEnglishLevelEdit() {
                 if (response.success) {
                     bar.style.width = newVal + '%';
                     percent.textContent = newVal + '%';
-                    updateProgressBarColor(bar, newVal);
 
-                    form.classList.add('hidden');
-                    form.classList.remove('flex');
-                    bar.parentElement.classList.remove('hidden');
+                    editDiv.classList.add('hidden');
+                    editDiv.classList.remove('flex');
+                    display.classList.remove('hidden');
                     editBtn.classList.remove('hidden');
+                    saveBtn.classList.add('hidden');
+                    cancelBtn.classList.add('hidden');
+
+                    // Remove from editing fields
+                    editingFields.delete('english_proficiency');
+                    updateEditingPopup();
+
                     showSuccessMessage('سطح زبان انگلیسی با موفقیت ذخیره شد');
 
                     setTimeout(refreshRequestData, 500);
@@ -616,36 +723,54 @@ function initializeEnglishLevelEdit() {
             })
             .catch(error => {
                 console.error('❌ Error updating English level:', error);
-                error.textContent = 'خطا در ذخیره اطلاعات';
-                error.classList.remove('hidden');
+                showErrorMessage('خطا در ذخیره اطلاعات');
             })
             .finally(() => {
                 hideLoadingIndicator(loadingEl);
+                saveBtn.disabled = false;
             });
+    });
+
+    // Cancel button click
+    cancelBtn.addEventListener('click', function() {
+
+        editDiv.classList.add('hidden');
+        editDiv.classList.remove('flex');
+        display.classList.remove('hidden');
+        editBtn.classList.remove('hidden');
+        saveBtn.classList.add('hidden');
+        cancelBtn.classList.add('hidden');
+
+        // Remove from editing fields
+        editingFields.delete('english_proficiency');
+        updateEditingPopup();
+
+        // Re-enable save button
+        saveBtn.disabled = false;
     });
 }
 
 // Update progress bar color
-function updateProgressBarColor(progressBar, percentage) {
-    if (!progressBar) return;
+// function updateProgressBarColor(progressBar, percentage) {
+//     if (!progressBar) return;
 
-    progressBar.classList.remove('english-low', 'english-medium', 'english-high');
+//     progressBar.classList.remove('english-low', 'english-medium', 'english-high');
 
-    if (percentage <= 30) {
-        progressBar.classList.add('english-low');
-        progressBar.style.background = 'linear-gradient(270deg, #ef4444 0%, #dc2626 100%)';
-    } else if (percentage <= 70) {
-        progressBar.classList.add('english-medium');
-        progressBar.style.background = 'linear-gradient(270deg, #f59e0b 0%, #d97706 100%)';
-    } else {
-        progressBar.classList.add('english-high');
-        progressBar.style.background = 'linear-gradient(270deg, #10b981 0%, #059669 100%)';
-    }
-}
+//     if (percentage <= 30) {
+//         progressBar.classList.add('english-low');
+//         progressBar.style.background = 'linear-gradient(270deg, #ef4444 0%, #dc2626 100%)';
+//     } else if (percentage <= 70) {
+//         progressBar.classList.add('english-medium');
+//         progressBar.style.background = 'linear-gradient(270deg, #f59e0b 0%, #d97706 100%)';
+//     } else {
+//         progressBar.classList.add('english-high');
+//         progressBar.style.background = 'linear-gradient(270deg, #10b981 0%, #059669 100%)';
+//     }
+// }
 
 // Main initializer
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 DOM loaded, initializing all editors...');
+
 
     // Schedule init functions with delays to prevent conflicts
     setTimeout(initializeNationalCodeEdit, 100);
@@ -658,5 +783,5 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initializeEnglishLevelEdit, 800);
     setTimeout(initializeProfileImageUpload, 900);
     setTimeout(initializeGradeSheetUpload, 1000);
-    console.log('⏰ All initialization functions scheduled');
+
 });

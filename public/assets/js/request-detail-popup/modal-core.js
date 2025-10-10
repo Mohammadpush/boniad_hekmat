@@ -164,7 +164,7 @@ function openRequestDetailModal(requestData, cardElement = null) {
         modal.classList.add('show');
 
         // Re-initialize editors after modal show with more delay
-        console.log('🔄 Re-initializing editors after modal show...');
+
         setTimeout(() => {
             initializeNationalCodeEdit();
             setTimeout(initializeBasicFields, 100);
@@ -181,8 +181,8 @@ function openRequestDetailModal(requestData, cardElement = null) {
             }, 800);
         }, 500);
 
-        // Start live update for modal
-        startModalLiveUpdate(requestData.id);
+        // // Start live update for modal
+        // startModalLiveUpdate(requestData.id);
     }, 10);
 }
 
@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update main page after modal close
     function updateMainPageAfterModalClose() {
-        console.log('🔄 Updating main page after modal close...');
+
 
         // Check if we're on myrequests page
         if (!window.location.pathname.includes('myrequests')) {
@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function() {
         makeAjaxRequest('/unified/myrequests-data')
             .then(data => {
                 if (data.success) {
-                    console.log('📡 Updating page with new data after modal close...');
+
 
                     // Update page with new data
                     updatePageWithNewData(data);
@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 function stopModalLiveUpdate() {
     if (modalLiveUpdateInterval) {
-        console.log('⏹️ Stopping modal live update...');
+
         clearInterval(modalLiveUpdateInterval);
         modalLiveUpdateInterval = null;
         modalLastUpdateTime = null;
@@ -283,13 +283,13 @@ function checkModalForUpdates(requestId) {
                 const hasNewData = !modalLastUpdateTime || currentUpdateTime !== modalLastUpdateTime;
 
                 if (hasNewData) {
-                    console.log('📡 Modal data changed, updating softly...');
+
                     modalLastUpdateTime = currentUpdateTime;
 
                     // Softly update modal content
                     updateModalSoftly(data.request);
                 } else {
-                    console.log('✅ Modal data is up to date');
+
                 }
             }
         })
@@ -303,7 +303,7 @@ function checkModalForUpdates(requestId) {
 
 function updateModalSoftly(request) {
     try {
-        console.log('🔄 Updating modal softly...');
+
 
         // Update basic info
         const updates = [
@@ -353,7 +353,7 @@ function updateModalSoftly(request) {
             }
         }
 
-        console.log('✅ Modal updated successfully');
+
     } catch (error) {
         console.error('❌ Error updating modal:', error);
     }

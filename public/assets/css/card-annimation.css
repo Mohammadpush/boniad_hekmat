@@ -5,13 +5,7 @@
             transform: translateY(-8px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.12);
         }
-        .status-badge {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
+
         .action-btn {
             transition: all 0.2s ease;
         }

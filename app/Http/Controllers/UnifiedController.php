@@ -617,7 +617,7 @@ public function updateRequestField(Request $request)
         $request->validate([
             'request_id' => 'required|integer|exists:requests,id',
             'field_name' => 'required|string',
-            'field_value' => 'required|string'
+            'field_value' => 'required'
         ]);
 
         $requestModel = ModelRequest::findOrFail($request->request_id);

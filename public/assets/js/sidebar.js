@@ -15,46 +15,34 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set active menu item
     setActiveMenuItem();
 
-    // Apply saved state immediately without animation
-    if (!isSmallScreen) {
-        const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-        if (isCollapsed) {
-            applySidebarState(true, false); // collapsed, no animation
-        } else {
-            applySidebarState(false, false); // expanded, no animation
-        }
-    } else {
+    applySidebarState(true, false); // collapsed, no animation
+
         // For small screens, maintain state but start collapsed
         const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
         applySidebarState(isCollapsed, false); // keep saved state, no animation
         sidebar.style.transform = ''; // Don't hide sidebar
-    }
+
 
     // Toggle button click handler
     if (toggleBtn) {
         toggleBtn.addEventListener('click', function() {
-            if (isSmallScreen) {
+
                 // For small screens, use same logic as desktop but add overlay
-                if (sidebar.classList.contains('w-16')) {
+                if (!document.body.classList.contains('sidebar-open')) {
+                    document.body.classList.add('sidebar-open');
                     expandSidebar();
                     // Add overlay for mobile
-                    document.body.classList.add('sidebar-open');
-                    sidebar.classList.add('mobile-open');
+
+                    console.log('sidebar is open');
                 } else {
+                    document.body.classList.remove('sidebar-open');
                     collapseSidebar();
                     // Remove overlay for mobile
-                    document.body.classList.remove('sidebar-open');
-                    sidebar.classList.remove('mobile-open');
-                }
-                return;
-            }
 
-            // Desktop behavior
-            if (sidebar.classList.contains('w-16')) {
-                expandSidebar();
-            } else {
-                collapseSidebar();
-            }
+                    console.log('sidebar is close');
+                }
+
+
         });
     }
 
@@ -143,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (menuLabel) {
             menuLabel.style.opacity = '0';
             menuLabel.style.visibility = 'hidden';
+            console.log('menulabel find', menuLabel);
         }
         if (accountLabel) {
             accountLabel.style.opacity = '0';
@@ -177,23 +166,31 @@ document.addEventListener('DOMContentLoaded', function() {
         sidebar.classList.add('w-64');
 
         // Show text elements with delay
-        setTimeout(() => {
-            if (sidebarTitle) sidebarTitle.classList.remove('hidden');
-            if (menuLabel) {
-                menuLabel.style.opacity = '1';
-                menuLabel.style.visibility = 'visible';
-            }
-            if (accountLabel) {
-                accountLabel.style.opacity = '1';
-                accountLabel.style.visibility = 'visible';
-            }
-            menuTexts.forEach(text => text.classList.remove('hidden'));
+        if(document.body.classList.contains('sidebar-open'))
+        {
 
-            // Remove expanding class after animation
             setTimeout(() => {
-                sidebar.classList.remove('sidebar-expanding');
-            }, 300);
-        }, 200);
+                if (document.body.classList.contains('sidebar-open')) {
+
+                    if (sidebarTitle) sidebarTitle.classList.remove('hidden');
+                    if (menuLabel) {
+                        menuLabel.style.opacity = '1';
+                        menuLabel.style.visibility = 'visible';
+                        console.log('menu ldsfjl')
+                    }
+                    if (accountLabel) {
+                        accountLabel.style.opacity = '1';
+                        accountLabel.style.visibility = 'visible';
+                    }
+                    menuTexts.forEach(text => text.classList.remove('hidden'));
+
+                    // Remove expanding class after animation
+                    setTimeout(() => {
+                        sidebar.classList.remove('sidebar-expanding');
+                    }, 300);
+                }
+            }, 200);
+        }
 
         // Change icon back - FIXED DIRECTION
         if (toggleIcon) {
@@ -283,7 +280,9 @@ document.addEventListener('DOMContentLoaded', function() {
             sidebar.classList.add('mobile-open');
 
             // Show text elements with delay for smooth animation
+
             setTimeout(() => {
+
                 if (sidebarTitle) sidebarTitle.classList.remove('hidden');
                 if (menuLabel) {
                     menuLabel.style.opacity = '1';
