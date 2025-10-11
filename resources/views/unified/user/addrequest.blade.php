@@ -17,7 +17,7 @@
                     <p class="text-gray-600 text-sm mt-1">مرحله <span id="current-step">1</span> از 6</p>
                 </div>
                 <div class="text-left">
-                    <p class="text-sm text-gray-500">پیشرفت: <span id="progress-percent">17</span>%</p>
+                    <p class="text-sm text-gray-500">پیشرفت: <span id="progress-percent">17</span></p>
                 </div>
             </div>
 
@@ -25,37 +25,37 @@
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center step-indicator" data-step="1">
                     <div class="step-circle active w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold">1</div>
-                    <span class="mr-2 text-sm font-medium text-gray-700">اطلاعات شخصی</span>
+                    {{-- <span class="mr-2 text-sm font-medium text-gray-700">اطلاعات شخصی</span> --}}
                 </div>
                 <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
 
                 <div class="flex items-center step-indicator" data-step="2">
                     <div class="step-circle w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">2</div>
-                    <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات تحصیلی</span>
+                    {{-- <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات تحصیلی</span> --}}
                 </div>
                 <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
 
                 <div class="flex items-center step-indicator" data-step="3">
                     <div class="step-circle w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">3</div>
-                    <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات مسکن</span>
+                    {{-- <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات مسکن</span> --}}
                 </div>
                 <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
 
                 <div class="flex items-center step-indicator" data-step="4">
                     <div class="step-circle w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">4</div>
-                    <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات والدین</span>
+                    {{-- <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات والدین</span> --}}
                 </div>
                 <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
 
                 <div class="flex items-center step-indicator" data-step="5">
                     <div class="step-circle w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">5</div>
-                    <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات خانوادگی</span>
+                    {{-- <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات خانوادگی</span> --}}
                 </div>
                 <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
 
                 <div class="flex items-center step-indicator" data-step="6">
                     <div class="step-circle w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">6</div>
-                    <span class="mr-2 text-sm font-medium text-gray-500">سوالات نهایی</span>
+                    {{-- <span class="mr-2 text-sm font-medium text-gray-500">سوالات نهایی</span> --}}
                 </div>
             </div>
 
@@ -102,7 +102,7 @@
                         <div class="md:col-span-2">
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">نام و نام خانوادگی *</label>
                             <input type="text" id="name" name="name" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="نام و نام خانوادگی خود را وارد کنید">
                             <div class="error-message" id="name-error"></div>
                         </div>
@@ -111,7 +111,7 @@
                         <div>
                             <label for="birthdate" class="block text-sm font-medium text-gray-700 mb-2">تاریخ تولد *</label>
                             <input type="text" id="birthdate" name="birthdate" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="۱۴۰۰/۰۱/۰۱">
                             <div class="error-message" id="birthdate-error"></div>
                         </div>
@@ -120,7 +120,7 @@
                         <div>
                             <label for="nationalcode" class="block text-sm font-medium text-gray-700 mb-2">کد ملی *</label>
                             <input type="text" id="nationalcode" name="nationalcode" required maxlength="10"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
                                 placeholder="کد ملی 10 رقمی">
                             <div class="error-message" id="nationalcode-error"></div>
                         </div>
@@ -129,7 +129,7 @@
                         <div>
                             <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">شماره موبایل *</label>
                             <input type="text" id="phone" name="phone" required maxlength="11"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
                                 placeholder="09xxxxxxxxx">
                             <div class="error-message" id="phone-error"></div>
                         </div>
@@ -138,7 +138,7 @@
                         <div>
                             <label for="telephone" class="block text-sm font-medium text-gray-700 mb-2">تلفن ثابت</label>
                             <input type="text" id="telephone" name="telephone"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
                                 placeholder="021xxxxxxxx">
                             <div class="error-message" id="telephone-error"></div>
                         </div>
@@ -171,7 +171,7 @@
                         <div>
                             <label for="grade" class="block text-sm font-medium text-gray-700 mb-2">پایه تحصیلی *</label>
                             <select id="grade" name="grade" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <option value="">انتخاب کنید</option>
                                 <option value="اول">اول</option>
                                 <option value="دوم">دوم</option>
@@ -194,7 +194,7 @@
                             <label for="major_id" class="block text-sm font-medium text-gray-700 mb-2">رشته تحصیلی *</label>
                             <div class="relative">
                                 <input type="text" id="major_search"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="جستجو و انتخاب رشته تحصیلی..." autocomplete="off">
                                 <input type="hidden" id="major_id" name="major_id" value="">
 
@@ -217,7 +217,7 @@
                         <div>
                             <label for="school" class="block text-sm font-medium text-gray-700 mb-2">نام مدرسه *</label>
                             <input type="text" id="school" name="school" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="نام مدرسه خود را وارد کنید">
                             <div class="error-message" id="school-error"></div>
                         </div>
@@ -226,7 +226,7 @@
                         <div>
                             <label for="last_score" class="block text-sm font-medium text-gray-700 mb-2">معدل ترم قبل *</label>
                             <input type="number" id="last_score" name="last_score" required min="0" max="20" step="0.01"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="مثال: 18.50">
                             <div class="error-message" id="last_score-error"></div>
                         </div>
@@ -235,7 +235,7 @@
                         <div>
                             <label for="principal" class="block text-sm font-medium text-gray-700 mb-2">نام مدیر مدرسه *</label>
                             <input type="text" id="principal" name="principal" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="نام مدیر مدرسه">
                             <div class="error-message" id="principal-error"></div>
                         </div>
@@ -244,7 +244,7 @@
                         <div>
                             <label for="school_telephone" class="block text-sm font-medium text-gray-700 mb-2">تلفن مدرسه</label>
                             <input type="text" id="school_telephone" name="school_telephone"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
                                 placeholder="021xxxxxxxx">
                             <div class="error-message" id="school_telephone-error"></div>
                         </div>
@@ -277,7 +277,7 @@
                         <div>
                             <label for="rental" class="block text-sm font-medium text-gray-700 mb-2">وضعیت مسکن *</label>
                             <select id="rental" name="rental" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <option value="">انتخاب کنید</option>
                                 <option value="0">ملکی</option>
                                 <option value="1">استیجاری</option>
@@ -290,7 +290,7 @@
                     <div class="mt-6">
                         <label for="address" class="block text-sm font-medium text-gray-700 mb-2">آدرس کامل *</label>
                         <textarea id="address" name="address" required rows="4"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="آدرس کامل محل سکونت خود را وارد کنید"></textarea>
                         <div class="error-message" id="address-error"></div>
                     </div>
@@ -311,7 +311,7 @@
                             <div>
                                 <label for="father_name" class="block text-sm font-medium text-gray-700 mb-2">نام پدر *</label>
                                 <input type="text" id="father_name" name="father_name" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="نام پدر">
                                 <div class="error-message" id="father_name-error"></div>
                             </div>
@@ -320,7 +320,7 @@
                             <div>
                                 <label for="father_phone" class="block text-sm font-medium text-gray-700 mb-2">موبایل پدر *</label>
                                 <input type="text" id="father_phone" name="father_phone" required maxlength="11"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
+                                    class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
                                     placeholder="09xxxxxxxxx">
                                 <div class="error-message" id="father_phone-error"></div>
                             </div>
@@ -329,7 +329,7 @@
                             <div>
                                 <label for="father_job" class="block text-sm font-medium text-gray-700 mb-2">شغل پدر *</label>
                                 <input type="text" id="father_job" name="father_job" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="شغل پدر">
                                 <div class="error-message" id="father_job-error"></div>
                             </div>
@@ -338,7 +338,7 @@
                             <div>
                                 <label for="father_income" class="block text-sm font-medium text-gray-700 mb-2">درآمد ماهانه پدر (تومان) *</label>
                                 <input type="text" id="father_income" name="father_income" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent price-input"
+                                    class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent price-input"
                                     placeholder="مثال: 5,000,000">
                                 <div class="error-message" id="father_income-error"></div>
                             </div>
@@ -347,7 +347,7 @@
                             <div class="md:col-span-2">
                                 <label for="father_job_address" class="block text-sm font-medium text-gray-700 mb-2">آدرس محل کار پدر *</label>
                                 <textarea id="father_job_address" name="father_job_address" required rows="2"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="آدرس محل کار پدر"></textarea>
                                 <div class="error-message" id="father_job_address-error"></div>
                             </div>
@@ -362,7 +362,7 @@
                             <div>
                                 <label for="mother_name" class="block text-sm font-medium text-gray-700 mb-2">نام مادر *</label>
                                 <input type="text" id="mother_name" name="mother_name" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="نام مادر">
                                 <div class="error-message" id="mother_name-error"></div>
                             </div>
@@ -371,7 +371,7 @@
                             <div>
                                 <label for="mother_phone" class="block text-sm font-medium text-gray-700 mb-2">موبایل مادر *</label>
                                 <input type="text" id="mother_phone" name="mother_phone" required maxlength="11"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
+                                    class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent numinput"
                                     placeholder="09xxxxxxxxx">
                                 <div class="error-message" id="mother_phone-error"></div>
                             </div>
@@ -380,7 +380,7 @@
                             <div>
                                 <label for="mother_job" class="block text-sm font-medium text-gray-700 mb-2">شغل مادر *</label>
                                 <input type="text" id="mother_job" name="mother_job" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="شغل مادر">
                                 <div class="error-message" id="mother_job-error"></div>
                             </div>
@@ -389,7 +389,7 @@
                             <div>
                                 <label for="mother_income" class="block text-sm font-medium text-gray-700 mb-2">درآمد ماهانه مادر (تومان) *</label>
                                 <input type="text" id="mother_income" name="mother_income" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent price-input"
+                                    class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent price-input"
                                     placeholder="مثال: 3,000,000">
                                 <div class="error-message" id="mother_income-error"></div>
                             </div>
@@ -398,7 +398,7 @@
                             <div class="md:col-span-2">
                                 <label for="mother_job_address" class="block text-sm font-medium text-gray-700 mb-2">آدرس محل کار مادر *</label>
                                 <textarea id="mother_job_address" name="mother_job_address" required rows="2"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="آدرس محل کار مادر"></textarea>
                                 <div class="error-message" id="mother_job_address-error"></div>
                             </div>
@@ -418,7 +418,7 @@
                         <div>
                             <label for="siblings_count" class="block text-sm font-medium text-gray-700 mb-2">تعداد فرزندان خانواده *</label>
                             <input type="number" id="siblings_count" name="siblings_count" required min="1" max="20"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="مثال: 3">
                             <div class="error-message" id="siblings_count-error"></div>
                         </div>
@@ -469,7 +469,7 @@
                         <div>
                             <label for="know" class="block text-sm font-medium text-gray-700 mb-2">چگونه با بنیاد آشنا شدید؟ *</label>
                             <select id="know" name="know" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <option value="">انتخاب کنید</option>
                                 <option value="اینترنت">اینترنت</option>
                                 <option value="دوستان">دوستان</option>
@@ -484,7 +484,7 @@
                         <div>
                             <label for="counseling_method" class="block text-sm font-medium text-gray-700 mb-2">روش مشاوره مورد نظر *</label>
                             <select id="counseling_method" name="counseling_method" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <option value="">انتخاب کنید</option>
                                 <option value="مدرسه">مشاوره در مدرسه</option>
                                 <option value="خارجی">مشاوره خارجی</option>
@@ -498,7 +498,7 @@
                         <div>
                             <label for="why_counseling_method" class="block text-sm font-medium text-gray-700 mb-2">دلیل انتخاب این روش مشاوره</label>
                             <textarea id="why_counseling_method" name="why_counseling_method" rows="3"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="دلیل انتخاب روش مشاوره را توضیح دهید"></textarea>
                             <div class="error-message" id="why_counseling_method-error"></div>
                         </div>
@@ -517,7 +517,7 @@
                         <div>
                             <label for="motivation" class="block text-sm font-medium text-gray-700 mb-2">انگیزه شما برای درخواست بورسیه چیست؟ *</label>
                             <textarea id="motivation" name="motivation" required rows="4"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="حداقل 30 کلمه"></textarea>
                             <p class="text-xs text-gray-500 mt-1">حداقل 30 کلمه</p>
                             <div class="error-message" id="motivation-error"></div>
@@ -527,7 +527,7 @@
                         <div>
                             <label for="spend" class="block text-sm font-medium text-gray-700 mb-2">در صورت دریافت کمک مالی، چگونه از آن استفاده می‌کنید؟ *</label>
                             <textarea id="spend" name="spend" required rows="4"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="نحوه استفاده از کمک مالی را توضیح دهید"></textarea>
                             <div class="error-message" id="spend-error"></div>
                         </div>
@@ -536,7 +536,7 @@
                         <div>
                             <label for="how_am_i" class="block text-sm font-medium text-gray-700 mb-2">خودتان را معرفی کنید *</label>
                             <textarea id="how_am_i" name="how_am_i" required rows="4"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="درباره خودتان، علایق، نقاط قوت و ضعف بنویسید"></textarea>
                             <div class="error-message" id="how_am_i-error"></div>
                         </div>
@@ -545,7 +545,7 @@
                         <div>
                             <label for="favorite_major" class="block text-sm font-medium text-gray-700 mb-2">رشته مورد علاقه شما برای ادامه تحصیل چیست؟ *</label>
                             <input type="text" id="favorite_major" name="favorite_major" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="مثال: مهندسی کامپیوتر">
                             <div class="error-message" id="favorite_major-error"></div>
                         </div>
@@ -554,7 +554,7 @@
                         <div>
                             <label for="future" class="block text-sm font-medium text-gray-700 mb-2">برنامه‌های آینده شما چیست؟ *</label>
                             <textarea id="future" name="future" required rows="4"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="برنامه‌های تحصیلی، شغلی و زندگی خود را بنویسید"></textarea>
                             <div class="error-message" id="future-error"></div>
                         </div>
@@ -591,7 +591,7 @@
                         <div>
                             <label for="suggestion" class="block text-sm font-medium text-gray-700 mb-2">پیشنهادات شما برای بهتر شدن عملکرد بنیاد</label>
                             <textarea id="suggestion" name="suggestion" rows="4"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="پیشنهادات خود را بنویسید"></textarea>
                             <div class="error-message" id="suggestion-error"></div>
                         </div>

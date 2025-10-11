@@ -5,15 +5,16 @@
 <div id="requestDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 ">
     <div class="flex items-center justify-center min-h-screen p-2">
         {{-- دکمه بستن کنار مودال (سمت راست بالا) --}}
-        <div class="relative w-full max-w-7xl">
+        <div class="relative pt-[24px] pr-[24px]">
+
             <button type="button" id="closeRequestDetailModal"
-                class="absolute -top-4 -right-4 bg-red-400 hover:bg-red-700 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-colors z-10">
+                class="absolute top-[9px] right-[9px] bg-red-400 hover:bg-red-700 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-colors z-10">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
-
-            <div class="bg-white rounded-2xl w-full max-h-[95vh] overflow-y-auto shadow-2xl modal-content p-[24px]">
+            <div class="bg-white rounded-2xl w-full max-h-[95vh] overflow-y-auto shadow-2xl modal-content p-[24px] mx-auto overflow-visible ">
+                {{-- دکمه بستن مودال --}}
                 {{-- محتوای مودال --}}
                 <div class="p-8 bg-gray-50">
                     {{-- محتوای اصلی بدون grid اضافی --}}

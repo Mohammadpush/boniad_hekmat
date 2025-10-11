@@ -73,42 +73,7 @@ function updateCard(cardElement, requestData) {
         }
 
         // Update status
-        const statusBadge = cardElement.querySelector('.status-badge');
-        if (statusBadge) {
-            statusBadge.className = 'status-badge px-3 py-1 rounded-full text-xs font-medium border';
 
-            let statusColor = '';
-            let statusText = '';
-
-            switch(requestData.story) {
-                case 'submit':
-                    statusColor = 'bg-blue-100 text-blue-700 border-blue-200';
-                    statusText = '📤 ارسال شده';
-                    break;
-                case 'accept':
-                    statusColor = 'bg-green-100 text-green-700 border-green-200';
-                    statusText = '✅ تایید شده';
-                    break;
-                case 'check':
-                    statusColor = 'bg-yellow-100 text-yellow-700 border-yellow-200';
-                    statusText = '🔍 در حال بررسی';
-                    break;
-                case 'reject':
-                    statusColor = 'bg-red-100 text-red-700 border-red-200';
-                    statusText = '❌ رد شده';
-                    break;
-                case 'epointment':
-                    statusColor = 'bg-purple-100 text-purple-700 border-purple-200';
-                    statusText = '📅 ملاقات';
-                    break;
-                default:
-                    statusColor = 'bg-gray-100 text-gray-700 border-gray-200';
-                    statusText = '❓ نامشخص';
-            }
-
-            statusBadge.className += ' ' + statusColor;
-            statusBadge.textContent = statusText;
-        }
 
         // Update onclick for view button
         const viewButton = cardElement.querySelector('button[onclick*="openRequestDetailModal"]');

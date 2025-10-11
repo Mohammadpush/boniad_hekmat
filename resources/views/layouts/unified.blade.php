@@ -162,15 +162,15 @@
 
         <!-- Main Content -->
         <div class="flex-1 min-[658px]:mr-[63px]  w-full ">
-            <div class=" shadow hide max-[342px]:h-[80px]">
+            <div class=" shadow hide max-[342px]:h-[80px] fixed bg-gray-100 z-[2] max-[658px]:w-full">
                 <div class="px-3 py-4  ">
                     <button class="navbar-toggle max-[658px]:block min-[659px]:hidden z-[50]">
                         <span class="bar"></span>
                         <span class="bar"></span>
                         <span class="bar"></span>
                     </button>
-                    <div class="flex justify-between gap-6 w-[calc(100vw_-_80px)] mr-auto ">
-                        <h1 class="text-black text-[clamp(1rem,3.5vw,1.25rem)] font-bold h-fit my-auto">
+                    <div class="flex justify-between gap-6 w-[calc(100vw_-_90px)] mr-auto px-4 ">
+                        <h1 class="text-black text-[clamp(0.7rem,3.5vw,1.25rem)] font-bold h-fit my-auto">
                             @yield('title')
                         </h1>
                 <a href="{{ route('unified.requestform') }}" class="bg-green-500 text-center rounded-3xl flex w-[clamp(100px,25vw,150px)] max-[342px]:fixed max-[342px]:bottom-0 max-[342px]:w-[100vw] max-[342px]:left-0  max-[342px]:rounded-none z-20 h-[50px] justify-center ">
@@ -214,8 +214,10 @@
                 <li><a href="{{ route('logout') }}"
                         class="lamp block py-4 text-lg text-gray-700 hover:text-red-600">خروج</a></li>
             </ul>
+            <main class=" mt-[80px]">
 
-            @yield('content')
+                @yield('content')
+            </main>
         </div>
     </div>
 

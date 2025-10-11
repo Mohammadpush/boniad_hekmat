@@ -54,43 +54,40 @@
                         <div class="card-hover bg-gradient-to-br from-white to-gray-50 w-72 h-96 flex flex-col items-center justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden select-none">
 
                             <!-- آیکون وضعیت در گوشه -->
-                                                    <div class="absolute top-4 right-4">
-                                                        <div
-                                                            class="status-badge px-3 py-1 rounded-full text-xs font-medium border
-                                                        {{ $request->story === 'submit'
-                                                            ? 'bg-blue-100 text-blue-700 border-blue-200'
-                                                            : ($request->story === 'accept'
-                                                                ? 'bg-green-100 text-green-700 border-green-200'
-                                                                : ($request->story === 'check'
-                                                                    ? 'bg-yellow-100 text-yellow-700 border-yellow-200'
-                                                                    : ($request->story === 'reject'
-                                                                        ? 'bg-red-100 text-red-700 border-red-200'
-                                                                        : ($request->story === 'epointment'
-                                                                            ? 'bg-purple-100 text-purple-700 border-purple-200'
-                                                                            : 'bg-gray-100 text-gray-700 border-gray-200')))) }}">
-                                                            {{ $request->story === 'submit'
-                                                                ? '📤 ارسال شده'
-                                                                : ($request->story === 'accept'
-                                                                    ? '✅ تایید شده'
-                                                                    : ($request->story === 'check'
-                                                                        ? '🔍 در حال بررسی'
-                                                                        : ($request->story === 'reject'
-                                                                            ? '❌ رد شده'
-                                                                            : ($request->story === 'epointment'
-                                                                                ? '📅 ملاقات'
-                                                                                : '❓ نامشخص')))) }}
-                                                        </div>
-                                                    </div>
 
-                                                    <!-- تصویر پروفایل -->
-                                                    <div class="relative mb-4">
-                                                        <img src="{{ route('img', ['filename' => $request->imgpath]) }}"
-                                                            alt="تصویر کاربر"
-                                                            class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white">
-                                                        <div
-                                                            class="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white">
-                                                        </div>
-                                                    </div>
+                            <!-- تصویر پروفایل -->
+                            <div class="relative mb-4">
+                                <img src="{{ route('img', ['filename' => $request->imgpath]) }}"
+                                alt="تصویر کاربر"
+                                class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white">
+                        </div>
+                        <div class="absolute bottom-[13.5rem] left-1/2 transform -translate-x-1/2">
+                            <div
+                                class="status-badge px-3 py-1 text-white rounded-full text-xs font-medium
+                            {{ $request->story === 'submit'
+                                ? 'bg-blue-500 '
+                                : ($request->story === 'accept'
+                                    ? 'bg-green-500'
+                                    : ($request->story === 'check'
+                                        ? 'bg-yellow-500'
+                                        : ($request->story === 'reject'
+                                            ? 'bg-red-500'
+                                            : ($request->story === 'epointment'
+                                                ? 'bg-pink-600'
+                                                : 'bg-gray-500')))) }}">
+                                {{ $request->story === 'submit'
+                                    ? ' ارسال شده'
+                                    : ($request->story === 'accept'
+                                        ? ' تایید شده'
+                                        : ($request->story === 'check'
+                                            ? ' در  حال بررسی'
+                                            : ($request->story === 'reject'
+                                                ? ' رد شده'
+                                                : ($request->story === 'epointment'
+                                                    ? '  قرارملاقات'
+                                                    : ' نامشخص')))) }}
+                            </div>
+                        </div>
 
                                                     <!-- اطلاعات کاربر -->
                                                     <div class="text-center mb-6">

@@ -35,7 +35,7 @@ function openRequestDetailModal(requestData, cardElement = null) {
     switch(requestData.story) {
         case 'check':
             statusColor = 'bg-yellow-500';
-            statusText = 'در انتظار';
+            statusText = 'در حال بررسی';
             break;
         case 'accept':
             statusColor = 'bg-green-500';
