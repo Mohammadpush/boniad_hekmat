@@ -1,4 +1,6 @@
-
+@php
+    use Illuminate\Support\Facades\Auth;
+@endphp
                         {{-- Container اصلی grid --}}
                     <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
                         {{-- ستون چپ - پروفایل و اطلاعات شخصی --}}
@@ -273,7 +275,13 @@
                                                 </button>
                                             </div>
                                         </div>
-
+                                        @if (Auth::user()->role != 'user')
+                                            <form method="POST" action="{{ route('unified.accept') }}">
+                                                @csrf
+                                                <input type="hidden" name="id" class="requestid">
+                                                <button type="submit" class="w-[100px] h-[20px] rounded-[20px] bg-green-500">تایید درخواست</button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

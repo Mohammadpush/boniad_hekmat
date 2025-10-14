@@ -170,13 +170,9 @@
                         <span class="bar"></span>
                     </button>
                     <div class="flex justify-between gap-6 w-[calc(100vw_-_90px)] mr-auto px-4 ">
-                        <h1 class="text-black text-[clamp(0.7rem,3.5vw,1.25rem)] font-bold h-fit my-auto">
-                            @yield('title')
-                        </h1>
-                <a href="{{ route('unified.requestform') }}" class="bg-green-500 text-center rounded-3xl flex w-[clamp(100px,25vw,150px)] max-[342px]:fixed max-[342px]:bottom-0 max-[342px]:w-[100vw] max-[342px]:left-0  max-[342px]:rounded-none z-20 h-[50px] justify-center ">
+                        @yield('title')
 
-                <span class="h-fit m-auto text-[clamp(0.5rem,3vw,1rem)] max-[342px]:text-base">افزودن درخواست +</span>
-                </a>
+
                 </div>
 
                 </div>
@@ -232,7 +228,7 @@
     <!-- Layout JavaScript -->
     <script src="{{ asset('assets/js/layouts/unified-layout.js') }}"></script>
     <script src="{{ asset('assets/js/search-functionality.js') }}"></script>
-
+    
     @yield('scripts')
 </body>
 

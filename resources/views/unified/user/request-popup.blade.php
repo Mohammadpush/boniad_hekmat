@@ -1,4 +1,7 @@
+
 {{-- CSS فایل‌ها --}}
+
+
 <link rel="stylesheet" href="{{ asset('assets/css/request-detail.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/request-detail-popup/slider-styles.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/request-detail-popup/progress-bar-styles.css') }}">{{-- مودال جزئیات درخواست برای کاربران --}}
@@ -34,7 +37,7 @@
                                             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                                     </svg>
                                 </div>
-                                <h3 class="text-2xl font-bold text-gray-800">اطلاعات مسکن</h3>
+                                <h3 class="text-2xl font-bold text-gray-800">اطلاعات مسکن {{ $request->story }}</h3>
                             </div>
 
                             <div class="space-y-4">
@@ -44,6 +47,8 @@
                                     <div class="flex items-center justify-between">
                                         <span id="modalRentalDisplay"
                                             class="text-lg font-semibold text-gray-800"></span>
+
+
                                         <form id="modalRentalForm" class="hidden items-center space-x-2 space-x-reverse"
                                             style="margin:0;">
                                             <select id="modalRentalInput"
@@ -1184,4 +1189,3 @@
     <script src="{{ asset('assets/js/request-detail-popup/modal-core.js') }}"></script>
     <script src="{{ asset('assets/js/request-detail-popup/field-management.js') }}"></script>
     <script src="{{ asset('assets/js/request-detail-popup/data-upload.js') }}"></script>
-    <script src="{{ asset('assets/js/popup-functionality.js') }}"></script>

@@ -7,9 +7,8 @@ let modalLastUpdateTime = null;
 let modalIsUpdating = false;
 
 // Open modal function
-function openRequestDetailModal(requestData, cardElement = null) {
+function openRequestDetailModal(requestData, cardElement = null, isadmin = false) {
     const modal = document.getElementById('requestDetailModal');
-
     // Store request ID for editing
     window.currentRequestId = requestData.id;
 
@@ -20,13 +19,24 @@ function openRequestDetailModal(requestData, cardElement = null) {
             cardElement.classList.remove('card-animate-to-center');
         }, 600);
     }
+    if (isadmin && requestData.story) {
+// المان‌هایی که id آنها با "edit" شروع می‌شود و با "lBtn" تمام می‌شود
+const editbtns = document.querySelectorAll('[id^="edit"][id$="Btn"]');
+        editbtns.forEach(editbtn => {
+            editbtn.classList.add('hidden');
+        });
+    }
 
     // Fill profile information
     document.getElementById('modalProfileImg').src = requestData.imgpath_url;
     document.getElementById('modalProfileImg').alt = requestData.name;
     document.getElementById('modalUserName').textContent = requestData.name;
     document.getElementById('modalUserGrade').textContent = 'پایه ' + requestData.grade;
-
+    const requestid =document.querySelectorAll('.requestid');
+    requestid.forEach(id => {
+        id.value = requestData.id
+        console.log('requst id is set')
+    });
     // Set status
     const statusBadge = document.getElementById('modalStatusBadge');
     let statusColor = '';
@@ -40,6 +50,7 @@ function openRequestDetailModal(requestData, cardElement = null) {
         case 'accept':
             statusColor = 'bg-green-500';
             statusText = 'تایید شده';
+
             break;
         case 'reject':
             statusColor = 'bg-red-500';

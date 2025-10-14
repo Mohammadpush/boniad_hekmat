@@ -1,12 +1,43 @@
 // اسکریپت مخصوص صفحه درخواست‌های من
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // مدیریت کارت شماره بانکی
     initCardNumberInput();
 
     // مدیریت پاپ‌آپ
     initPopupHandlers();
 });
+function opencardnumberpopup(requestData) {
+    const popup = document.getElementById('popup');
+    const inputid = document.getElementById('cardnumberpopupid')
+    if (popup) {
+        popup.style.display = 'Block';
+        popup.classList.remove('hidden');
 
+        inputid.value = requestData.id;
+        console.log('function clicked', requestData);  // حالا id رو هم لاگ می‌کنه
+
+        // ریست کردن فرم و تنظیم فوکوس
+        if (typeof window.resetCardForm === 'function') {
+            window.resetCardForm();
+        }
+
+        // تأخیر برای فوکوس صحیح
+        setTimeout(() => {
+            const hiddenInput = document.getElementById('cardNumberInput');
+            if (hiddenInput) {
+                hiddenInput.focus();
+            }
+        }, 100);
+
+    } else {
+        console.error('Popup element not found!');
+    }
+    if (requestData.cardnumber) {
+        const title = document.getElementById('card-title');
+        title.innerText = 'ویرایش شماره کارت';
+        requestData.cardnumber = requestData.cardnumber.toString().split('');
+    }
+}
 function initCardNumberInput() {
     const digits = document.querySelectorAll('.card-digit');
     const hiddenInput = document.getElementById('cardNumberInput');
@@ -26,7 +57,7 @@ function initCardNumberInput() {
                 digit.classList.remove('border-gray-300', 'bg-gray-50');
             } else {
                 digit.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
-                if (cardNumber[index] !== '0') {
+                if (digit.textContent !== 'X') {
                     digit.classList.add('border-green-500', 'bg-green-50');
                     digit.classList.remove('border-gray-300', 'bg-gray-50');
                 } else {
@@ -60,23 +91,11 @@ function initCardNumberInput() {
         }
     }
 
-    // ریست کردن فرم
-    function resetForm() {
-        currentIndex = 0;
-        cardNumber = ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'];
-        digits.forEach((digit, index) => {
-            digit.textContent = '0';
-            digit.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200',
-                'border-green-500', 'bg-green-50', 'bg-green-100', 'animate-pulse');
-            digit.classList.add('border-gray-300', 'bg-gray-50');
-        });
-        finalInput.value = '';
-        focusCurrentDigit();
-    }
+
 
     // مدیریت کلیک روی مستطیل‌ها
     digits.forEach((digit, index) => {
-        digit.addEventListener('click', function() {
+        digit.addEventListener('click', function () {
             currentIndex = index;
             focusCurrentDigit();
             hiddenInput.focus();
@@ -84,10 +103,10 @@ function initCardNumberInput() {
     });
 
     // مدیریت ورودی کیبورد
-    hiddenInput.addEventListener('input', function(e) {
+    hiddenInput.addEventListener('input', function (e) {
         const value = e.target.value.replace(/\D/g, '');
 
-        if (value.length > 0) {
+        if (value.length > -1) {
             const lastDigit = value[value.length - 1];
 
             // تنظیم رقم در موقعیت فعلی
@@ -107,17 +126,17 @@ function initCardNumberInput() {
     });
 
     // مدیریت کلیدهای ویژه
-    hiddenInput.addEventListener('keydown', function(e) {
+    hiddenInput.addEventListener('keydown', function (e) {
         if (e.key === 'Backspace') {
             e.preventDefault();
 
-            if (cardNumber[currentIndex] !== '0') {
+            if (cardNumber[currentIndex] == 'X') {
                 cardNumber[currentIndex] = '0';
-                digits[currentIndex].textContent = '0';
-            } else if (currentIndex > 0) {
+                digits[currentIndex].textContent = 'X';
+            } else {
                 currentIndex--;
                 cardNumber[currentIndex] = '0';
-                digits[currentIndex].textContent = '0';
+                digits[currentIndex].textContent = 'X';
             }
 
             focusCurrentDigit();
@@ -140,22 +159,42 @@ function initCardNumberInput() {
     // مدیریت باز شدن پاپ‌آپ
     const openButtons = document.querySelectorAll('#openpopup');
     openButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            popup.classList.toggle('hidden');
+        button.addEventListener('click', function () {
+            popup.classList.remove('hidden');
+            popup.style.display = 'block';
             resetForm();
-            setTimeout(() => {
-                hiddenInput.focus();
-            }, 100);
         });
     });
 
     // کلیک روی کل منطقه برای فوکس
     const cardContainer = document.querySelector('[dir="ltr"]');
     if (cardContainer) {
-        cardContainer.addEventListener('click', function() {
+        cardContainer.addEventListener('click', function () {
             hiddenInput.focus();
         });
     }
+
+    // ریست کردن فرم - انتقال داخل initCardNumberInput
+    function resetForm() {
+        currentIndex = 0;
+        cardNumber = ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'];
+        digits.forEach((digit, index) => {
+            digit.textContent = 'X';
+            digit.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200',
+                'border-green-500', 'bg-green-50', 'bg-green-100', 'animate-pulse');
+            digit.classList.add('border-gray-300', 'bg-gray-50');
+        });
+        finalInput.value = '';
+
+        // تأخیر کوتاه برای اطمینان از اینکه DOM آپدیت شده باشد
+        setTimeout(() => {
+            focusCurrentDigit();
+            hiddenInput.focus();
+        }, 10);
+    }
+
+    // اضافه کردن resetForm به window تا سایر قسمت‌ها بتوانند از آن استفاده کنند
+    window.resetCardForm = resetForm;
 }
 
 function initPopupHandlers() {
@@ -166,25 +205,34 @@ function initPopupHandlers() {
 
     // مدیریت بستن پاپ‌آپ
     if (closeButton) {
-        closeButton.addEventListener('click', function() {
+        closeButton.addEventListener('click', function () {
             popup.classList.add('hidden');
             popup.style.display = 'none';
+            if (typeof window.resetCardForm === 'function') {
+                window.resetCardForm();
+            }
         });
     }
 
     // بستن پاپ‌آپ با کلیک روی پس‌زمینه
-    popup.addEventListener('click', function(e) {
+    popup.addEventListener('click', function (e) {
         if (e.target === popup) {
             popup.classList.add('hidden');
             popup.style.display = 'none';
+            if (typeof window.resetCardForm === 'function') {
+                window.resetCardForm();
+            }
         }
     });
 
     // بستن پاپ‌آپ با کلید Escape
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && !popup.classList.contains('hidden')) {
             popup.classList.add('hidden');
             popup.style.display = 'none';
+            if (typeof window.resetCardForm === 'function') {
+                window.resetCardForm();
+            }
         }
     });
 }

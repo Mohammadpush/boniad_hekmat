@@ -1,15 +1,131 @@
 @extends('layouts.unified')
 
 @section('head')
-    <!-- استایل‌های عمومی -->
-    <link rel="stylesheet" href="{{ asset('assets/css/common/animations.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/common/scroll-containers.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/common/ui-elements.css') }}">
+    <style>
 
-    <!-- استایل‌های مخصوص این صفحه -->
-    <link rel="stylesheet" href="{{ asset('assets/css/pages/allrequests/styles.css') }}">
+
+        /* انیمیشن smooth scroll */
+        .scroll-container {
+            scroll-behavior: smooth;
+        }
+
+        /* افکت hover برای کارت‌ها */
+        .card-hover:hover {
+            transform: translateY(-4px);
+
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* استایل دکمه مشاهده همه */
+        .view-all-btn svg {
+            transition: transform 0.2s ease;
+        }
+
+        .view-all-btn.expanded svg {
+            transform: rotate(180deg);
+        }
+
+        /* کانتینر اسکرول افقی */
+        .scroll-wrapper {
+            width:100%;
+            position: relative;
+            container-type: inline-size;
+        }
+
+        .horizontal-scroll-container {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: 320px;
+            gap: 1.5rem;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            padding: 1rem 0;
+            scrollbar-width: none;
+            width: 100%;
+            max-width: 100%;
+        }
+
+
+        /* کارت‌ها در اسکرول افقی */
+        .horizontal-scroll-container .card-hover {
+            width: 320px;
+            min-width: 320px;
+            max-width: 320px;
+            flex-shrink: 0;
+            animation: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* جلوگیری از شکستگی layout */
+        .overflow-x-auto {
+            max-width: 100%;
+            position: relative;
+        }
+
+        /* تضمین عدم تاثیر بر کل صفحه */
+        .space-y-8 {
+            max-width: 100%;
+            overflow: visible;
+        }
+
+        /* نمایش اسکرول بار در حالت مشاهده همه */
+        .show-scrollbar {
+            scrollbar-width: thin;
+            -ms-overflow-style: auto;
+        }
+
+        .show-scrollbar::-webkit-scrollbar {
+            display: block;
+            height: 8px;
+        }
+
+        .show-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .show-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .show-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* استایل‌های دکمه‌های کنترل */
+        .control-btn {
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* انیمیشن برای تغییر دسته‌بندی */
+        .category-transition {
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* استایل‌های رنگی برای گروه‌های مختلف */
+        .bg-orange-100 { background-color: #fed7aa; }
+        .text-orange-700 { color: #c2410c; }
+        .bg-orange-500 { background-color: #f97316; }
+    </style>
 @endsection
-
 
 @section('page-title', 'درخواست‌های من')
 
@@ -66,42 +182,18 @@
 
                     // دسته‌بندی بر اساس پایه
                     $gradeGroups = [
-                        'elementary' => [
-                            'label' => '🎒 ابتدایی (1-6)',
-                            'grades' => ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم'],
-                            'color' => 'green',
-                        ],
-                        'middle' => [
-                            'label' => '🎓 متوسطه اول (7-9)',
-                            'grades' => ['هفتم', 'هشتم', 'نهم'],
-                            'color' => 'blue',
-                        ],
-                        'high' => [
-                            'label' => '🏆 متوسطه دوم (10-12)',
-                            'grades' => ['دهم', 'یازدهم', 'دوازدهم'],
-                            'color' => 'purple',
-                        ],
+                        'elementary' => ['label' => '🎒 ابتدایی (1-6)', 'grades' => ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم'], 'color' => 'green'],
+                        'middle' => ['label' => '🎓 متوسطه اول (7-9)', 'grades' => ['هفتم', 'هشتم', 'نهم'], 'color' => 'blue'],
+                        'high' => ['label' => '🏆 متوسطه دوم (10-12)', 'grades' => ['دهم', 'یازدهم', 'دوازدهم'], 'color' => 'purple']
                     ];
 
                     // دسته‌بندی بر اساس حروف الفبا
                     $alphabetGroups = [
-                        'group1' => [
-                            'label' => '🔤 الف - چ',
-                            'chars' => ['آ', 'ا', 'ب', 'پ', 'ت', 'ث', 'ج', 'چ'],
-                            'color' => 'red',
-                        ],
-                        'group2' => [
-                            'label' => '🔤 ح - ع',
-                            'chars' => ['ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'ژ', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع'],
-                            'color' => 'orange',
-                        ],
-                        'group3' => [
-                            'label' => '🔤 غ - م',
-                            'chars' => ['غ', 'ف', 'ق', 'ک', 'گ', 'ل', 'م'],
-                            'color' => 'yellow',
-                        ],
+                        'group1' => ['label' => '🔤 الف - چ', 'chars' => ['آ', 'ا', 'ب', 'پ', 'ت', 'ث', 'ج', 'چ'], 'color' => 'red'],
+                        'group2' => ['label' => '🔤 ح - ع', 'chars' => ['ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'ژ', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع'], 'color' => 'orange'],
+                        'group3' => ['label' => '🔤 غ - م', 'chars' => ['غ', 'ف', 'ق', 'ک', 'گ', 'ل', 'م'], 'color' => 'yellow'],
                         'group4' => ['label' => '🔤 ن - ی', 'chars' => ['ن', 'و', 'ه', 'ی'], 'color' => 'green'],
-                        'group5' => ['label' => '🔤 سایر حروف', 'chars' => [], 'color' => 'gray'],
+                        'group5' => ['label' => '🔤 سایر حروف', 'chars' => [], 'color' => 'gray']
                     ];
                 @endphp
 
@@ -149,14 +241,16 @@
                                 <div>
                                     <p class="text-purple-100 text-sm">دسته‌بندی/مرتب‌سازی</p>
                                     <p class="text-lg font-bold">
-                                        {{ $currentGroupType === 'status' ? 'وضعیت' : ($currentGroupType === 'grade' ? 'پایه' : 'حروف الفبا') }}
-                                        @if ($currentGroupType !== 'status')
+                                        {{ $currentGroupType === 'status' ? 'وضعیت' :
+                                           ($currentGroupType === 'grade' ? 'پایه' : 'حروف الفبا') }}
+                                        @if($currentGroupType !== 'status')
                                             / {{ $sortOrder === 'asc' ? 'صعودی' : 'نزولی' }}
                                         @endif-
                                     </p>
                                 </div>
                                 <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                                    {{ $currentGroupType === 'status' ? '📊' : ($currentGroupType === 'grade' ? '🎓' : '🔤') }}
+                                    {{ $currentGroupType === 'status' ? '📊' :
+                                       ($currentGroupType === 'grade' ? '🎓' : '🔤') }}
                                 </div>
                             </div>
                         </div>
@@ -168,21 +262,19 @@
                             <div class="flex items-center mb-3">
 
                                 <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
                                     </svg>
                                 </div>
                                 <h3 class="text-lg font-semibold text-gray-800">تنظیمات نمایش و مرتب‌سازی</h3>
-                                <div class="search-bar" action="" dir="ltr">
-                                    <input class="search-input" required="" name="search" type="search"
-                                        id="searchInput" autocomplete="off" placeholder="جستجو..." dir="rtl">
-                                    <button type="reset" class="search-btn"
-                                        onclick="this.previousElementSibling.value=''; this.previousElementSibling.blur();">
-                                        <span>Search/Close</span>
-                                    </button>
-                                </div>
+                                        <div class="search-bar" action="" dir="ltr">
+            <input class="search-input" required="" name="search" type="search" id="searchInput"
+                autocomplete="off" placeholder="جستجو..." dir="rtl">
+            <button type="reset" class="search-btn"
+                onclick="this.previousElementSibling.value=''; this.previousElementSibling.blur();">
+                <span>Search/Close</span>
+            </button>
+        </div>
                             </div>
 
                             <div class="flex flex-wrap items-center justify-between gap-4">
@@ -190,34 +282,34 @@
                                     <span class="text-sm font-medium text-gray-700">دسته‌بندی بر اساس:</span>
                                     <div class="flex gap-2">
                                         <button onclick="changeGroupType('status')"
-                                            class="control-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $currentGroupType === 'status' ? 'bg-blue-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-blue-50 border border-gray-200' }}">
+                                           class="control-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $currentGroupType === 'status' ? 'bg-blue-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-blue-50 border border-gray-200' }}">
                                             📊 وضعیت
                                         </button>
                                         <button onclick="changeGroupType('grade')"
-                                            class="control-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $currentGroupType === 'grade' ? 'bg-blue-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-blue-50 border border-gray-200' }}">
+                                           class="control-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $currentGroupType === 'grade' ? 'bg-blue-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-blue-50 border border-gray-200' }}">
                                             🎓 پایه تحصیلی
                                         </button>
                                         <button onclick="changeGroupType('alphabet')"
-                                            class="control-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $currentGroupType === 'alphabet' ? 'bg-blue-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-blue-50 border border-gray-200' }}">
+                                           class="control-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $currentGroupType === 'alphabet' ? 'bg-blue-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-blue-50 border border-gray-200' }}">
                                             🔤 حروف الفبا
                                         </button>
                                     </div>
                                 </div>
 
-                                @if ($currentGroupType !== 'status')
-                                    <div class="flex items-center gap-3">
-                                        <span class="text-sm font-medium text-gray-700">ترتیب:</span>
-                                        <div class="flex gap-2">
-                                            <button onclick="changeSortOrder('asc')"
-                                                class="control-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $sortOrder === 'asc' ? 'bg-green-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-green-50 border border-gray-200' }}">
-                                                ↑ صعودی
-                                            </button>
-                                            <button onclick="changeSortOrder('desc')"
-                                                class="control-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $sortOrder === 'desc' ? 'bg-red-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-red-50 border border-gray-200' }}">
-                                                ↓ نزولی
-                                            </button>
-                                        </div>
+                                @if($currentGroupType !== 'status')
+                                <div class="flex items-center gap-3">
+                                    <span class="text-sm font-medium text-gray-700">ترتیب:</span>
+                                    <div class="flex gap-2">
+                                        <button onclick="changeSortOrder('asc')"
+                                           class="control-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $sortOrder === 'asc' ? 'bg-green-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-green-50 border border-gray-200' }}">
+                                            ↑ صعودی
+                                        </button>
+                                        <button onclick="changeSortOrder('desc')"
+                                           class="control-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $sortOrder === 'desc' ? 'bg-red-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-red-50 border border-gray-200' }}">
+                                            ↓ نزولی
+                                        </button>
                                     </div>
+                                </div>
                                 @endif
                             </div>
                         </div>
@@ -236,47 +328,23 @@
                                 $currentGroups = $gradeGroups;
                                 $groupedData = [];
                                 foreach ($gradeGroups as $key => $group) {
-                                    $groupRequests = $requests->filter(function ($request) use ($group) {
+                                    $groupRequests = $requests->filter(function($request) use ($group) {
                                         return in_array($request->grade, $group['grades']);
                                     });
 
                                     // مرتب‌سازی بر اساس پایه
                                     if ($sortOrder === 'asc') {
                                         // صعودی: از پایه کم به زیاد
-                                        $gradeOrder = [
-                                            'اول' => 1,
-                                            'دوم' => 2,
-                                            'سوم' => 3,
-                                            'چهارم' => 4,
-                                            'پنجم' => 5,
-                                            'ششم' => 6,
-                                            'هفتم' => 7,
-                                            'هشتم' => 8,
-                                            'نهم' => 9,
-                                            'دهم' => 10,
-                                            'یازدهم' => 11,
-                                            'دوازدهم' => 12,
-                                        ];
-                                        $groupRequests = $groupRequests->sortBy(function ($request) use ($gradeOrder) {
+                                        $gradeOrder = ['اول' => 1, 'دوم' => 2, 'سوم' => 3, 'چهارم' => 4, 'پنجم' => 5, 'ششم' => 6,
+                                                      'هفتم' => 7, 'هشتم' => 8, 'نهم' => 9, 'دهم' => 10, 'یازدهم' => 11, 'دوازدهم' => 12];
+                                        $groupRequests = $groupRequests->sortBy(function($request) use ($gradeOrder) {
                                             return $gradeOrder[$request->grade] ?? 999;
                                         });
                                     } else {
                                         // نزولی: از پایه زیاد به کم
-                                        $gradeOrder = [
-                                            'دوازدهم' => 1,
-                                            'یازدهم' => 2,
-                                            'دهم' => 3,
-                                            'نهم' => 4,
-                                            'هشتم' => 5,
-                                            'هفتم' => 6,
-                                            'ششم' => 7,
-                                            'پنجم' => 8,
-                                            'چهارم' => 9,
-                                            'سوم' => 10,
-                                            'دوم' => 11,
-                                            'اول' => 12,
-                                        ];
-                                        $groupRequests = $groupRequests->sortBy(function ($request) use ($gradeOrder) {
+                                        $gradeOrder = ['دوازدهم' => 1, 'یازدهم' => 2, 'دهم' => 3, 'نهم' => 4, 'هشتم' => 5, 'هفتم' => 6,
+                                                      'ششم' => 7, 'پنجم' => 8, 'چهارم' => 9, 'سوم' => 10, 'دوم' => 11, 'اول' => 12];
+                                        $groupRequests = $groupRequests->sortBy(function($request) use ($gradeOrder) {
                                             return $gradeOrder[$request->grade] ?? 999;
                                         });
                                     }
@@ -285,8 +353,7 @@
                                         $groupedData[$key] = $groupRequests;
                                     }
                                 }
-                            } else {
-                                // alphabet
+                            } else { // alphabet
                                 $currentGroups = $alphabetGroups;
                                 $groupedData = [];
 
@@ -296,23 +363,18 @@
                                 foreach ($alphabetGroups as $key => $group) {
                                     if ($key === 'group5') {
                                         // گروه سایر حروف - درخواست‌هایی که در گروه‌های قبلی قرار نگرفته‌اند
-                                        $groupRequests = $requests->filter(function ($request) use ($usedRequests) {
+                                        $groupRequests = $requests->filter(function($request) use ($usedRequests) {
                                             return !$usedRequests->contains('id', $request->id);
                                         });
                                     } else {
                                         // گروه‌های معمولی
-                                        $groupRequests = $requests->filter(function ($request) use (
-                                            $group,
-                                            $usedRequests,
-                                        ) {
+                                        $groupRequests = $requests->filter(function($request) use ($group, $usedRequests) {
                                             if ($usedRequests->contains('id', $request->id)) {
                                                 return false; // از تکرار جلوگیری می‌کنیم
                                             }
 
                                             $name = trim($request->name);
-                                            if (empty($name)) {
-                                                return false;
-                                            }
+                                            if (empty($name)) return false;
 
                                             $firstChar = mb_substr($name, 0, 1, 'UTF-8');
                                             $isMatch = in_array($firstChar, $group['chars']);
@@ -340,7 +402,7 @@
                         @foreach ($currentGroups as $groupKey => $groupInfo)
                             @if (isset($groupedData[$groupKey]) && $groupedData[$groupKey]->count() > 0)
                                 <!-- Debug info - موقتی -->
-                                @if ($currentGroupType === 'alphabet')
+                                @if($currentGroupType === 'alphabet')
                                     <!-- Debug: نمایش تعداد واقعی -->
                                     {{-- <div class="text-xs text-red-600 mb-2">
                                         Debug: گروه {{ $groupKey }} - تعداد: {{ $groupedData[$groupKey]->count() }}
@@ -364,112 +426,124 @@
                                     <!-- کانتینر اسکرول افقی -->
                                     <div class="relative">
                                         <div class="scroll-wrapper ">
-                                            <div id="scroll-{{ $groupKey }}"
-                                                class="horizontal-scroll-container show-scrollbar min-w-0">
-                                                @foreach ($groupedData[$groupKey] as $request)
-                                                    <!-- کارت -->
-                                                    <div
-                                                        class="card-hover flex-shrink-0 flex flex-col items-center bg-gradient-to-br from-white to-gray-50 w-72 h-96 justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden select-none">
+                                            <div id="scroll-{{ $groupKey }}" class="horizontal-scroll-container show-scrollbar min-w-0">
+                                            @foreach ($groupedData[$groupKey] as $request)
+                        <!-- کارت -->
+                        <div
+                            class="card-hover bg-gradient-to-br from-white to-gray-50 w-72 h-96 flex flex-col items-center justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden select-none">
 
-                                                        <!-- آیکون وضعیت در گوشه -->
-                                                        <div class="absolute top-4 right-4">
-                                                            <div
-                                                                class="status-badge px-3 py-1 rounded-full text-xs font-medium border
-                                                        {{ $request->story === 'submit'
-                                                            ? 'bg-blue-100 text-blue-700 border-blue-200'
-                                                            : ($request->story === 'accept'
-                                                                ? 'bg-green-100 text-green-700 border-green-200'
-                                                                : ($request->story === 'check'
-                                                                    ? 'bg-yellow-100 text-yellow-700 border-yellow-200'
-                                                                    : ($request->story === 'reject'
-                                                                        ? 'bg-red-100 text-red-700 border-red-200'
-                                                                        : ($request->story === 'epointment'
-                                                                            ? 'bg-purple-100 text-purple-700 border-purple-200'
-                                                                            : 'bg-gray-100 text-gray-700 border-gray-200')))) }}">
-                                                                {{ $request->story === 'submit'
-                                                                    ? '📤 ارسال شده'
-                                                                    : ($request->story === 'accept'
-                                                                        ? '✅ تایید شده'
-                                                                        : ($request->story === 'check'
-                                                                            ? '🔍 در حال بررسی'
-                                                                            : ($request->story === 'reject'
-                                                                                ? '❌ رد شده'
-                                                                                : ($request->story === 'epointment'
-                                                                                    ? '📅 ملاقات'
-                                                                                    : '❓ نامشخص')))) }}
-                                                            </div>
-                                                        </div>
+                            <!-- آیکون وضعیت در گوشه -->
 
-                                                        <!-- تصویر پروفایل -->
-                                                        <div class="relative mb-4">
-                                                            <img src="{{ route('img', ['filename' => $request->imgpath]) }}"
-                                                                alt="تصویر کاربر"
-                                                                class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white">
-                                                            <div
-                                                                class="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white">
-                                                            </div>
-                                                        </div>
+                            <!-- تصویر پروفایل -->
+                            <div class="relative mb-4">
+                                <img src="{{ route('img', ['filename' => $request->imgpath]) }}" alt="تصویر کاربر"
+                                    class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white">
+                            </div>
+                            <div class="absolute bottom-[13.5rem] left-1/2 transform -translate-x-1/2">
+                                <div
+                                    class="status-badge px-3 py-1 text-white rounded-full text-xs font-medium
+                            {{ $request->story === 'submit'
+                                ? 'bg-blue-500 '
+                                : ($request->story === 'accept'
+                                    ? 'bg-green-500'
+                                    : ($request->story === 'check'
+                                        ? 'bg-yellow-500'
+                                        : ($request->story === 'reject'
+                                            ? 'bg-red-500'
+                                            : ($request->story === 'epointment'
+                                                ? 'bg-pink-600'
+                                                : 'bg-gray-500')))) }}">
+                                    {{ $request->story === 'submit'
+                                        ? ' ارسال شده'
+                                        : ($request->story === 'accept'
+                                            ? ' تایید شده'
+                                            : ($request->story === 'check'
+                                                ? ' در  حال بررسی'
+                                                : ($request->story === 'reject'
+                                                    ? ' رد شده'
+                                                    : ($request->story === 'epointment'
+                                                        ? '  قرارملاقات'
+                                                        : ' نامشخص')))) }}
+                                </div>
+                            </div>
 
-                                                        <!-- اطلاعات کاربر -->
-                                                        <div class="text-center mb-6">
-                                                            <h3 class="text-lg font-semibold text-gray-800 mb-1">
-                                                                {{ $request->name }}</h3>
-                                                            <p class="text-sm text-gray-500">پایه: {{ $request->grade }}
-                                                            </p>
-                                                        </div>
+                            <!-- اطلاعات کاربر -->
+                            <div class="text-center mb-6">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-1">
+                                    {{ $request->name }}</h3>
+                                <p class="text-sm text-gray-500">پایه: {{ $request->grade }}</p>
+                            </div>
 
-                                                        <!-- دکمه‌های عملکرد -->
-                                                        <div class="flex gap-3 w-full">
-                                                            <a href="{{ route('unified.addoreditrequests', ['id' => $request->id]) }}"
-                                                                class="action-btn flex-1 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center py-3 gap-2">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                                    viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                                        stroke-width="2"
-                                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                                                    </path>
-                                                                </svg>
-                                                                ویرایش
-                                                            </a>
+                            <!-- دکمه‌های عملکرد -->
+                            <div class="flex gap-3 w-full mt-8">
 
-                                                            <form method="POST"
-                                                                action="{{ route('unified.requestdetail', ['id' => $request->id]) }}"
-                                                                class="flex-1">
-                                                                @csrf
-                                                                <button type="submit"
-                                                                    class="action-btn flex-1 w-full bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center  py-3 justify-center gap-2">
-                                                                    <svg class="w-4 h-4" fill="none"
-                                                                        stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round"
-                                                                            stroke-linejoin="round" stroke-width="2"
-                                                                            d="M5 13l4 4L19 7"></path>
-                                                                    </svg>
-                                                                    مشاهده
-                                                                </button>
-                                                            </form>
-                                                        </div>
+                                <button type="button"
+                                    onclick="openRequestDetailModal({
 
-                                                        <!-- جزئیات اضافی -->
-                                                        <div class="mt-4 w-full">
+                                                                id: {{ $request->id }},
+                                                                name: '{{ addslashes($request->name) }}',
+                                                                grade: '{{ addslashes($request->grade) }}',
+                                                                story: '{{ $request->story }}',
+                                                                imgpath_url: '{{ route('img', ['filename' => $request->imgpath]) }}',
+                                                                nationalcode: '{{ addslashes($request->nationalcode) }}',
+                                                                birthdate: '{{ addslashes(Jalalian::fromDateTime($request->birthdate)->format(' Y/m/d ')) }}',
+                                                                phone: '{{ addslashes($request->phone) }}',
+                                                                telephone: '{{ addslashes($request->telephone) }}',
+                                                                school: '{{ addslashes($request->school) }}',
+                                                                principal: '{{ addslashes($request->principal) }}',
+                                                                major_name: '{{ $request->major ? addslashes($request->major->name) : '' }}',
+                                                                last_score: '{{ addslashes($request->last_score) }}',
+                                                                school_telephone: '{{ addslashes($request->school_telephone) }}',
+                                                                english_proficiency: {{ $request->english_proficiency ?? 0 }},
+                                                                gradesheetpath: '{{ $request->gradesheetpath }}',
+                                                                gradesheetpath_url: '{{ $request->gradesheetpath ? route('img', ['filename' => $request->gradesheetpath]) : '' }}',
+                                                                rental: '{{ $request->rental }}',
+                                                                address: '{{ addslashes($request->address) }}',
+                                                                siblings_count: '{{ $request->siblings_count }}',
+                                                                siblings_rank: '{{ $request->siblings_rank }}',
+                                                                know: '{{ addslashes($request->know) }}',
+                                                                counseling_method: '{{ addslashes($request->counseling_method) }}',
+                                                                why_counseling_method: '{{ addslashes($request->why_counseling_method) }}',
+                                                                father_name: '{{ addslashes($request->father_name) }}',
+                                                                father_phone: '{{ addslashes($request->father_phone) }}',
+                                                                father_job: '{{ addslashes($request->father_job) }}',
+                                                                father_income: '{{ $request->father_income }}',
+                                                                father_job_address: '{{ addslashes($request->father_job_address) }}',
+                                                                mother_name: '{{ addslashes($request->mother_name) }}',
+                                                                mother_phone: '{{ addslashes($request->mother_phone) }}',
+                                                                mother_job: '{{ addslashes($request->mother_job) }}',
+                                                                mother_income: '{{ $request->mother_income }}',
+                                                                mother_job_address: '{{ addslashes($request->mother_job_address) }}',
+                                                                motivation: '{{ addslashes($request->motivation) }}',
+                                                                spend: '{{ addslashes($request->spend) }}',
+                                                                how_am_i: '{{ addslashes($request->how_am_i) }}',
+                                                                future: '{{ addslashes($request->future) }}',
+                                                                favorite_major: '{{ addslashes($request->favorite_major) }}',
+                                                                help_others: '{{ addslashes($request->help_others) }}',
+                                                                suggestion: '{{ addslashes($request->suggestion) }}'
+                                                            },null , true)"
+                                    class="action-btn flex-1 w-1/2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center py-3 justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    مشاهده
+                                </button>
 
-                                                            <div
-                                                                class="flex justify-between items-center text-xs text-gray-600">
-                                                                <span>تاریخ ثبت:</span>
-                                                                <span>{{ Jalalian::fromDateTime($request->created_at)->format('H:i Y/m/d ') }}</span>
-                                                            </div>
+                            </div>
 
-                                                        </div>
 
-                                                        <!-- افکت دکوراتیو -->
-                                                        <div
-                                                            class="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full opacity-20">
-                                                        </div>
-                                                        <div
-                                                            class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-green-200 to-blue-200 rounded-full opacity-20">
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
+
+                            <!-- افکت دکوراتیو -->
+                            <div
+                                class="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full opacity-20">
+                            </div>
+                            <div
+                                class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-green-200 to-blue-200 rounded-full opacity-20">
+                            </div>
+                        </div>
+                                            @endforeach
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -477,347 +551,48 @@
                         @endforeach
                     </div>
 
-                    <!-- Modal -->
-                    <div id="popup" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
-                        <div class="flex items-center justify-center min-h-screen">
-                            <div class="bg-white rounded-2xl p-8 max-w-[35.6rem] w-full mx-4 shadow-2xl">
-                                <div class="text-center mb-6">
-                                    <div
-                                        class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-                                        </svg>
-
-                                    </div>
-                                    <h3 class="text-xl font-bold text-gray-800 mb-2">افزودن شماره کارت</h3>
-                                    <p class="text-gray-600">شماره کارت بانک پارسیان خود را وارد کنید</p>
-                                </div>
-
-                                <form method="post" action="{{ route('unified.storecard', ['id' => $request->id]) }}">
-                                    @csrf
-                                    <div class="mb-6">
-                                        <label class="block text-sm font-medium text-gray-700 mb-4 text-center">شماره
-                                            کارت</label>
-
-                                        <!-- 16 مستطیل برای نمایش ارقام -->
-                                        <div class="flex  justify-center items-center gap-2 mb-4" dir="ltr">
-                                            <!-- گروه اول: 4 رقم -->
-                                            <div class="flex gap-1">
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="0">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="1">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="2">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="3">0</div>
-                                            </div>
-
-                                            <!-- خط تیره -->
-                                            <div class="text-gray-400 text-xl font-bold">-</div>
-
-                                            <!-- گروه دوم: 4 رقم -->
-                                            <div class="flex gap-1">
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="4">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="5">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="6">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="7">0</div>
-                                            </div>
-
-                                            <!-- خط تیره -->
-                                            <div class="text-gray-400 text-xl font-bold">-</div>
-
-                                            <!-- گروه سوم: 4 رقم -->
-                                            <div class="flex gap-1">
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="8">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="9">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="10">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="11">0</div>
-                                            </div>
-
-                                            <!-- خط تیره -->
-                                            <div class="text-gray-400 text-xl font-bold">-</div>
-
-                                            <!-- گروه چهارم: 4 رقم -->
-                                            <div class="flex gap-1">
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="12">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="13">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="14">0</div>
-                                                <div class="card-digit w-[1.5rem] h-[2.4rem] border-2 border-gray-300 rounded-lg flex items-center justify-center text-lg font-mono bg-gray-50 transition-all duration-200"
-                                                    data-index="15">0</div>
-                                            </div>
-                                        </div>
-
-                                        <!-- اینپوت مخفی برای کیبورد -->
-                                        <input type="text" id="cardNumberInput" class="sr-only" maxlength="16"
-                                            autocomplete="off" tabindex="-1">
-
-                                        <!-- اینپوت برای ارسال به سرور -->
-                                        <input type="hidden" name="cardnumber" id="cardNumberFinal">
-                                    </div>
-
-                                    <div class="flex gap-3">
-                                        <button type="submit"
-                                            class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition-colors">
-                                            ✅ ثبت شماره کارت
-                                        </button>
-                                        <button type="button" id="closepopup"
-                                            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-lg font-medium transition-colors">
-                                            ❌ انصراف
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
 
 
                 </div>
             @endif
         </div>
     </main>
+    @include('unified.user.request-popup')
 @endsection
 @section('scripts')
-    <!-- اسکریپت‌های عمومی -->
     <script src="{{ asset('assets/js/search-functionality.js') }}"></script>
-    <script src="{{ asset('assets/js/popup-functionality.js') }}"></script>
+
     <script src="{{ asset('assets/js/input-validation.js') }}"></script>
 
-    <!-- اسکریپت مخصوص کارت بانکی (مشترک) -->
-    <script src="{{ asset('assets/js/pages/myrequests/card-manager.js') }}"></script>
+<script src="{{ asset('assets/js/pages/allrequests/alllrequests.js') }}"></script>
+    <script src="{{ asset('assets/js/pages/myrequests/live-update.js') }}"></script>
     <script>
-
-        // انیمیشن موفقیت
-        setTimeout(() => {
-            digits.forEach(digit => {
-                digit.classList.remove('animate-pulse');
-            });
-        }, 1000);
-                } else {
-            // پاک کردن مقدار اگر کامل نیست
-            finalInput.value = '';
-}
-        }
-
-        // ریست کردن فرم
-        function resetForm() {
-            currentIndex = 0;
-            cardNumber = ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'];
-            digits.forEach((digit, index) => {
-                digit.textContent = '0';
-                digit.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200',
-                    'border-green-500', 'bg-green-50', 'bg-green-100', 'animate-pulse');
-                digit.classList.add('border-gray-300', 'bg-gray-50');
-            });
-            finalInput.value = '';
-            focusCurrentDigit();
-        }
-
-        // مدیریت کلیک روی مستطیل‌ها
-        digits.forEach((digit, index) => {
-            digit.addEventListener('click', function() {
-                currentIndex = index;
-                focusCurrentDigit();
-                hiddenInput.focus();
-            });
-        });
-
-        // مدیریت ورودی کیبورد
-        hiddenInput.addEventListener('input', function(e) {
-            const value = e.target.value.replace(/\D/g, '');
-
-            if (value.length > 0) {
-                const lastDigit = value[value.length - 1];
-
-                // تنظیم رقم در موقعیت فعلی
-                cardNumber[currentIndex] = lastDigit;
-                digits[currentIndex].textContent = lastDigit;
-
-                // انتقال به مستطیل بعدی
-                if (currentIndex < 15) {
-                    currentIndex++;
-                    focusCurrentDigit();
-                }
-
-                // بررسی تکمیل
-                checkCompletion();
-            }
-
-            // پاک کردن اینپوت مخفی
-            e.target.value = '';
-        });
-
-        // مدیریت کلیدهای ویژه
-        hiddenInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Backspace') {
-                e.preventDefault();
-
-                // اگر در موقعیت فعلی عددی وجود دارد، آن را پاک کن
-                if (cardNumber[currentIndex] !== '0') {
-                    cardNumber[currentIndex] = '0';
-                    digits[currentIndex].textContent = '0';
-                }
-                // اگر موقعیت فعلی خالی است و موقعیت قبلی وجود دارد
-                else if (currentIndex > 0) {
-                    currentIndex--;
-                    cardNumber[currentIndex] = '0';
-                    digits[currentIndex].textContent = '0';
-                }
-
-                focusCurrentDigit();
-                checkCompletion();
-            }
-
-            if (e.key === 'ArrowLeft' && currentIndex > 0) {
-                e.preventDefault();
-                currentIndex--;
-                focusCurrentDigit();
-            }
-
-            if (e.key === 'ArrowRight' && currentIndex < 15) {
-                e.preventDefault();
-                currentIndex++;
-                focusCurrentDigit();
-            }
-        });
-
-        // مدیریت باز شدن پاپ‌آپ
-        const openButtons = document.querySelectorAll('#openpopup');
-        openButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                popup.classList.toggle('hidden');
-
-
-                // ریست کردن فرم
-                resetForm();
-
-                // فوکس خودکار با تاخیر کوتاه
-                setTimeout(() => {
-                    hiddenInput.focus();
-                }, 100);
-            });
-        });
-
-        // مدیریت بستن پاپ‌آپ
-        const closeButton = document.getElementById('closepopup');
-        if (closeButton) {
-            closeButton.addEventListener('click', function() {
-                popup.classList.add('hidden');
-                popup.style.display = 'none';
-            });
-        }
-
-        // بستن پاپ‌آپ با کلیک روی پس‌زمینه
-        popup.addEventListener('click', function(e) {
-            if (e.target === popup) {
-                popup.classList.add('hidden');
-                popup.style.display = 'none';
-            }
-        });
-
-        // کلیک روی کل منطقه برای فوکس
-        const cardContainer = document.querySelector('[dir="ltr"]');
-        if (cardContainer) {
-            cardContainer.addEventListener('click', function() {
-                hiddenInput.focus();
-            });
-        }
-
-        // بستن پاپ‌آپ با کلید Escape
-        document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !popup.classList.contains('hidden')) {
-            popup.classList.add('hidden');
-            popup.style.display = 'none';
-        }
-        });
-        });
-
-        // متغیرهای سراسری
+               // متغیرهای سراسری
         let currentGroupType = '{{ $currentGroupType }}';
         let currentSortOrder = '{{ $sortOrder }}';
         let allRequests = @json($requests->values()->all());
 
         // گروه‌بندی و برچسب‌ها
         const statusLabels = {
-            'submit': {
-                label: '📤 ارسال شده',
-                color: 'blue'
-            },
-            'check': {
-                label: '🔍 در حال بررسی',
-                color: 'yellow'
-            },
-            'epointment': {
-                label: '📅 ملاقات',
-                color: 'purple'
-            },
-            'accept': {
-                label: '✅ تایید شده',
-                color: 'green'
-            },
-            'reject': {
-                label: '❌ رد شده',
-                color: 'red'
-            }
+            'submit': {label: '📤 ارسال شده', color: 'blue'},
+            'check': {label: '🔍 در حال بررسی', color: 'yellow'},
+            'epointment': {label: '📅 ملاقات', color: 'purple'},
+            'accept': {label: '✅ تایید شده', color: 'green'},
+            'reject': {label: '❌ رد شده', color: 'red'}
         };
 
         const gradeGroups = {
-            'elementary': {
-                label: '🎒 ابتدایی (1-6)',
-                grades: ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم'],
-                color: 'green'
-            },
-            'middle': {
-                label: '🎓 متوسطه اول (7-9)',
-                grades: ['هفتم', 'هشتم', 'نهم'],
-                color: 'blue'
-            },
-            'high': {
-                label: '🏆 متوسطه دوم (10-12)',
-                grades: ['دهم', 'یازدهم', 'دوازدهم'],
-                color: 'purple'
-            }
+            'elementary': {label: '🎒 ابتدایی (1-6)', grades: ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم'], color: 'green'},
+            'middle': {label: '🎓 متوسطه اول (7-9)', grades: ['هفتم', 'هشتم', 'نهم'], color: 'blue'},
+            'high': {label: '🏆 متوسطه دوم (10-12)', grades: ['دهم', 'یازدهم', 'دوازدهم'], color: 'purple'}
         };
 
         const alphabetGroups = {
-            'group1': {
-                label: '🔤 الف - چ',
-                chars: ['آ', 'ا', 'ب', 'پ', 'ت', 'ث', 'ج', 'چ'],
-                color: 'red'
-            },
-            'group2': {
-                label: '🔤 ح - ع',
-                chars: ['ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'ژ', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع'],
-                color: 'orange'
-            },
-            'group3': {
-                label: '🔤 غ - م',
-                chars: ['غ', 'ف', 'ق', 'ک', 'گ', 'ل', 'م'],
-                color: 'yellow'
-            },
-            'group4': {
-                label: '🔤 ن - ی',
-                chars: ['ن', 'و', 'ه', 'ی'],
-                color: 'green'
-            },
-            'group5': {
-                label: '🔤 سایر حروف',
-                chars: [],
-                color: 'gray'
-            }
+            'group1': {label: '🔤 الف - چ', chars: ['آ', 'ا', 'ب', 'پ', 'ت', 'ث', 'ج', 'چ'], color: 'red'},
+            'group2': {label: '🔤 ح - ع', chars: ['ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'ژ', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع'], color: 'orange'},
+            'group3': {label: '🔤 غ - م', chars: ['غ', 'ف', 'ق', 'ک', 'گ', 'ل', 'م'], color: 'yellow'},
+            'group4': {label: '🔤 ن - ی', chars: ['ن', 'و', 'ه', 'ی'], color: 'green'},
+            'group5': {label: '🔤 سایر حروف', chars: [], color: 'gray'}
         };
 
         // تابع گروه‌بندی درخواست‌ها
@@ -830,8 +605,7 @@
                     const statusRequests = requests.filter(req => req.story === status);
                     if (statusRequests.length > 0) {
                         // همیشه بر اساس تاریخ مرتب‌سازی
-                        groupedData[status] = statusRequests.sort((a, b) => new Date(b.created_at) - new Date(a
-                            .created_at));
+                        groupedData[status] = statusRequests.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                     }
                 });
             } else if (groupType === 'grade') {
@@ -842,38 +616,11 @@
 
                     if (groupRequests.length > 0) {
                         // مرتب‌سازی بر اساس پایه
-                        const gradeOrder = sortOrder === 'asc' ?
-                            {
-                                'اول': 1,
-                                'دوم': 2,
-                                'سوم': 3,
-                                'چهارم': 4,
-                                'پنجم': 5,
-                                'ششم': 6,
-                                'هفتم': 7,
-                                'هشتم': 8,
-                                'نهم': 9,
-                                'دهم': 10,
-                                'یازدهم': 11,
-                                'دوازدهم': 12
-                            } :
-                            {
-                                'دوازدهم': 1,
-                                'یازدهم': 2,
-                                'دهم': 3,
-                                'نهم': 4,
-                                'هشتم': 5,
-                                'هفتم': 6,
-                                'ششم': 7,
-                                'پنجم': 8,
-                                'چهارم': 9,
-                                'سوم': 10,
-                                'دوم': 11,
-                                'اول': 12
-                            };
+                        const gradeOrder = sortOrder === 'asc'
+                            ? {'اول': 1, 'دوم': 2, 'سوم': 3, 'چهارم': 4, 'پنجم': 5, 'ششم': 6, 'هفتم': 7, 'هشتم': 8, 'نهم': 9, 'دهم': 10, 'یازدهم': 11, 'دوازدهم': 12}
+                            : {'دوازدهم': 1, 'یازدهم': 2, 'دهم': 3, 'نهم': 4, 'هشتم': 5, 'هفتم': 6, 'ششم': 7, 'پنجم': 8, 'چهارم': 9, 'سوم': 10, 'دوم': 11, 'اول': 12};
 
-                        groupedData[groupKey] = groupRequests.sort((a, b) => (gradeOrder[a.grade] || 999) - (
-                            gradeOrder[b.grade] || 999));
+                        groupedData[groupKey] = groupRequests.sort((a, b) => (gradeOrder[a.grade] || 999) - (gradeOrder[b.grade] || 999));
                     }
                 });
             } else if (groupType === 'alphabet') {
@@ -885,9 +632,9 @@
                         // گروه سایر حروف
                         const groupRequests = requests.filter(req => !usedRequests.includes(req.id));
                         if (groupRequests.length > 0) {
-                            groupedData[groupKey] = sortOrder === 'asc' ?
-                                groupRequests.sort((a, b) => a.name.localeCompare(b.name, 'fa')) :
-                                groupRequests.sort((a, b) => b.name.localeCompare(a.name, 'fa'));
+                            groupedData[groupKey] = sortOrder === 'asc'
+                                ? groupRequests.sort((a, b) => a.name.localeCompare(b.name, 'fa'))
+                                : groupRequests.sort((a, b) => b.name.localeCompare(a.name, 'fa'));
                         }
                     } else {
                         const group = alphabetGroups[groupKey];
@@ -903,9 +650,9 @@
 
                         if (groupRequests.length > 0) {
                             usedRequests.push(...groupRequests.map(req => req.id));
-                            groupedData[groupKey] = sortOrder === 'asc' ?
-                                groupRequests.sort((a, b) => a.name.localeCompare(b.name, 'fa')) :
-                                groupRequests.sort((a, b) => b.name.localeCompare(a.name, 'fa'));
+                            groupedData[groupKey] = sortOrder === 'asc'
+                                ? groupRequests.sort((a, b) => a.name.localeCompare(b.name, 'fa'))
+                                : groupRequests.sort((a, b) => b.name.localeCompare(a.name, 'fa'));
                         }
                     }
                 });
@@ -924,7 +671,7 @@
             existingSections.forEach(section => section.remove());
 
             const currentGroups = groupType === 'status' ? statusLabels :
-                groupType === 'grade' ? gradeGroups : alphabetGroups;
+                                 groupType === 'grade' ? gradeGroups : alphabetGroups;
 
             Object.keys(groupedData).forEach(groupKey => {
                 const requests = groupedData[groupKey];
@@ -970,32 +717,14 @@
         // تابع ایجاد HTML برای هر کارت
         function createCardHTML(request, groupType) {
             const statusMap = {
-                'submit': {
-                    class: 'bg-blue-100 text-blue-700 border-blue-200',
-                    text: '📤 ارسال شده'
-                },
-                'accept': {
-                    class: 'bg-green-100 text-green-700 border-green-200',
-                    text: '✅ تایید شده'
-                },
-                'check': {
-                    class: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-                    text: '🔍 در حال بررسی'
-                },
-                'reject': {
-                    class: 'bg-red-100 text-red-700 border-red-200',
-                    text: '❌ رد شده'
-                },
-                'epointment': {
-                    class: 'bg-purple-100 text-purple-700 border-purple-200',
-                    text: '📅 ملاقات'
-                }
+                'submit': {class: 'bg-blue-100 text-blue-700 border-blue-200', text: '📤 ارسال شده'},
+                'accept': {class: 'bg-green-100 text-green-700 border-green-200', text: '✅ تایید شده'},
+                'check': {class: 'bg-yellow-100 text-yellow-700 border-yellow-200', text: '🔍 در حال بررسی'},
+                'reject': {class: 'bg-red-100 text-red-700 border-red-200', text: '❌ رد شده'},
+                'epointment': {class: 'bg-purple-100 text-purple-700 border-purple-200', text: '📅 ملاقات'}
             };
 
-            const status = statusMap[request.story] || {
-                class: 'bg-gray-100 text-gray-700 border-gray-200',
-                text: '❓ نامشخص'
-            };
+            const status = statusMap[request.story] || {class: 'bg-gray-100 text-gray-700 border-gray-200', text: '❓ نامشخص'};
 
             let extraInfo = '';
             if (groupType === 'grade') {
@@ -1004,10 +733,10 @@
                 extraInfo = `<span>نام:</span><span class="font-medium">${request.name}</span>`;
             } else {
                 const statusText = request.story === 'submit' ? 'ارسال شده' :
-                    request.story === 'accept' ? 'تایید شده' :
-                    request.story === 'check' ? 'در حال بررسی' :
-                    request.story === 'reject' ? 'رد شده' :
-                    request.story === 'epointment' ? 'ملاقات' : 'نامشخص';
+                                 request.story === 'accept' ? 'تایید شده' :
+                                 request.story === 'check' ? 'در حال بررسی' :
+                                 request.story === 'reject' ? 'رد شده' :
+                                 request.story === 'epointment' ? 'ملاقات' : 'نامشخص';
                 extraInfo = `<span>وضعیت:</span><span class="font-medium">${statusText}</span>`;
             }
 
@@ -1071,11 +800,9 @@
             document.querySelectorAll('[onclick^="changeGroupType"]').forEach(btn => {
                 const type = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
                 if (type === currentGroupType) {
-                    btn.className = btn.className.replace(/bg-white.*?border-gray-200/,
-                        'bg-blue-500 text-white shadow-md');
+                    btn.className = btn.className.replace(/bg-white.*?border-gray-200/, 'bg-blue-500 text-white shadow-md');
                 } else {
-                    btn.className = btn.className.replace(/bg-blue-500.*?shadow-md/,
-                        'bg-white text-gray-600 hover:bg-blue-50 border border-gray-200');
+                    btn.className = btn.className.replace(/bg-blue-500.*?shadow-md/, 'bg-white text-gray-600 hover:bg-blue-50 border border-gray-200');
                 }
             });
 
@@ -1084,19 +811,15 @@
                 const order = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
                 if (order === currentSortOrder) {
                     if (order === 'asc') {
-                        btn.className = btn.className.replace(/bg-white.*?border-gray-200/,
-                            'bg-green-500 text-white shadow-md');
+                        btn.className = btn.className.replace(/bg-white.*?border-gray-200/, 'bg-green-500 text-white shadow-md');
                     } else {
-                        btn.className = btn.className.replace(/bg-white.*?border-gray-200/,
-                            'bg-red-500 text-white shadow-md');
+                        btn.className = btn.className.replace(/bg-white.*?border-gray-200/, 'bg-red-500 text-white shadow-md');
                     }
                 } else {
                     if (order === 'asc') {
-                        btn.className = btn.className.replace(/bg-green-500.*?shadow-md/,
-                            'bg-white text-gray-600 hover:bg-green-50 border border-gray-200');
+                        btn.className = btn.className.replace(/bg-green-500.*?shadow-md/, 'bg-white text-gray-600 hover:bg-green-50 border border-gray-200');
                     } else {
-                        btn.className = btn.className.replace(/bg-red-500.*?shadow-md/,
-                            'bg-white text-gray-600 hover:bg-red-50 border border-gray-200');
+                        btn.className = btn.className.replace(/bg-red-500.*?shadow-md/, 'bg-white text-gray-600 hover:bg-red-50 border border-gray-200');
                     }
                 }
             });
@@ -1121,6 +844,8 @@
             renderGroups(groupedData, currentGroupType);
             updateButtons();
         }
-    </script>
 
+
+
+    </script>
 @endsection

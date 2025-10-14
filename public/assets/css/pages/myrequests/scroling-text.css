@@ -1,0 +1,8 @@
+        /* برای انیمیشن اسکرولینگ سفارشی (Tailwind به تنهایی انیمیشن scroll مداوم ندارد، پس keyframes ساده اضافه می‌شود) */
+        @keyframes scroll-left {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(100%); }
+        }
+        .scrolling-text {
+            animation: scroll-left 10s linear infinite;
+        }

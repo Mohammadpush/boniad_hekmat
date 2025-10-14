@@ -221,12 +221,12 @@ class UnifiedController extends Controller
     }
 
     // Status Update Methods
-    public function accept($id)
+    public function accept(request $req)
     {
-        $userrequest = ModelRequest::findOrFail($id);
+        $userrequest = ModelRequest::findOrFail($req->id);
         $userrequest->update(['story' => 'accept']);
         DailyTracker::create([
-            'request_id' => $id,
+            'request_id' => $req->id,
             'start_date' => Carbon::now()->startOfDay(),
             'max_days' => 31
         ]);
@@ -591,11 +591,15 @@ public function storerequestform(Request $request)
 
     return redirect()->route('unified.myrequests')->with('success', 'درخواست با موفقیت ثبت شد.');
 }
-public function storecard(Request $req , $id){
+public function storecard(Request $req ){
 
-    $request = ModelRequest::findOrFail($id);
+    $request = ModelRequest::findOrFail($req->id);
     $request->cardnumber = $req->cardnumber;
-    $request->update();
+try {
+    $request->update(['cardnumber' => $req->cardnumber]);
+} catch (\Exception $e) {
+    dd($e->getMessage());
+}
 
     return redirect()->route('unified.myrequests');
 }
@@ -640,7 +644,7 @@ public function updateRequestField(Request $request)
             'mother_job', 'mother_income', 'mother_job_address', 'siblings_count',
             'siblings_rank', 'english_proficiency', 'know', 'counseling_method',
             'why_counseling_method', 'motivation', 'spend', 'how_am_i',
-            'favorite_major', 'future', 'help_others', 'suggestion'
+            'favorite_major', 'future', 'help_others', 'suggestion', 'cardnumber'
         ];
 
         if (!in_array($request->field_name, $allowedFields)) {
