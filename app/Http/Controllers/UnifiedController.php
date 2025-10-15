@@ -241,13 +241,12 @@ class UnifiedController extends Controller
         return redirect()->route('unified.allrequests')->with('success', 'درخواست رد شد');
     }
 
-    public function epointment(Request $request, $id)
+    public function epointment(Request $request)
     {
-        if (Auth::user()->role === 'user') {
-            return redirect()->route('unified.myrequests');
-        }
 
-        $userrequest = ModelRequest::with('user')->findOrFail($id);
+
+        $userrequest = ModelRequest::with('user')->findOrFail($request->id);
+        $jalaliDateTime = $request->mydate;
 
         try {
  // تبدیل مستقیم با Jalalian
@@ -260,7 +259,7 @@ class UnifiedController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'خطا تو تاریخ !',
-                'received_date' =>  $jalaliDate,
+                'received_date' =>  $jalaliDateTime,
                 'format_issue' => 'فرمت باید باشه: ساعت:دقیقه سال-ماه-روز (مثل 11:45 1404-12-3)',
                 'error_message' => $e->getMessage()
             ], 422);
@@ -268,16 +267,29 @@ class UnifiedController extends Controller
     }
 
     // Message - All Roles
-    public function message($id)
+    public function message($id = null)
     {
-        $scholarships = Scholarship::with('request')->where('request_id', $id)->get();
-        return view('unified.user.message', compact('scholarships', 'id'));
-    }
+        $userRole = Auth::user()->role;
 
-    // Add Message - All Roles
-    public function addmessage($id)
-    {
-        return view('unified.user.addmessage', compact('id'));
+        // Get requests based on role
+        if ($userRole === 'user') {
+            $requests = ModelRequest::where('user_id', Auth::id())->get();
+        } else {
+            $requests = ModelRequest::with('user')->get();
+        }
+
+        // Get messages for selected request
+        $scholarships = [];
+        $selectedRequest = null;
+        if ($id) {
+            $scholarships = Scholarship::with(['request', 'profile'])
+                ->where('request_id', $id)
+                ->orderBy('created_at', 'asc')
+                ->get();
+            $selectedRequest = ModelRequest::with('user')->find($id);
+        }
+
+        return view('unified.user.message', compact('scholarships', 'requests', 'selectedRequest', 'id'));
     }
 
     public function storemessage(Request $request, $id)
@@ -473,13 +485,20 @@ class UnifiedController extends Controller
     }
 public function storerequestform(Request $request)
 {
+    // Log request data for debugging
+    \Log::info('Request Form Submission', [
+        'user_id' => Auth::id(),
+        'birthdate' => $request->birthdate,
+        'all_data' => $request->except(['imgpath', 'gradesheetpath'])
+    ]);
+
     $data = $request->validate([
         'name' => 'required|string|max:75',
-        'birthdate' => 'required|string',
+        'birthdate' => 'required|string|regex:/^\d{4}\/\d{2}\/\d{2}$/',
         'nationalcode' => 'required|string|max:10',
         'phone' => 'required|string|max:11',
         'telephone' => 'nullable|string|max:11',
-        'rental' => 'required|string|in:0,1', // اصلاح شد - فقط 0 (ملکی) یا 1 (استیجاری)
+        'rental' => 'required|string|in:0,1',
         'grade' => 'required|string|max:25',
         'major_id' => 'nullable|exists:majors,id',
         'school' => 'required|string|max:75',
@@ -495,14 +514,14 @@ public function storerequestform(Request $request)
         'address' => 'required|string',
         'father_job_address' => 'required|string',
         'mother_job_address' => 'required|string',
-        'father_income' => 'required|string', // Because of comma formatting
-        'mother_income' => 'required|string', // Because of comma formatting
+        'father_income' => 'required|string',
+        'mother_income' => 'required|string',
         'siblings_count' => 'required|integer|min:1',
         'siblings_rank' => 'required|integer|min:1',
-        'english_proficiency' => 'required|integer|between:0,100', // اصلاح شد - هر عددی از 0 تا 100
+        'english_proficiency' => 'required|integer|between:0,100',
         'know' => 'required|string|max:191',
         'counseling_method' => 'required|string|max:191',
-        'why_counseling_method' => 'nullable|string', // اصلاح شد - غیر اجباری
+        'why_counseling_method' => 'nullable|string',
         'motivation' => 'required|string|min:30',
         'spend' => 'required|string',
         'how_am_i' => 'required|string',
@@ -513,10 +532,22 @@ public function storerequestform(Request $request)
         'imgpath' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         'gradesheetpath' => 'required|file|mimes:jpeg,png,jpg,gif,pdf|max:5048',
         'abouts.*' => 'nullable|string|max:191'
+    ], [
+        'birthdate.regex' => 'تاریخ تولد باید به فرمت 1400/01/01 باشد',
+        'imgpath.required' => 'آپلود عکس شخصی الزامی است',
+        'gradesheetpath.required' => 'آپلود کارنامه الزامی است'
     ]);
 
-    // تبدیل تاریخ شمسی به میلادی
-    $data['birthdate'] = Jalalian::fromFormat('Y/m/d', $data['birthdate'])->toCarbon();
+    try {
+        // تبدیل تاریخ شمسی به میلادی
+        $data['birthdate'] = Jalalian::fromFormat('Y/m/d', $data['birthdate'])->toCarbon();
+    } catch (\Exception $e) {
+        \Log::error('Birthdate conversion error', [
+            'birthdate' => $request->birthdate,
+            'error' => $e->getMessage()
+        ]);
+        return back()->withErrors(['birthdate' => 'فرمت تاریخ تولد نامعتبر است'])->withInput();
+    }
 
     // حذف کاما از درآمدها و تبدیل به integer
     $data['father_income'] = (int)str_replace(',', '', $data['father_income']);

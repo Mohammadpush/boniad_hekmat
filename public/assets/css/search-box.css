@@ -209,11 +209,7 @@
   outline: none;
 }
 
-@media screen and (prefers-color-scheme: dark) {
-  body, input {
-    color: #f1f1f1;
-  }
-
+/* @media screen and (prefers-color-scheme: dark) {
   .search-bar input {
     box-shadow: 0 0 0 0.4em #0f0d0d inset;
   }
@@ -227,5 +223,5 @@
   .search-btn {
     background: #0f0d0d;
   }
-}
+} */
 

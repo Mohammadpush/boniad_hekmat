@@ -24,7 +24,12 @@ return new class extends Migration
              //به معنای اینکه آیا منزل ملکی است یا استیجاری اگر استیجاری بود true
             $table->string('grade',25);
              // از (اول،دوم،سوم،چهارم تا دوزادهم به صورت متن ولی سلکت باشد) نه اینپوت که خود کاربر متن وارد کند.
-            $table->foreignId('major_id')->constrained('majors')->onDelete('cascade')->nullable();
+
+// ...existing code...
+
+$table->foreignId('major_id')->nullable()->constrained('majors')->onDelete('cascade');
+
+// ...existing code...
             // در ایران از پایه دهم دانش آموزان انتخاب رشته میکنند پس از قبل از دهم نیازی به پر کردن این فیلد نیست ولی شاید ادمین نتواند تمامی رشته های ایران را شناسایی کند دوست دارم خودت با جست و جو این جدول رابطه یک به یک با  majors دارد.ی=
             $table->string('school');
             $table->integer('last_score');

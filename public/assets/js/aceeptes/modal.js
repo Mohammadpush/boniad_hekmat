@@ -1,11 +1,11 @@
  // Scholarship Modal Functions
-    function openScholarshipModal(requestId) {
+ function openScholarshipModal(requestId) {
         const modal = document.getElementById('scholarshipModal');
         const content = document.getElementById('modalContent');
 
         document.getElementById('modalRequestId').value = requestId;
         document.getElementById('scholarshipForm').action = '{{ route("unified.storemessage", ":id") }}'.replace(':id', requestId);
-
+        console.log(modal,content)
         modal.classList.remove('hidden');
 
         // Animation

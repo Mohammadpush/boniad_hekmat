@@ -44,12 +44,14 @@ class AcceptedStudentsManager {
             console.error('Modal elements not found');
             return;
         }
+        else
+        {
+            console.log(modal,modalContent,form,requestIdInput);
+        }
 
         // Set the request ID
         requestIdInput.value = requestId;
 
-        // Set form action
-        form.action = '/admin/scholarship';
 
         // Show modal
         modal.classList.remove('hidden');
@@ -292,9 +294,9 @@ class AcceptedStudentsManager {
         // Remove non-digits
         let value = input.value.replace(/[^0-9]/g, '');
 
-        // Add thousand separators
-        if (value) {
-            value = parseInt(value).toLocaleString('fa-IR');
+        // Add thousand separators with comma (same as price-input.js)
+        if (value.length > 3) {
+            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
 
         input.value = value;
@@ -304,18 +306,19 @@ class AcceptedStudentsManager {
     initialize() {
         this.initializeProgressBars();
 
-        // Setup price input formatting
-        const priceInput = document.getElementById('price');
-        if (priceInput) {
-            priceInput.addEventListener('input', (e) => {
-                this.formatPrice(e.target);
-            });
-        }
+        // Note: price input formatting is handled by price-input.js
+        // We don't need to set up the event listener here to avoid conflicts
 
-        // Setup form submission
+        // Setup form submission - remove commas before submit
         const scholarshipForm = document.getElementById('scholarshipForm');
         if (scholarshipForm) {
             scholarshipForm.addEventListener('submit', (e) => {
+                // Remove commas from price before validation
+                const priceInput = document.getElementById('price');
+                if (priceInput) {
+                    priceInput.value = priceInput.value.replace(/,/g, '');
+                }
+
                 if (!this.validateScholarshipForm()) {
                     e.preventDefault();
                 }

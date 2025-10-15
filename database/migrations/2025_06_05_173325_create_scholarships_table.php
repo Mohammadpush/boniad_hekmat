@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('profile_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('request_id')->constrained()->onDelete('cascade');
-            $table->string('message');
+            $table->text('description');
             $table->integer('price')->nullable();
             $table->string('story');
             $table->boolean('ismaster')->default(false);

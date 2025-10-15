@@ -10,7 +10,7 @@ class scholarship extends Model
        protected $fillable = [
         'profile_id',
         'request_id',
-        'message',
+        'description',
         'price',
         'story',
         'ismaster',

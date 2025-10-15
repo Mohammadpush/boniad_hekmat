@@ -16,160 +16,132 @@
         use Morilog\Jalali\Jalalian;
     @endphp
 
-    <main class="flex-1 p-8">
-
-
-<div class="bg-white rounded-xl shadow p-6">
-    <div class="overflow-x-auto">
-        <table class="min-w-full">
-            <!-- هدر جدول -->
-            <thead class="bg-gray-100">
-                <tr>
-                        <tr class="bg-gray-50 max-[728px]:hidden">
-                            <th class="px-6 py-4 text-center text-xs font-medium text-gray-600 uppercase tracking-wider rounded-r-lg">عکس</th>
-                            <th class="px-6 py-4 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">نام و نام خانوادگی</th>
-                            <th class="px-6 py-4 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">نام کاربری</th>
-                            <th class="px-6 py-4 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">عملکردها</th>
-                            <th class="px-6 py-4 text-center text-xs font-medium text-gray-600 uppercase tracking-wider rounded-l-lg">شماره کارت</th>
-                        </tr>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @if ($requests->isEmpty())
-                    <tr>
-                        <td colspan="6" class="text-gray-600 text-center py-4">شما هیچ درخواستی ندارید.</td>
-                    </tr>
-                @else
-                         @php
-                            $i = 0;
-                        @endphp
+    <main class="p-8 w-full min-w-0">
+        <div class="bg-white rounded-xl shadow p-6 w-full min-w-0">
+            @if ($requests->isEmpty())
+                <div class="text-center py-12">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">هیچ درخواست پذیرفته شده‌ای یافت نشد</h3>
+                    <p class="text-gray-600 mb-6">در حال حاضر درخواستی تایید نشده است</p>
+                </div>
+            @else
+                <!-- Container برای کارت‌ها -->
+                <div class="flex flex-wrap gap-14 justify-center">
                     @foreach ($requests as $request)
-                                <tr
-                                    class="text-center  max-[728px]:flex max-[728px]:flex-col  max-[728px]:shadow-lg  max-[728px]:rounded-lg max-[728px]:justify-center   transition-transform transform group-hover:scale-105 max-[728px]:relative {{ $i % 2 == 0 ? 'max-[728px]:bg-[#e0e0dfc9]' : 'max-[728px]:bg-[#ecece5ea]' }} "style="    border-bottom-right-radius: 0px;
-    border-bottom-left-radius: 0px;">
+                        <!-- کارت -->
+                        <div class="card-hover bg-gradient-to-br from-white to-gray-50 w-80 flex flex-col rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden select-none transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
 
-                                    <td class="px-6 py-4 whitespace-nowrap  "> <img
-                                            src="{{ route('img', ['filename' => $request->imgpath]) }}" alt=""
-                                            class="w-10 h-10 max-[728px]:w-40 max-[728px]:h-40 m-auto"></td>
-                                    <td class="px-6 py-4 whitespace-nowrap max-[728px]:hidden">{{ $request->name }} {{ $request->female}}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap max-[728px]:hidden"> {{ $request->user->name }} </td>
+                            <!-- بج وضعیت تایید شده -->
+                            <div class="absolute top-4 left-4">
+                                <div class="px-3 py-1 bg-green-500 text-white rounded-full text-xs font-medium">
+                                    ✅ تایید شده
+                                </div>
+                            </div>
 
-                                                                                <td class="hidden px-6 py-4 max-[728px]:block m-auto text-3xl">
-                                          <div class="flex gap-2">
-                                            <span>{{ $request->name }} {{ $request->female }}</span>
-                                            <span class="text-[18px] mt-3.5 text-gray-700">{{ $request->user->name }}</span>
-                                          </div>
-                                        </td>
-                                    <td class="px-6 py-4 whitespace-nowrap flex items-center space-x-2 space-x-reverse  justify-around max-[728px]:w-[45%] max-[728px]:m-auto">
+                            <!-- تصویر پروفایل -->
+                            <div class="relative mb-4 mt-2">
+                                <img src="{{ route('img', ['filename' => $request->imgpath]) }}" alt="تصویر کاربر"
+                                    class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white mx-auto">
+                            </div>
 
-                                        <form method="POST"
-                                            action="{{ route('unified.requestdetail', ['id' => $request->id]) }}"
-                                            class="text-blue-600 hover:text-blue-800 ml-2 flex ">
-                                            @csrf
-                                            <button type="submit" class="w-fit pb-[4.5px]">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline"
-                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                            </button>
-                                        </form>
+                            <!-- اطلاعات کاربر -->
+                            <div class="text-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-1">
+                                    {{ $request->name }} {{ $request->female }}
+                                </h3>
+                                <p class="text-sm text-gray-500">نام کاربری: {{ $request->user->name }}</p>
+                            </div>
 
-                                        <a href="{{ route('unified.message', ['id' => $request->id]) }}"
-                                            class="text-blue-600 hover:text-blue-800 ml-2 flex">
+                            <!-- شماره کارت -->
+                            <div class="mb-4 bg-blue-50 rounded-xl p-3">
+                                <p class="text-xs text-gray-600 mb-1 text-center">💳 شماره کارت</p>
+                                @if (empty($request->cardnumber))
+                                    <p class="text-sm text-red-600 text-center font-medium">شماره کارت ثبت نشده است</p>
+                                @else
+                                    <p class="text-blue-800 text-center font-mono text-sm cursor-pointer hover:bg-blue-100 transition rounded p-2"
+                                       onclick="copyText('{{ $request->cardnumber }}')"
+                                       title="کلیک کنید تا کپی شود">
+                                        {{ $request->cardnumber }}
+                                    </p>
+                                @endif
+                            </div>
 
-                                            <button type="submit" class="mt-auto mb-auto">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
-                                                </svg>
-
-                                            </button>
-                                        </a>
-
-                                    </td>
-
-                                    <td class="whitespace-nowrap">
-                                        <div class="flex flex-row items-center gap-2 justify-center ">
-                                                    @if (empty($request->cardnumber))
-                                                        <span> شماره کارت ثبت نشده است</span>
-                                                        @else
-
-                                                        <span class="text-blue-800 max-[728px]:bg-[#84e2ff65] w-full h-full p-3 rounded-b-lg copy-text cursor-pointer" onclick="copyText('{{ $request->cardnumber }}')" title="کلیک کنید تا کپی شود">
-                                                           {{ $request->cardnumber }}
-                                                        </span>
-                                                    @endif
-
-                                        </div>
-
-                                    </td>
-                                </tr>
-                        <!-- Progress Bar for DailyTracker -->
-                        <tr>
-                            <td colspan="6" class="">
-                                @if ($request->DailyTracker)
-                                    @php
-                                        $today = \Carbon\Carbon::now()->startOfDay()->addDays(15);
-
+                            <!-- روزشمار -->
+                            @if ($request->DailyTracker)
+                                @php
+                                    $today = \Carbon\Carbon::now()->startOfDay()->addDays(15);
                                     if ($request->DailyTracker->id == 1) {
-
                                         $today = \Carbon\Carbon::now()->startOfDay()->addDays(31);
                                     }
-
-                                        $start = \Carbon\Carbon::parse($request->DailyTracker->start_date, 'Asia/Tehran')->startOfDay();
-                                        $passed = $start->diffInDays($today);
-                                        $max = $request->DailyTracker->max_days;
-                                        $percent = min(($passed / $max) * 100, 100);
-                                    @endphp
-                                    <div style="background:#e0e0e0; width:100%; overflow:hidden; margin-bottom: 1rem;" class="rounded-lg max-[728px]:rounded-t-[0px] rounded-b-lg">
+                                    $start = \Carbon\Carbon::parse($request->DailyTracker->start_date, 'Asia/Tehran')->startOfDay();
+                                    $passed = $start->diffInDays($today);
+                                    $max = $request->DailyTracker->max_days;
+                                    $percent = min(($passed / $max) * 100, 100);
+                                @endphp
+                                <div class="mb-4">
+                                    <div class="bg-gray-200 rounded-full overflow-hidden h-8 relative">
                                         @if ($passed >= $max)
-                                            <div style="
-                                                width: 100%;
-                                                background: linear-gradient(90deg, #4caf50, #81c784);
-                                                color: white;
-                                                padding: 10px 15px;
-                                                font-weight: bold;
-                                                font-family: sans-serif;
-                                                text-align: left;
-                                                border-radius: 15px 0 0 15px;
-                                                transition: width 0.5s ease;">
-                                                <button onclick="openScholarshipModal({{ $request->id }})" class="w-full text-center cursor-pointer hover:bg-green-600 transition duration-200 rounded">
-                                                    دریافت بورسیه
+                                            <div class="h-full w-full bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
+                                                <button onclick="openScholarshipModal({{ $request->id }})"
+                                                    class="w-full h-full text-white font-bold text-sm hover:bg-green-700 transition cursor-pointer rounded-full">
+                                                    🎓 دریافت بورسیه
                                                 </button>
                                             </div>
                                         @else
-                                            <div style="
-                                                width: {{ $percent }}%;
-                                                background: linear-gradient(90deg, #4cafaf, #81b9c7);
-                                                color: white;
-                                                padding: 10px 15px;
-                                                font-weight: bold;
-                                                font-family: sans-serif;
-                                                text-align: left;
-                                                transition: width 0.5s ease;">
+                                            <div class="h-full bg-gradient-to-r from-blue-400 to-cyan-500 flex items-center justify-center text-white font-bold text-sm transition-all duration-500"
+                                                 style="width: {{ $percent }}%;">
                                                 @if ($passed == 0)
-                                                    0
+                                                    شروع نشده
                                                 @else
                                                     {{ $passed }} / {{ $max }} روز
                                                 @endif
                                             </div>
                                         @endif
                                     </div>
-                                @else
-                                    <p class="text-red-600">روز‌شمار موجود نیست.</p>
-                                @endif
-                            </td>
-                        </tr>
-                                                       @php
-            $i++;
-        @endphp
+                                </div>
+                            @else
+                                <p class="text-red-600 text-sm text-center mb-4">⚠️ روز‌شمار موجود نیست</p>
+                            @endif
+
+                            <!-- دکمه‌های عملکرد -->
+                            <div class="flex gap-3 mt-auto">
+                                <form method="POST" action="{{ route('unified.requestdetail', ['id' => $request->id]) }}" class="flex-1">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-xl py-3 text-sm font-medium transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        مشاهده
+                                    </button>
+                                </form>
+
+                                <a href="{{ route('unified.message', ['id' => $request->id]) }}" class="flex-1">
+                                    <button type="button"
+                                        class="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl py-3 text-sm font-medium transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                                        </svg>
+                                        پیام
+                                    </button>
+                                </a>
+                            </div>
+
+                            <!-- افکت دکوراتیو -->
+                            <div class="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-green-200 to-blue-200 rounded-full opacity-20"></div>
+                            <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full opacity-20"></div>
+                        </div>
                     @endforeach
-                @endif
-            </tbody>
-        </table>
-    </div>
-</div>
+                </div>
+            @endif
+        </div>
+    </main>
 
 <!-- Success Popup -->
 <div id="successPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">

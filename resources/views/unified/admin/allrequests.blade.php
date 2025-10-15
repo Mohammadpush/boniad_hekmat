@@ -1,6 +1,7 @@
 @extends('layouts.unified')
-
 @section('head')
+<link rel="stylesheet" href="{{ asset('assets/css/jalalydatepicker.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/flatpicker.css') }}">
     <style>
 
 
@@ -44,6 +45,16 @@
             scrollbar-width: none;
             width: 100%;
             max-width: 100%;
+            max-height: 450px; /* محدود کردن ارتفاع */
+            transition: max-height 0.3s ease;
+        }
+
+        /* حالت expanded */
+        .horizontal-scroll-container[data-expanded="true"] {
+            grid-auto-flow: row;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            max-height: none;
+            overflow-y: auto;
         }
 
 
@@ -133,7 +144,6 @@
     @php
         use Morilog\Jalali\Jalalian;
     @endphp
-
 
 
 
@@ -421,12 +431,24 @@
                                                 {{ $groupedData[$groupKey]->count() }} درخواست
                                             </span>
                                         </h2>
+
+                                        <!-- دکمه مشاهده همه -->
+                                        @if($groupedData[$groupKey]->count() > 3)
+                                        <button type="button"
+                                                onclick="toggleViewAll('{{ $groupKey }}')"
+                                                class="view-all-btn flex items-center gap-2 px-4 py-2 bg-{{ $groupInfo['color'] }}-50 hover:bg-{{ $groupInfo['color'] }}-100 text-{{ $groupInfo['color'] }}-700 rounded-lg transition-all duration-200 text-sm font-medium">
+                                            <span class="view-all-text">مشاهده همه</span>
+                                            <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </button>
+                                        @endif
                                     </div>
 
                                     <!-- کانتینر اسکرول افقی -->
                                     <div class="relative">
-                                        <div class="scroll-wrapper ">
-                                            <div id="scroll-{{ $groupKey }}" class="horizontal-scroll-container show-scrollbar min-w-0">
+                                        <div class="scroll-wrapper">
+                                            <div id="scroll-{{ $groupKey }}" class="horizontal-scroll-container show-scrollbar min-w-0" data-expanded="false">
                                             @foreach ($groupedData[$groupKey] as $request)
                         <!-- کارت -->
                         <div
@@ -534,6 +556,41 @@
 
 
 
+                            <!-- روزشمار -->
+                            @if ($request->DailyTracker)
+                                @php
+                                    $today = \Carbon\Carbon::now()->startOfDay()->addDays(15);
+                                    if ($request->DailyTracker->id == 1) {
+                                        $today = \Carbon\Carbon::now()->startOfDay()->addDays(31);
+                                    }
+                                    $start = \Carbon\Carbon::parse($request->DailyTracker->start_date, 'Asia/Tehran')->startOfDay();
+                                    $passed = $start->diffInDays($today);
+                                    $max = $request->DailyTracker->max_days;
+                                    $percent = min(($passed / $max) * 100, 100);
+                                @endphp
+                                <div class="mb-4">
+                                    <div class="bg-gray-200 rounded-b-[20px] overflow-hidden h-8 absolute bottom-0 w-full  left-0">
+                                        @if ($passed >= $max)
+                                            <div class="h-full w-full bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
+                                                <button onclick="openScholarshipModal({{ $request->id }})"
+                                                    class="w-full h-full text-white font-bold text-sm hover:bg-green-700 transition cursor-pointer rounded-full">
+                                                    🎓 دریافت بورسیه
+                                                </button>
+                                            </div>
+                                        @else
+                                            <div class="h-full bg-gradient-to-r from-blue-400 to-cyan-500 flex items-center justify-center text-white font-bold text-sm transition-all duration-500"
+                                                 style="width: {{ $percent }}%;">
+                                                @if ($passed == 0)
+                                                    شروع نشده
+                                                @else
+                                                    {{ $passed }} / {{ $max }} روز
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+
+                            @endif
                             <!-- افکت دکوراتیو -->
                             <div
                                 class="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full opacity-20">
@@ -551,21 +608,166 @@
                         @endforeach
                     </div>
 
-
-
                 </div>
-            @endif
+                @endif
+            </div>
+        </main>
+        <div class="fixed inset-0 flex w-full h-full bg-black bg-opacity-50 items-center justify-center z-50 hidden" id='epointmet-modal'>
+            <form method="post" action="{{ route('unified.epointment') }}"
+                  class="bg-white rounded-2xl p-8 min-w-96 max-w-md mx-4 shadow-2xl">
+                @csrf
+                <input type="hidden" name="id" class="requestid" value="">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">تعیین زمان ملاقات</h3>
+                    <p class="text-gray-600">لطفاً تاریخ و زمان مورد نظر خود را انتخاب کنید</p>
+                </div>
+
+                <div class="mb-6">
+                    <input data-jdp name="mydate" id="mydate" type="text" value=""
+                        placeholder="انتخاب تاریخ و زمان ملاقات"
+                        class="w-full h-12 bg-gray-50 border-2 border-gray-200 text-gray-700 rounded-xl text-center focus:border-blue-500 focus:outline-none focus:bg-white transition-all">
+                </div>
+
+                <div class="flex gap-4">
+                    <button type="submit"
+                        class="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-6 rounded-xl hover:from-green-700 hover:to-green-800 transition font-medium shadow-lg">
+                        ✅ تایید ملاقات
+                    </button>
+                    <button type="button" onclick="closeModal('epointmet-modal')"
+                        class="flex-1 bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-6 rounded-xl hover:from-gray-700 hover:to-gray-800 transition font-medium shadow-lg">
+                        ❌ انصراف
+                    </button>
+                </div>
+            </form>
         </div>
-    </main>
-    @include('unified.user.request-popup')
+        <!-- Scholarship Modal -->
+<div id="scholarshipModal"  class="form fixed inset-0 bg-d bg-black bg-opacity-60 flex flex-col items-center justify-center z-50 hidden backdrop-blur-sm">
+<div class="bg-white rounded-3xl p-8 min-w-96 max-w-md mx-4 shadow-2xl transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+    <form id="scholarshipForm" method="POST">
+        @csrf
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="bg-gradient-to-r from-green-400 to-blue-500 w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">تعیین بورسیه</h3>
+            <p class="text-gray-600 text-sm">لطفاً اطلاعات بورسیه را کامل کنید</p>
+        </div>
+
+        <!-- Hidden Fields -->
+        <input type="hidden" name="story" value="scholarship">
+        <input type="hidden" name="request_id" id="modalRequestId">
+
+        <!-- Title Field -->
+        <div class="mb-6">
+            <label for="title" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                <svg class="w-4 h-4 ml-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                </svg>
+                عنوان بورسیه
+            </label>
+            <input type="text" name="title" id="title" required maxlength="25"
+                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300"
+                   placeholder="عنوان بورسیه را وارد کنید">
+        </div>
+
+        <!-- Description Field -->
+        <div class="mb-6">
+            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                <svg class="w-4 h-4 ml-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                توضیحات
+            </label>
+            <textarea name="description" id="description" required rows="3"
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 resize-none"
+                      placeholder="توضیحات مربوط به بورسیه"></textarea>
+        </div>
+
+        <!-- Price Field -->
+        <div class="mb-8">
+            <label for="price-input" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                <svg class="w-4 h-4 ml-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+                مبلغ بورسیه (تومان)
+            </label>
+            <div class="relative">
+                <input type="text" name="price" id="price"
+                       class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 hover:border-gray-300"
+                       placeholder="مبلغ بورسیه را وارد کنید">
+                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">تومان</span>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-3 justify-center">
+            <button type="submit" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center">
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                تعیین بورسیه
+            </button>
+            <button type="button" onclick="closeScholarshipModal()"
+                    class="bg-gradient-to-r from-red-500 to-red-600 text-white px-8 py-3 rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center">
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                انصراف
+            </button>
+        </div>
+    </form>
+</div>
+</div>
+        @include('unified.user.request-popup')
+
 @endsection
 @section('scripts')
+
+    <script src="{{ asset('assets/js/libraris/jalalidatepicker.js') }}"></script>
+    <script src="{{ asset('assets/js/libraris/flatpicker.js') }}"></script>
+<script>
+          document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Jalali Datepicker
+            jalaliDatepicker.startWatch({
+                selector: 'input[data-jdp]',
+                persianDigits: true,
+                date: true,                    // فعال کردن انتخاب تاریخ
+                time: true,                    // فعال کردن انتخاب زمان
+                hasSecond: true,               // فعال کردن انتخاب ثانیه
+                minDate: 'today',              // حداقل تاریخ از امروز
+                showTodayBtn: true,            // نمایش دکمه امروز
+                showEmptyBtn: true,            // نمایش دکمه خالی
+                showCloseBtn: true,            // نمایش دکمه بستن
+                autoHide: true,                // بستن خودکار پس از انتخاب
+                hideAfterChange: false         // عدم بستن خودکار برای تنظیم زمان
+            });
+        });
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+        function closeModal(modalId){
+            document.getElementById(modalId).classList.add('hidden');
+        }
+</script>
     <script src="{{ asset('assets/js/search-functionality.js') }}"></script>
 
     <script src="{{ asset('assets/js/input-validation.js') }}"></script>
+    {{-- <!-- اسکریپت‌های عمومی -->
+    <script src="{{ asset('assets/js/price-input.js') }}"></script> --}}
+    <script src="{{ asset('assets/js/copytext.js') }}"></script>
 
-<script src="{{ asset('assets/js/pages/allrequests/alllrequests.js') }}"></script>
+    <!-- اسکریپت‌های مخصوص این صفحه -->
+    <script src="{{ asset('assets/js/pages/acceptes/accepted-manager.js') }}"></script>
     <script src="{{ asset('assets/js/pages/myrequests/live-update.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/aceeptes/modal.js') }}"></script> --}}
     <script>
                // متغیرهای سراسری
         let currentGroupType = '{{ $currentGroupType }}';
@@ -692,6 +894,18 @@
                 cardsHTML += createCardHTML(request, groupType);
             });
 
+            // دکمه مشاهده همه فقط اگر بیش از 3 کارت داشته باشیم
+            const viewAllBtn = requests.length > 3 ? `
+                <button type="button"
+                        onclick="toggleViewAll('${groupKey}')"
+                        class="view-all-btn flex items-center gap-2 px-4 py-2 bg-${groupInfo.color}-50 hover:bg-${groupInfo.color}-100 text-${groupInfo.color}-700 rounded-lg transition-all duration-200 text-sm font-medium">
+                    <span class="view-all-text">مشاهده همه</span>
+                    <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+            ` : '';
+
             return `
                 <div class="mb-8 category-section category-transition">
                     <div class="flex items-center justify-between mb-4">
@@ -702,10 +916,11 @@
                                 ${requests.length} درخواست
                             </span>
                         </h2>
+                        ${viewAllBtn}
                     </div>
                     <div class="relative">
                         <div class="scroll-wrapper">
-                            <div id="scroll-${groupKey}" class="horizontal-scroll-container show-scrollbar">
+                            <div id="scroll-${groupKey}" class="horizontal-scroll-container show-scrollbar" data-expanded="false">
                                 ${cardsHTML}
                             </div>
                         </div>
@@ -716,78 +931,144 @@
 
         // تابع ایجاد HTML برای هر کارت
         function createCardHTML(request, groupType) {
-            const statusMap = {
-                'submit': {class: 'bg-blue-100 text-blue-700 border-blue-200', text: '📤 ارسال شده'},
-                'accept': {class: 'bg-green-100 text-green-700 border-green-200', text: '✅ تایید شده'},
-                'check': {class: 'bg-yellow-100 text-yellow-700 border-yellow-200', text: '🔍 در حال بررسی'},
-                'reject': {class: 'bg-red-100 text-red-700 border-red-200', text: '❌ رد شده'},
-                'epointment': {class: 'bg-purple-100 text-purple-700 border-purple-200', text: '📅 ملاقات'}
+            // نقشه رنگ‌بندی وضعیت‌ها
+            const statusConfig = {
+                'submit': {bgClass: 'bg-blue-500', text: ' ارسال شده'},
+                'accept': {bgClass: 'bg-green-500', text: ' تایید شده'},
+                'check': {bgClass: 'bg-yellow-500', text: ' در  حال بررسی'},
+                'reject': {bgClass: 'bg-red-500', text: ' رد شده'},
+                'epointment': {bgClass: 'bg-pink-600', text: '  قرارملاقات'}
             };
 
-            const status = statusMap[request.story] || {class: 'bg-gray-100 text-gray-700 border-gray-200', text: '❓ نامشخص'};
+            const currentStatus = statusConfig[request.story] || {bgClass: 'bg-gray-500', text: ' نامشخص'};
 
-            let extraInfo = '';
-            if (groupType === 'grade') {
-                extraInfo = `<span>پایه:</span><span class="font-medium">${request.grade}</span>`;
-            } else if (groupType === 'alphabet') {
-                extraInfo = `<span>نام:</span><span class="font-medium">${request.name}</span>`;
-            } else {
-                const statusText = request.story === 'submit' ? 'ارسال شده' :
-                                 request.story === 'accept' ? 'تایید شده' :
-                                 request.story === 'check' ? 'در حال بررسی' :
-                                 request.story === 'reject' ? 'رد شده' :
-                                 request.story === 'epointment' ? 'ملاقات' : 'نامشخص';
-                extraInfo = `<span>وضعیت:</span><span class="font-medium">${statusText}</span>`;
+            // محاسبه روزشمار (اگر DailyTracker وجود داشته باشد)
+            let dailyTrackerHTML = '';
+            if (request.daily_tracker) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                // اضافه کردن روزهای اضافی بر اساس id
+                if (request.daily_tracker.id == 1) {
+                    today.setDate(today.getDate() + 31);
+                } else {
+                    today.setDate(today.getDate() + 15);
+                }
+
+                const startDate = new Date(request.daily_tracker.start_date);
+                startDate.setHours(0, 0, 0, 0);
+
+                const diffTime = today - startDate;
+                const passed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const max = request.daily_tracker.max_days;
+                const percent = Math.min((passed / max) * 100, 100);
+
+                if (passed >= max) {
+                    dailyTrackerHTML = `
+                        <div class="mb-4">
+                            <div class="bg-gray-200 rounded-b-[20px] overflow-hidden h-8 absolute bottom-0 w-full left-0">
+                                <div class="h-full w-full bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
+                                    <button onclick="openScholarshipModal(${request.id})"
+                                        class="w-full h-full text-white font-bold text-sm hover:bg-green-700 transition cursor-pointer rounded-full">
+                                        🎓 دریافت بورسیه
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const progressText = passed == 0 ? 'شروع نشده' : `${passed} / ${max} روز`;
+                    dailyTrackerHTML = `
+                        <div class="mb-4">
+                            <div class="bg-gray-200 rounded-b-[20px] overflow-hidden h-8 absolute bottom-0 w-full left-0">
+                                <div class="h-full bg-gradient-to-r from-blue-400 to-cyan-500 flex items-center justify-center text-white font-bold text-sm transition-all duration-500"
+                                     style="width: ${percent}%;">
+                                    ${progressText}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             }
 
-            // تبدیل تاریخ به فرمت مناسب
-            const createdAt = request.created_at;
-            // فرض می‌کنیم که سرور تاریخ جلالی را آماده کرده
-            const createdDate = createdAt; // یا هر فرمت‌دهی که نیاز دارید
-
             return `
-                <div class="card-hover flex-shrink-0 flex flex-col items-center bg-gradient-to-br from-white to-gray-50 w-72 h-96 justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden">
-                    <div class="absolute top-4 right-4">
-                        <div class="status-badge px-3 py-1 rounded-full text-xs font-medium border ${status.class}">
-                            ${status.text}
-                        </div>
-                    </div>
+                <div class="card-hover bg-gradient-to-br from-white to-gray-50 w-72 h-96 flex flex-col items-center justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden select-none">
+                    <!-- تصویر پروفایل -->
                     <div class="relative mb-4">
                         <img src="/img/${request.imgpath}" alt="تصویر کاربر" class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white">
-                        <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
                     </div>
+
+                    <!-- بج وضعیت -->
+                    <div class="absolute bottom-[13.5rem] left-1/2 transform -translate-x-1/2">
+                        <div class="status-badge px-3 py-1 text-white rounded-full text-xs font-medium ${currentStatus.bgClass}">
+                            ${currentStatus.text}
+                        </div>
+                    </div>
+
+                    <!-- اطلاعات کاربر -->
                     <div class="text-center mb-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-1">${request.name}</h3>
                         <p class="text-sm text-gray-500">پایه: ${request.grade}</p>
                     </div>
-                    <div class="flex gap-3 w-full">
-                        <a href="{{ route('unified.addoreditrequests') }}?id=${request.id}" class="action-btn flex-1 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center justify-center py-3 gap-2">
+
+                    <!-- دکمه‌های عملکرد -->
+                    <div class="flex gap-3 w-full mt-8">
+                        <button type="button"
+                            onclick='openRequestDetailModal(${JSON.stringify({
+                                id: request.id,
+                                name: request.name,
+                                grade: request.grade,
+                                story: request.story,
+                                imgpath_url: '/img/' + request.imgpath,
+                                nationalcode: request.nationalcode || '',
+                                birthdate: request.birthdate || '',
+                                phone: request.phone || '',
+                                telephone: request.telephone || '',
+                                school: request.school || '',
+                                principal: request.principal || '',
+                                major_name: request.major_name || '',
+                                last_score: request.last_score || '',
+                                school_telephone: request.school_telephone || '',
+                                english_proficiency: request.english_proficiency || 0,
+                                gradesheetpath: request.gradesheetpath || '',
+                                gradesheetpath_url: request.gradesheetpath ? '/img/' + request.gradesheetpath : '',
+                                rental: request.rental || '',
+                                address: request.address || '',
+                                siblings_count: request.siblings_count || '',
+                                siblings_rank: request.siblings_rank || '',
+                                know: request.know || '',
+                                counseling_method: request.counseling_method || '',
+                                why_counseling_method: request.why_counseling_method || '',
+                                father_name: request.father_name || '',
+                                father_phone: request.father_phone || '',
+                                father_job: request.father_job || '',
+                                father_income: request.father_income || '',
+                                father_job_address: request.father_job_address || '',
+                                mother_name: request.mother_name || '',
+                                mother_phone: request.mother_phone || '',
+                                mother_job: request.mother_job || '',
+                                mother_income: request.mother_income || '',
+                                mother_job_address: request.mother_job_address || '',
+                                motivation: request.motivation || '',
+                                spend: request.spend || '',
+                                how_am_i: request.how_am_i || '',
+                                future: request.future || '',
+                                favorite_major: request.favorite_major || '',
+                                help_others: request.help_others || '',
+                                suggestion: request.suggestion || ''
+                            })}, null, true)'
+                            class="action-btn flex-1 w-1/2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center py-3 justify-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
-                            ویرایش
-                        </a>
-                        <form method="POST" action="/unified/requestdetail/${request.id}" class="flex-1">
-                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''}">
-                            <button type="submit" class="action-btn flex-1 w-full bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center py-3 justify-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                مشاهده
-                            </button>
-                        </form>
+                            مشاهده
+                        </button>
                     </div>
-                    <div class="mt-4 w-full">
-                        <div class="bg-gray-50 rounded-xl p-3">
-                            <div class="flex justify-between items-center text-xs text-gray-600">
-                                <span>تاریخ ثبت:</span>
-                                <span>${createdDate}</span>
-                            </div>
-                            <div class="flex justify-between items-center text-xs text-gray-600 mt-1">
-                                ${extraInfo}
-                            </div>
-                        </div>
-                    </div>
+
+                    <!-- روزشمار -->
+                    ${dailyTrackerHTML}
+
+                    <!-- افکت دکوراتیو -->
                     <div class="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full opacity-20"></div>
                     <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-green-200 to-blue-200 rounded-full opacity-20"></div>
                 </div>
@@ -845,6 +1126,56 @@
             updateButtons();
         }
 
+        // تابع مشاهده همه / بستن
+        function toggleViewAll(groupKey) {
+            const container = document.getElementById('scroll-' + groupKey);
+            const button = event.currentTarget;
+            const textSpan = button.querySelector('.view-all-text');
+            const icon = button.querySelector('svg');
+
+            if (!container) return;
+
+            const isExpanded = container.getAttribute('data-expanded') === 'true';
+
+            if (isExpanded) {
+                // بستن - برگشت به حالت اسکرول افقی
+                container.setAttribute('data-expanded', 'false');
+                textSpan.textContent = 'مشاهده همه';
+                icon.style.transform = 'rotate(0deg)';
+
+                // اسکرول به بالای دسته
+                container.closest('.category-section').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            } else {
+                // باز کردن - نمایش grid
+                container.setAttribute('data-expanded', 'true');
+                textSpan.textContent = 'بستن';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+   // Price inputs with comma formatting
+    document.querySelectorAll('.price-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            let value = this.value.replace(/[^0-9]/g, '');
+            if (value.length > 3) {
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+            this.value = value;
+        });
+
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const paste = (e.clipboardData || window.clipboardData).getData('text');
+            let value = paste.replace(/[^0-9]/g, '');
+            if (value.length > 3) {
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+            this.value = value;
+        });
+    });
 
 
     </script>

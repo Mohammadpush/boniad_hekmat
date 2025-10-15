@@ -401,24 +401,113 @@ function initializeFamilyFields() {
         successMessage: 'تعداد خواهر و برادر با موفقیت ذخیره شد'
     });
 
-    // Siblings rank
+    // Siblings rank with interactive icons
     const rankDisplay = document.getElementById('modalSiblingsRankDisplay');
     const rankForm = document.getElementById('modalSiblingsRankForm');
     const rankInput = document.getElementById('modalSiblingsRankInput');
     const rankError = document.getElementById('modalSiblingsRankError');
     const editRankBtn = document.getElementById('editSiblingsRankBtn');
     const cancelRankEdit = document.getElementById('cancelSiblingsRankEdit');
+    const rankIconsContainer = document.getElementById('modalSiblingsIconsContainer');
 
-    if (rankDisplay && rankForm && rankInput && rankError && editRankBtn && cancelRankEdit) {
+    if (rankDisplay && rankForm && rankInput && rankError && editRankBtn && cancelRankEdit && rankIconsContainer) {
+
+        // Function to create interactive sibling icons in modal
+        function updateModalSiblingsRankIcons(count, selectedRank = null) {
+            rankIconsContainer.innerHTML = '';
+
+            if (!count || count < 1 || count > 20) {
+                rankIconsContainer.innerHTML = '<span class="text-gray-400 text-xs">تعداد فرزندان معتبر نیست</span>';
+                return;
+            }
+
+            // Generate person icons
+            for (let i = 1; i <= count; i++) {
+                const iconWrapper = document.createElement('div');
+                iconWrapper.className = 'w-12 h-12 p-1.5 border-2 border-gray-300 rounded-lg cursor-pointer transition-all duration-200 hover:border-blue-400 hover:bg-blue-50 flex items-center justify-center group relative';
+                iconWrapper.dataset.rank = i;
+
+                // SVG icon
+                const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                icon.setAttribute('fill', i == selectedRank ? 'currentColor' : 'none');
+                icon.setAttribute('viewBox', '0 0 24 24');
+                icon.setAttribute('stroke-width', '1.5');
+                icon.setAttribute('stroke', 'currentColor');
+                icon.className = i == selectedRank
+                    ? 'w-6 h-6 text-blue-600 transition-colors duration-200'
+                    : 'w-6 h-6 text-gray-500 group-hover:text-blue-600 transition-colors duration-200';
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('stroke-linecap', 'round');
+                path.setAttribute('stroke-linejoin', 'round');
+                path.setAttribute('d', 'M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z');
+
+                icon.appendChild(path);
+                iconWrapper.appendChild(icon);
+
+                // Rank number badge
+                const rankNumber = document.createElement('div');
+                rankNumber.className = i == selectedRank
+                    ? 'absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium transition-all duration-200'
+                    : 'absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 bg-gray-200 text-gray-600 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium transition-all duration-200';
+                rankNumber.textContent = i;
+                iconWrapper.appendChild(rankNumber);
+
+                // Set initial selected state
+                if (i == selectedRank) {
+                    iconWrapper.className = 'w-12 h-12 p-1.5 border-2 border-blue-500 rounded-lg cursor-pointer transition-all duration-200 bg-blue-100 flex items-center justify-center group relative';
+                }
+
+                // Click event
+                iconWrapper.addEventListener('click', function() {
+                    const clickedRank = this.dataset.rank;
+
+                    // Reset all icons
+                    rankIconsContainer.querySelectorAll('[data-rank]').forEach(wrapper => {
+                        wrapper.className = 'w-12 h-12 p-1.5 border-2 border-gray-300 rounded-lg cursor-pointer transition-all duration-200 hover:border-blue-400 hover:bg-blue-50 flex items-center justify-center group relative';
+                        const svg = wrapper.querySelector('svg');
+                        svg.setAttribute('fill', 'none');
+                        svg.className = 'w-6 h-6 text-gray-500 group-hover:text-blue-600 transition-colors duration-200';
+                        const numberDiv = wrapper.querySelector('div');
+                        numberDiv.className = 'absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 bg-gray-200 text-gray-600 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium transition-all duration-200';
+                    });
+
+                    // Set clicked icon as selected
+                    this.className = 'w-12 h-12 p-1.5 border-2 border-blue-500 rounded-lg cursor-pointer transition-all duration-200 bg-blue-100 flex items-center justify-center group relative';
+                    const selectedSvg = this.querySelector('svg');
+                    selectedSvg.setAttribute('fill', 'currentColor');
+                    selectedSvg.className = 'w-6 h-6 text-blue-600 transition-colors duration-200';
+                    const selectedNumber = this.querySelector('div');
+                    selectedNumber.className = 'absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium transition-all duration-200';
+
+                    // Update hidden input
+                    rankInput.value = clickedRank;
+                    rankError.classList.add('hidden');
+                });
+
+                rankIconsContainer.appendChild(iconWrapper);
+            }
+        }
+
         editRankBtn.addEventListener('click', function() {
-            const currentVal = rankDisplay.textContent.match(/(\d+)/)?.[1] || '1';
-            rankInput.value = currentVal;
+            const currentRankText = rankDisplay.textContent.match(/(\d+)/)?.[1] || '';
+            const siblingsCountValue = document.getElementById('modalSiblingsCountDisplay')?.textContent || '0';
+            const count = parseInt(siblingsCountValue);
+
+            rankInput.value = currentRankText;
+
+            // Create icons with current selection
+            updateModalSiblingsRankIcons(count, currentRankText);
 
             rankDisplay.classList.add('hidden');
             editRankBtn.classList.add('hidden');
             rankForm.classList.remove('hidden');
             rankForm.classList.add('flex');
             rankError.classList.add('hidden');
+
+            // Add to editing fields
+            editingFields.add('siblings_rank');
+            updateEditingPopup();
         });
 
         cancelRankEdit.addEventListener('click', function() {
@@ -427,6 +516,10 @@ function initializeFamilyFields() {
             rankDisplay.classList.remove('hidden');
             editRankBtn.classList.remove('hidden');
             rankError.classList.add('hidden');
+
+            // Remove from editing fields
+            editingFields.delete('siblings_rank');
+            updateEditingPopup();
         });
 
         rankForm.addEventListener('submit', function(e) {
@@ -434,13 +527,13 @@ function initializeFamilyFields() {
             const newVal = rankInput.value.trim();
             const numVal = parseInt(newVal);
 
-            if (isNaN(numVal) || numVal < 1 || numVal > 20) {
-                rankError.textContent = 'فرزند باید بین ۱ تا ۲۰ باشد';
+            if (!newVal || isNaN(numVal) || numVal < 1 || numVal > 20) {
+                rankError.textContent = 'لطفاً یک رتبه معتبر انتخاب کنید';
                 rankError.classList.remove('hidden');
                 return;
             }
 
-            const displayText = `فرزند ${newVal}ام`;
+            const displayText = `فرزند ${newVal}م`;
             const loadingEl = showLoadingIndicator('در حال ذخیره...');
 
             updateRequestField('siblings_rank', newVal)
@@ -451,9 +544,19 @@ function initializeFamilyFields() {
                         rankForm.classList.remove('flex');
                         rankDisplay.classList.remove('hidden');
                         editRankBtn.classList.remove('hidden');
-                        showSuccessMessage('فرزند چندم با موفقیت ذخیره شد');
+                        rankError.classList.add('hidden');
+
+                        // Remove from editing fields
+                        editingFields.delete('siblings_rank');
+                        updateEditingPopup();
+
+                        showSuccessMessage('رتبه فرزند با موفقیت ذخیره شد');
 
                         setTimeout(refreshRequestData, 500);
+
+                        if (typeof window.updatePageData === 'function') {
+                            setTimeout(window.updatePageData, 1000);
+                        }
                     } else {
                         throw new Error(response.message || 'خطا در ذخیره اطلاعات');
                     }

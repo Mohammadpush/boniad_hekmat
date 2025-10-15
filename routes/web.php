@@ -23,6 +23,11 @@ Route::post('/register', [HomeController::class, 'register'])->name('register.su
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
+// CSRF Token Refresh Route
+Route::middleware('web')->get('/refresh-csrf', function () {
+    return response()->json(['token' => csrf_token()]);
+});
+
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/roler', [AuthController::class, 'roler'])->name('roler');
@@ -63,12 +68,11 @@ Route::middleware(['auth'])->prefix('unified')->name('unified.')->group(function
     Route::post('/upload-pdf', [UnifiedController::class, 'uploadpdf'])->name('uploadpdf');
     Route::get('/get-request-data/{id}', [UnifiedController::class, 'getRequestData'])->name('getRequestData');
     Route::post('/accept', [UnifiedController::class, 'accept'])->name('accept');
-    Route::get('/reject/{id}', [UnifiedController::class, 'reject'])->name('reject');
-    Route::post('/epointment/{id}', [UnifiedController::class, 'epointment'])->name('epointment');
+    Route::post('/reject', [UnifiedController::class, 'reject'])->name('reject');
+    Route::post('/epointment', [UnifiedController::class, 'epointment'])->name('epointment');
 
     // Messages - All Roles
-    Route::get('/message/{id}', [UnifiedController::class, 'message'])->name('message');
-    Route::get('/addmessage/{id}', [UnifiedController::class, 'addmessage'])->name('addmessage');
+    Route::get('/message/{id?}', [UnifiedController::class, 'message'])->name('message');
     Route::post('/storemessage/{id}', [UnifiedController::class, 'storemessage'])->name('storemessage');
 
     // Accepted Requests - Admin/Master Only

@@ -1,41 +1,33 @@
-// اسکریپت مخصوص صفحه پیام‌ها
+// اسکریپت مدیریت پیام‌ها - طراحی تلگرامی
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize message search
-    initMessageSearch();
-
-    // Initialize modal handlers
-    initModalHandlers();
-
-    // Initialize smart navigation
-    initSmartNavigation();
+    initRequestSearch();
+    initRequestSelection();
+    initMessageInput();
+    initStoryTypeModal();
+    scrollToBottom();
 });
 
-function initMessageSearch() {
-    const searchInput = document.getElementById('searchInput');
+// جستجو در لیست درخواست‌ها
+function initRequestSearch() {
+    const searchInput = document.getElementById('searchRequests');
     if (!searchInput) return;
 
     searchInput.addEventListener('input', function() {
         const searchTerm = this.value.toLowerCase().trim();
-        const messageContainers = document.querySelectorAll('.space-y-4 > div');
+        const requestItems = document.querySelectorAll('.request-item');
 
-        messageContainers.forEach(container => {
-            const title = container.querySelector('.font-bold')?.textContent.toLowerCase() || '';
-            const description = container.querySelector('.text-sm')?.textContent.toLowerCase() || '';
+        requestItems.forEach(item => {
+            const name = item.dataset.requestName?.toLowerCase() || '';
 
-            if (searchTerm === '' || title.includes(searchTerm) || description.includes(searchTerm)) {
-                container.style.display = '';
-                container.classList.remove('hidden');
+            if (searchTerm === '' || name.includes(searchTerm)) {
+                item.style.display = '';
             } else {
-                container.style.display = 'none';
-                container.classList.add('hidden');
+                item.style.display = 'none';
             }
         });
-
-        // Show "no results" message if needed
-        updateNoResultsMessage(searchTerm);
     });
 
-    // Clear search on Escape
+    // پاک کردن جستجو با Escape
     searchInput.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             this.value = '';
@@ -45,128 +37,243 @@ function initMessageSearch() {
     });
 }
 
-function updateNoResultsMessage(searchTerm) {
-    const messageContainer = document.querySelector('.space-y-4');
-    const visibleMessages = document.querySelectorAll('.space-y-4 > div:not([style*="display: none"])');
+// انتخاب درخواست و تعویض چت
+function initRequestSelection() {
+    const requestItems = document.querySelectorAll('.request-item');
 
-    let noResultsDiv = document.getElementById('noResultsMessage');
+    requestItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const requestId = this.dataset.requestId;
 
-    if (searchTerm && visibleMessages.length === 0) {
-        if (!noResultsDiv) {
-            noResultsDiv = document.createElement('div');
-            noResultsDiv.id = 'noResultsMessage';
-            noResultsDiv.className = 'text-center py-8';
-            noResultsDiv.innerHTML = `
-                <div class="text-gray-400 mb-2">
-                    <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </div>
-                <p class="text-gray-600">نتیجه‌ای برای جستجوی شما یافت نشد.</p>
-                <p class="text-sm text-gray-500 mt-1">لطفاً کلمات کلیدی دیگری امتحان کنید.</p>
-            `;
-            messageContainer.appendChild(noResultsDiv);
-        } else {
-            noResultsDiv.style.display = '';
-        }
-    } else if (noResultsDiv) {
-        noResultsDiv.style.display = 'none';
-    }
-}
+            // حذف کلاس active از همه آیتم‌ها
+            requestItems.forEach(i => i.classList.remove('active'));
 
-function initModalHandlers() {
-    // Message modal handlers
-    const messageModal = document.getElementById('messageModal');
-    if (!messageModal) return;
+            // اضافه کردن active به آیتم انتخاب شده
+            this.classList.add('active');
 
-    // Close modal when clicking outside
-    messageModal.addEventListener('click', function(e) {
-        if (e.target === messageModal) {
-            closeMessageModal();
-        }
-    });
-
-    // Close modal with Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !messageModal.classList.contains('hidden')) {
-            closeMessageModal();
-        }
+            // انتقال به صفحه پیام این درخواست
+            window.location.href = `/unified/message/${requestId}`;
+        });
     });
 }
 
-function openMessageModal(title, content, price = null) {
-    const modal = document.getElementById('messageModal');
-    const modalContent = document.getElementById('messageContent');
+// مدیریت textarea پیام
+function initMessageInput() {
+    const textarea = document.getElementById('messageInput');
+    if (!textarea) return;
 
-    if (!modal || !modalContent) return;
+    // Auto-resize textarea
+    textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
 
-    let fullContent = '';
-    if (title) {
-        fullContent += `<h4 class="font-bold text-lg mb-3 text-blue-600">${title}</h4>`;
-    }
-    fullContent += `<p class="text-gray-700 leading-relaxed">${content}</p>`;
-    if (price) {
-        fullContent += `<div class="mt-4 p-3 bg-yellow-50 border-r-4 border-yellow-400 rounded">
-            <p class="text-sm text-yellow-800"><strong>مبلغ:</strong> ${price} تومان</p>
-        </div>`;
-    }
+    // ارسال با Ctrl+Enter یا Cmd+Enter
+    textarea.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('messageForm').submit();
+        }
+    });
 
-    modalContent.innerHTML = fullContent;
-    modal.classList.remove('hidden');
-    modal.classList.add('show');
+    // جلوگیری از ارسال فرم با Enter (فقط newline اضافه می‌کند)
+    textarea.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+            // در حالت عادی Enter خط جدید اضافه می‌کند
+            // برای ارسال باید Ctrl+Enter زد
+        }
+    });
 }
 
-function closeMessageModal() {
-    const modal = document.getElementById('messageModal');
-    if (!modal) return;
+// مدیریت modal انتخاب نوع پیام
+function initStoryTypeModal() {
+    const storyTypeButton = document.getElementById('storyTypeButton');
+    const storyTypeModal = document.getElementById('storyTypeModal');
+    const confirmButton = document.getElementById('confirmStoryType');
+    const cancelButton = document.getElementById('cancelStoryType');
+    const storyInput = document.getElementById('storyInput');
+    const priceInput = document.getElementById('priceInput');
+    const priceInputModal = document.getElementById('priceInputModal');
+    const priceSection = document.getElementById('priceSection');
+    const storyOptions = document.querySelectorAll('.story-option');
 
-    modal.classList.add('hidden');
-    modal.classList.remove('show');
-}
+    if (!storyTypeButton || !storyTypeModal) return;
 
-function initSmartNavigation() {
-    // Smart back navigation
-    window.smartGoBack = function() {
-        // بررسی تعداد صفحات موجود در history
-        if (window.history.length > 1) {
-            // بررسی آدرس فعلی
-            const currentUrl = window.location.href;
+    let selectedStory = 'message';
 
-            // اگر از addmessage اومدیم، دو قدم برگرد
-            if (document.referrer.includes('addmessage')) {
-                window.history.go(-2);
+    // باز کردن modal
+    storyTypeButton.addEventListener('click', function() {
+        storyTypeModal.classList.remove('hidden');
+
+        // تنظیم story فعلی
+        storyOptions.forEach(option => {
+            if (option.dataset.story === selectedStory) {
+                option.classList.add('active');
             } else {
-                // در غیر این صورت یک قدم
-                window.history.back();
+                option.classList.remove('active');
             }
+        });
+
+        // نمایش/مخفی کردن بخش مبلغ
+        if (selectedStory === 'scholarship') {
+            priceSection.classList.remove('hidden');
         } else {
-            // اگر history خالی است، به صفحه پیش‌فرض برو
-            window.location.href = '/unified/allrequests';
+            priceSection.classList.add('hidden');
         }
-    };
-}
+    });
 
-// Helper function to format numbers
-function formatPrice(price) {
-    return new Intl.NumberFormat('fa-IR').format(price);
-}
+    // انتخاب نوع story
+    storyOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // حذف active از همه
+            storyOptions.forEach(opt => opt.classList.remove('active'));
 
-// Add click handlers for message bubbles to show full content
-function addMessageClickHandlers() {
-    document.addEventListener('click', function(e) {
-        const messageDiv = e.target.closest('.message-bubble, .bg-\\[\\#9faeff\\], .bg-\\[\\#c5bebe\\]');
-        if (!messageDiv) return;
+            // اضافه کردن active به گزینه انتخاب شده
+            this.classList.add('active');
+            selectedStory = this.dataset.story;
 
-        const title = messageDiv.querySelector('.font-bold')?.textContent || '';
-        const description = messageDiv.querySelector('.text-sm')?.textContent || '';
-        const priceElement = messageDiv.querySelector('.opacity-75');
-        const price = priceElement ? priceElement.textContent.replace('مبلغ: ', '').replace(' تومان', '') : null;
+            // نمایش بخش مبلغ برای بورسیه
+            if (selectedStory === 'scholarship') {
+                priceSection.classList.remove('hidden');
+            } else {
+                priceSection.classList.add('hidden');
+            }
+        });
+    });
 
-        if (description.length > 100 || title.length > 50) {
-            openMessageModal(title, description, price);
+    // تایید انتخاب
+    confirmButton.addEventListener('click', function() {
+        storyInput.value = selectedStory;
+
+        // تنظیم مبلغ
+        if (selectedStory === 'scholarship' && priceInputModal.value) {
+            priceInput.value = priceInputModal.value;
+        } else {
+            priceInput.value = '';
+        }
+
+        // بستن modal
+        storyTypeModal.classList.add('hidden');
+
+        // تغییر آیکون دکمه بر اساس نوع انتخاب شده
+        updateStoryButtonIcon(selectedStory);
+    });
+
+    // انصراف
+    cancelButton.addEventListener('click', function() {
+        storyTypeModal.classList.add('hidden');
+    });
+
+    // بستن modal با کلیک خارج از آن
+    storyTypeModal.addEventListener('click', function(e) {
+        if (e.target === storyTypeModal) {
+            storyTypeModal.classList.add('hidden');
+        }
+    });
+
+    // بستن modal با Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !storyTypeModal.classList.contains('hidden')) {
+            storyTypeModal.classList.add('hidden');
         }
     });
 }
 
-// Initialize click handlers when DOM is ready
-document.addEventListener('DOMContentLoaded', addMessageClickHandlers);
+// تغییر آیکون دکمه بر اساس نوع پیام انتخاب شده
+function updateStoryButtonIcon(storyType) {
+    const storyButton = document.getElementById('storyTypeButton');
+    if (!storyButton) return;
+
+    const iconMap = {
+        'message': '💬',
+        'thanks': '🙏',
+        'warning': '⚠️',
+        'scholarship': '🎓'
+    };
+
+    const colorMap = {
+        'message': '#3b82f6',
+        'thanks': '#60a5fa',
+        'warning': '#eab308',
+        'scholarship': '#10b981'
+    };
+
+    // تغییر رنگ background
+    storyButton.style.background = colorMap[storyType] || '#f3f4f6';
+
+    // اگر پیام عادی نیست، رنگ متن سفید باشد
+    if (storyType !== 'message') {
+        storyButton.style.color = 'white';
+    } else {
+        storyButton.style.color = '#6b7280';
+    }
+}
+
+// اسکرول به آخرین پیام
+function scrollToBottom() {
+    const messagesContainer = document.getElementById('messagesContainer');
+    if (!messagesContainer) return;
+
+    setTimeout(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, 100);
+}
+
+// نمایش پیام موفقیت/خطا
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : '#ef4444'};
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        animation: slideInRight 0.3s ease-out;
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Mobile: مخفی/نمایش sidebar
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    if (!sidebar) return;
+
+    if (window.innerWidth <= 768) {
+        sidebar.classList.toggle('hidden-mobile');
+    }
+}
+
+// Event listener برای تغییر اندازه صفحه
+window.addEventListener('resize', function() {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && window.innerWidth > 768) {
+        sidebar.classList.remove('hidden-mobile');
+    }
+});
+
+// نمایش پیام‌های سیستمی (اگر در session باشد)
+window.addEventListener('load', function() {
+    const successMessage = document.querySelector('.alert-success');
+    const errorMessage = document.querySelector('.alert-error');
+
+    if (successMessage) {
+        showNotification(successMessage.textContent, 'success');
+    }
+
+    if (errorMessage) {
+        showNotification(errorMessage.textContent, 'error');
+    }
+});

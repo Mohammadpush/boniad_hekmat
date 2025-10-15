@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست چاپ درخواست</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .mock-modal {
+            display: none;
+        }
+        #printRequestBtn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 40px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #printRequestBtn:hover {
+            background: #45a049;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-right: 4px solid #2196F3;
+        }
+        .info h3 {
+            margin-top: 0;
+            color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🖨️ تست سیستم چاپ فشرده درخواست</h1>
+
+        <button id="printRequestBtn">چاپ درخواست نمونه</button>
+
+        <div class="info">
+            <h3>✅ سیستم چاپ آماده است!</h3>
+            <p>با کلیک روی دکمه بالا، پنجره چاپ باز می‌شود و تمام اطلاعات نمونه را نشان می‌دهد.</p>
+        </div>
+    </div>
+
+    <!-- داده‌های Mock برای تست -->
+    <div class="mock-modal">
+        <span id="modalNameDisplay">محمد رضایی</span>
+        <span id="modalNationalCodeDisplay">1234567890</span>
+        <span id="modalBirthdateDisplay">1385/05/15</span>
+        <span id="modalPhoneDisplay">09123456789</span>
+        <span id="modalTelephoneDisplay">02133445566</span>
+        <span id="modalGradeDisplay">دهم</span>
+        <span id="modalSchoolDisplay">دبیرستان شهید بهشتی</span>
+        <span id="modalPrincipalDisplay">آقای احمدی</span>
+        <span id="modalMajor">ریاضی</span>
+        <span id="modalGPA">18.50</span>
+        <span id="modalAddressDisplay">تهران، خیابان ولیعصر، کوچه شماره 10، پلاک 25</span>
+        <span id="modalFatherName">علی رضایی</span>
+        <span id="modalFatherJob">مهندس</span>
+        <span id="modalFatherPhone">09121234567</span>
+        <span id="modalFatherIncome">15,000,000 تومان</span>
+        <span id="modalMotherName">فاطمه احمدی</span>
+        <span id="modalMotherJob">معلم</span>
+        <span id="modalMotherPhone">09127654321</span>
+        <span id="modalMotherIncome">10,000,000 تومان</span>
+        <span id="modalMotivation">من از کودکی به تحصیل علاقه زیادی داشته‌ام و همواره آرزوی من این بوده که بتوانم در رشته ریاضی تحصیل کنم. با وجود شرایط اقتصادی نامناسب خانواده، من تلاش خود را می‌کنم تا بتوانم با دریافت این بورسیه به اهداف علمی خود دست پیدا کنم و در آینده بتوانم به جامعه خدمت کنم.</span>
+        <span id="modalSpend">از این کمک مالی برای خرید کتاب‌های درسی، ثبت‌نام در کلاس‌های کمک آموزشی و تهیه لوازم‌التحریر استفاده خواهم کرد.</span>
+        <span id="modalHowAmI">من دانش‌آموزی پرتلاش و علاقه‌مند به یادگیری هستم. همیشه سعی می‌کنم در درس‌ها فعال باشم و به دوستانم هم کمک کنم.</span>
+        <span id="modalFuture">قصد دارم در رشته مهندسی کامپیوتر تحصیل کنم و در آینده یک نرم‌افزار کاربردی برای کمک به دانش‌آموزان طراحی کنم.</span>
+        <span id="modalFavoriteMajor">مهندسی کامپیوتر</span>
+        <span id="modalHelpOthers">بله، در صورت موفقیت حتماً به دیگران کمک خواهم کرد</span>
+        <span id="modalSuggestion">پیشنهاد می‌کنم برنامه‌های آموزشی بیشتری برای دانش‌آموزان برگزار شود.</span>
+        <span id="modalStatusBadge">✅ تایید شده</span>
+        <img id="modalProfileImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ddd' width='100' height='100'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-family='Arial' font-size='14'%3E👤%3C/text%3E%3C/svg%3E" alt="پروفایل">
+    </div>
+
+    <script src="assets/js/print-request.js"></script>
+</body>
+</html>

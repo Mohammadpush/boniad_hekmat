@@ -196,29 +196,35 @@
                                             <span id="modalSiblingsRankDisplay"
                                                 class="text-lg font-semibold text-gray-800"></span>
                                             <form id="modalSiblingsRankForm"
-                                                class="hidden items-center space-x-2 space-x-reverse"
+                                                class="hidden flex-col space-y-2 w-full"
                                                 style="margin:0;">
                                                 <div id="modalSiblingsIconsContainer"
-                                                    class="flex gap-2 p-2 border border-gray-300 rounded min-w-[120px]">
+                                                    class="flex flex-wrap gap-2 p-3 border border-gray-300 rounded-lg min-h-[80px] items-center justify-center bg-gray-50">
                                                     <!-- آیکون‌های interactive در اینجا ایجاد خواهند شد -->
+                                                    <span class="text-gray-400 text-xs">در حال بارگذاری...</span>
                                                 </div>
                                                 <input type="hidden" id="modalSiblingsRankInput">
-                                                <button type="submit"><svg xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                                                        stroke="currentColor"
-                                                        class="size-5 text-gray-400 hover:text-green-500">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                                    </svg></button>
-                                                <button type="button" id="cancelSiblingsRankEdit"><svg
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                        viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
-                                                        class="size-5 text-gray-400 hover:text-red-500">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                                    </svg></button>
-                                                <span id="modalSiblingsRankError"
-                                                    class="text-red-500 text-xs ml-2 hidden"></span>
+                                                <div class="flex items-center gap-2">
+                                                    <button type="submit" class="p-2 hover:bg-green-50 rounded-lg transition-colors" title="ذخیره">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                                                            stroke="currentColor"
+                                                            class="w-5 h-5 text-gray-400 hover:text-green-500">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                        </svg>
+                                                    </button>
+                                                    <button type="button" id="cancelSiblingsRankEdit" class="p-2 hover:bg-red-50 rounded-lg transition-colors" title="انصراف">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                            viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                                            class="w-5 h-5 text-gray-400 hover:text-red-500">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                        </svg>
+                                                    </button>
+                                                    <span id="modalSiblingsRankError"
+                                                        class="text-red-500 text-xs flex-1"></span>
+                                                </div>
                                             </form>
                                             <button type="button" id="editSiblingsRankBtn"
                                                 class="ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
@@ -1138,6 +1144,7 @@
                             </div>
                         </div>
                     </div>
+                    @if (Auth::user()->role == 'user')
 
                     {{-- دکمه‌های عملیات --}}
                     <div class="flex justify-center items-center space-x-4 space-x-reverse mt-8">
@@ -1149,6 +1156,7 @@
                             ❌ کنسل
                         </a>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -1189,3 +1197,4 @@
     <script src="{{ asset('assets/js/request-detail-popup/modal-core.js') }}"></script>
     <script src="{{ asset('assets/js/request-detail-popup/field-management.js') }}"></script>
     <script src="{{ asset('assets/js/request-detail-popup/data-upload.js') }}"></script>
+    <script src="{{ asset('assets/js/print-request.js') }}"></script>
