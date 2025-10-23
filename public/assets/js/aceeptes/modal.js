@@ -4,7 +4,8 @@
         const content = document.getElementById('modalContent');
 
         document.getElementById('modalRequestId').value = requestId;
-        document.getElementById('scholarshipForm').action = '{{ route("unified.storemessage", ":id") }}'.replace(':id', requestId);
+        document.getElementById('scholarshipForm').action = 'unfied/stormessage/',requestId;
+        console.log( 'fjlsk;jfsfd',document.getElementById('scholarshipForm').action);
         console.log(modal,content)
         modal.classList.remove('hidden');
 
@@ -41,6 +42,7 @@
         e.preventDefault();
 
         const formData = new FormData(this);
+        console.log(formData);
         const actionUrl = this.action;
 
         // Show loading on submit button

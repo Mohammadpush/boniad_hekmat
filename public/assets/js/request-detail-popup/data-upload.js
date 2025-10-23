@@ -117,7 +117,7 @@ function initializeProfileImageUpload() {
     console.log('🎯 Starting profile image upload initialization...');
 
     // 1. یافتن المنت‌های مورد نیاز
-    const uploadBtn = document.getElementById('uploadProfileImgBtn');
+    const uploadBtn = document.getElementById('edituploadProfileImgBtn');
     const fileInput = document.getElementById('profileImgInput');
     const imgElement = document.getElementById('modalProfileImg');
     const requestId = window.currentRequestId;
@@ -232,7 +232,7 @@ function initializeGradeSheetUpload() {
     console.log('🎯 Starting grade sheet upload initialization...');
 
     // 1. یافتن المنت‌های مورد نیاز
-    const uploadBtn = document.getElementById('uploadGradeSheetBtn');
+    const uploadBtn = document.getElementById('edituploadGradeSheetBtn');
     const fileInput = document.getElementById('gradeSheetInput');
     const imgElement = document.getElementById('modalGradeSheetImg');
     const linkElement = document.getElementById('modalGradeSheetLink');

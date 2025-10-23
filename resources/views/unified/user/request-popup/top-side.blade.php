@@ -22,7 +22,7 @@
                     <div class="absolute bottom-0 right-0">
                         <div class="relative group">
                             <input type="file" name="imgpath" id="profileImgInput" accept="image/*" class="hidden">
-                            <button type="button" id="uploadProfileImgBtn"
+                            <button type="button" id="edituploadProfileImgBtn"
                                 class="absolute bottom-0 right-0 p-2 bg-white hover:bg-blue-50 text-blue-600 rounded-full shadow-lg transform transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 group-hover:translate-y-0 translate-y-2 opacity-90 hover:opacity-100">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
@@ -258,32 +258,32 @@
                                     @csrf
                                     <input type="hidden" name="id" class="requestid">
                                     <button type="submit"
-                                    class="group relative w-full px-3 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                        class="group relative w-full px-3 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M5 13l4 4L19 7"></path>
                                         </svg>
                                         <span>تایید</span>
                                         <div
-                                        class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-200">
-                                    </div>
-                                </button>
-                            </form>
+                                            class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-200">
+                                        </div>
+                                    </button>
+                                </form>
 
-                            <!-- دکمه رد درخواست -->
-                            <form method="POST" action="{{ route('unified.reject') }}" class="w-full">
-                                @csrf
-                                <input type="hidden" name="id" class="requestid">
-                                <button type="submit"
-                                class="group relative w-full px-3 py-3 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                <!-- دکمه رد درخواست -->
+                                <form method="POST" action="{{ route('unified.reject') }}" class="w-full">
+                                    @csrf
+                                    <input type="hidden" name="id" class="requestid">
+                                    <button type="submit"
+                                        class="group relative w-full px-3 py-3 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M6 18L18 6M6 6l12 12"></path>
-                                            </svg>
-                                            <span>رد</span>
-                                            <div
+                                        </svg>
+                                        <span>رد</span>
+                                        <div
                                             class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-200">
                                         </div>
                                     </button>
@@ -291,37 +291,36 @@
 
 
                                 <button type="button" onclick="openModal('epointmet-modal')"
-                                class="group relative w-full px-3 py-3 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    class="group relative w-full px-3 py-3 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                    </path>
-                                </svg>
-                                <span>ملاقات</span>
-                                <div
-                                class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-200">
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                    <span>ملاقات</span>
+                                    <div
+                                        class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-200">
+                                    </div>
+                                </button>
                             </div>
-                        </button>
-                    </div>
-                    <!-- دکمه چاپ - در بالا و جدا با عرض کامل -->
-                    <div class="mt-4">
-                        <button type="button" id="printRequestBtn"
-                            class="group relative w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
-                                </path>
-                            </svg>
-                            <span>چاپ درخواست</span>
-                            <div
-                                class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-200">
+                            <!-- دکمه چاپ - در بالا و جدا با عرض کامل -->
+                            <div class="mt-4">
+                                <button type="button" id="printRequestBtn"
+                                    class="group relative w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                                        </path>
+                                    </svg>
+                                    <span>چاپ درخواست</span>
+                                    <div
+                                        class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-200">
+                                    </div>
+                                </button>
                             </div>
-                        </button>
-                    </div>
+                        </div>
+                    @endif
                 </div>
-
-                @endif
-            </div>
             </div>
         </div>
     </div>
@@ -617,7 +616,7 @@
                         class="w-16 h-16 object-cover rounded-lg border-2 border-gray-300">
                     <a id="modalGradeSheetLink" href="" target="_blank"
                         class="text-blue-600 hover:text-blue-800 font-medium">مشاهده کارنامه</a>
-                    <button type="button" id="uploadGradeSheetBtn"
+                    <button type="button" id="edituploadGradeSheetBtn"
                         class="bg-green-500 hover:bg-green-600 text-white rounded-lg px-3 py-1 text-sm shadow-lg transition-colors"
                         title="آپلود کارنامه جدید">
                         آپلود مجدد

@@ -3,151 +3,12 @@
 @section('page-title', 'فرم درخواست بورسیه')
 
 @section('head')
-<style>
-    .progress-bar {
-        background: linear-gradient(to right, #3b82f6 0%, #3b82f6 var(--progress), #e5e7eb var(--progress), #e5e7eb 100%);
-        transition: all 0.3s ease;
-    }
-    .step-circle {
-        transition: all 0.3s ease;
-    }
-    .step-circle.active {
-        background: #3b82f6;
-        color: white;
-        transform: scale(1.1);
-    }
-    .step-circle.completed {
-        background: #10b981;
-        color: white;
-    }
-    .form-section {
-        display: none;
-        opacity: 0;
-        transform: translateX(20px);
-        transition: all 0.3s ease;
-    }
-    .form-section.active {
-        display: block;
-        opacity: 1;
-        transform: translateX(0);
-    }
-    .field-error {
-        border-color: #ef4444 !important;
-        background-color: #fef2f2 !important;
-    }
-    .error-message {
-        color: #ef4444;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
-
-    /* Custom Slider Styles */
-    .slider {
-        -webkit-appearance: none;
-        appearance: none;
-        background: linear-gradient(to left, #3b82f6 0%, #3b82f6 50%, #e5e7eb 50%, #e5e7eb 100%);
-        outline: none;
-        border-radius: 6px;
-        direction: rtl;
-    }
-
-    .slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: #3b82f6;
-        cursor: pointer;
-        border: 2px solid #ffffff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        transition: all 0.2s ease;
-    }
-
-    .slider::-webkit-slider-thumb:hover {
-        transform: scale(1.1);
-        background: #2563eb;
-    }
-
-    .slider::-moz-range-thumb {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: #3b82f6;
-        cursor: pointer;
-        border: 2px solid #ffffff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        transition: all 0.2s ease;
-    }
-
-    .slider::-moz-range-thumb:hover {
-        transform: scale(1.1);
-        background: #2563eb;
-    }
-
-    /* Person icon styles */
-    .person-icon svg {
-        transition: all 0.2s ease;
-    }
-        align-items: center;
-        justify-content: center;
-    }
-
-    .person-icon:hover {
-        transform: scale(1.05);
-        background: #f3f4f6;
-        border-color: #d1d5db;
-    }
-
-    .person-icon.selected {
-        background: #3b82f6;
-        color: white;
-        border-color: #2563eb;
-        transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
-
-    .person-icon.selected::after {
-        content: '';
-        position: absolute;
-        bottom: -6px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 6px;
-        height: 6px;
-        background: #10b981;
-        border-radius: 50%;
-        border: 2px solid white;
-    }
-
-    .person-number {
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 10px;
-        font-weight: bold;
-        color: #374151;
-        background: white;
-        border-radius: 50%;
-        width: 16px;
-        height: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid #d1d5db;
-    }
-
-    .person-icon.selected .person-number {
-        color: #3b82f6;
-        border-color: #3b82f6;
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('assets/css/pages/request-form/styles.css') }}">
 @endsection
 
 @section('content')
 <main class="flex-1 p-8">
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-[89rem] mx-auto">
         <!-- Progress Bar -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
             <div class="flex items-center justify-between mb-6">
@@ -162,40 +23,40 @@
 
             <!-- Progress Steps -->
             <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center step-indicator" data-step="1">
-                    <div class="step-circle active w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold">1</div>
-                    <span class="mr-2 text-sm font-medium text-gray-700">اطلاعات شخصی</span>
+                <div class="flex   items-center step-indicator" data-step="1">
+                    <div class="step-circle active size-[17vw]  rounded-full flex items-center justify-center text-sm font-semibold">1</div>
                 </div>
+                <span class="mr-2  text-sm font-medium text-gray-700 max-[862px]:hidden">اطلاعات شخصی</span>
                 <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
 
                 <div class="flex items-center step-indicator" data-step="2">
                     <div class="step-circle w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">2</div>
-                    <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات تحصیلی</span>
                 </div>
+                <span class="mr-2  text-sm font-medium text-gray-700 max-[862px]:hidden">اطلاعات تحصیلی</span>
                 <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
 
                 <div class="flex items-center step-indicator" data-step="3">
                     <div class="step-circle w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">3</div>
-                    <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات مسکن</span>
                 </div>
+                <span class="mr-2  text-sm font-medium text-gray-700 max-[862px]:hidden">اطلاعات مسکن</span>
                 <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
 
                 <div class="flex items-center step-indicator" data-step="4">
                     <div class="step-circle w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">4</div>
-                    <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات والدین</span>
                 </div>
+                <span class="mr-2  text-sm font-medium text-gray-700 max-[862px]:hidden">اطلاعات والدین</span>
                 <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
 
                 <div class="flex items-center step-indicator" data-step="5">
                     <div class="step-circle w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">5</div>
-                    <span class="mr-2 text-sm font-medium text-gray-500">اطلاعات خانوادگی</span>
                 </div>
+                <span class="mr-2  text-sm font-medium text-gray-700 max-[862px]:hidden">اطلاعات خانوادگی</span>
                 <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
 
                 <div class="flex items-center step-indicator" data-step="6">
                     <div class="step-circle w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">6</div>
-                    <span class="mr-2 text-sm font-medium text-gray-500">سوالات نهایی</span>
                 </div>
+                <span class="mr-2  text-sm font-medium text-gray-700 max-[862px]:hidden">سوالات نهایی</span>
             </div>
 
             <!-- Progress Bar -->
@@ -1298,7 +1159,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 text.className = 'mr-2 text-sm font-medium text-gray-700';
             } else {
                 circle.className = 'step-circle w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600';
-                text.className = 'mr-2 text-sm font-medium text-gray-500';
+                text.className = 'mr-2  text-sm font-medium text-gray-700 max-[862px]:hidden';
             }
         });
 

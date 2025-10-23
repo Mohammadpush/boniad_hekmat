@@ -76,8 +76,7 @@ $table->foreignId('major_id')->nullable()->constrained('majors')->onDelete('casc
 
             // از این ردیف به بعد
             $table->string('story')->default('submit');
-
-            $table->dateTime('date')->nullable();
+            //وضعیت درخواست فرد که شامل submit, accept, check, reject میباشد
             $table->string('cardnumber',16)->nullable();
 
             $table->timestamps();

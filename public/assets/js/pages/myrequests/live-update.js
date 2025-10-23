@@ -136,6 +136,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (viewButton) {
                 const newOnclick = `openRequestDetailModal({
                     id: ${requestData.id},
+                    this_user_id : ${requestData.this_user_id },
+                    id: ${requestData.id},
                     name: '${requestData.name.replace(/'/g, "\\'")}',
                     grade: '${requestData.grade}',
                     story: '${requestData.story}',
@@ -212,4 +214,5 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }, 3000);
     }
+    
 });

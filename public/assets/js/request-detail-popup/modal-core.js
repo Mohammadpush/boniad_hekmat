@@ -7,7 +7,7 @@ let modalLastUpdateTime = null;
 let modalIsUpdating = false;
 
 // Open modal function
-function openRequestDetailModal(requestData, cardElement = null, isadmin = false) {
+function openRequestDetailModal(requestData, cardElement = null) {
     const modal = document.getElementById('requestDetailModal');
     // Store request ID for editing
     window.currentRequestId = requestData.id;
@@ -19,11 +19,17 @@ function openRequestDetailModal(requestData, cardElement = null, isadmin = false
             cardElement.classList.remove('card-animate-to-center');
         }, 600);
     }
-    if (isadmin && requestData.story) {
+    if (requestData.user_id != requestData.this_user_id || requestData.story == 'accept') {
 // المان‌هایی که id آنها با "edit" شروع می‌شود و با "lBtn" تمام می‌شود
 const editbtns = document.querySelectorAll('[id^="edit"][id$="Btn"]');
         editbtns.forEach(editbtn => {
             editbtn.classList.add('hidden');
+        });
+    }
+    else{
+        const editbtns = document.querySelectorAll('[id^="edit"][id$="Btn"]');
+        editbtns.forEach(editbtn => {
+            editbtn.classList.remove('hidden');
         });
     }
 
@@ -166,6 +172,100 @@ const editbtns = document.querySelectorAll('[id^="edit"][id$="Btn"]');
         gradeSheetDiv.classList.add('hidden');
     }
 
+    // Fill appointments list
+    const appointmentsList = document.getElementById('appointmentsList');
+    const appointmentsSection = document.getElementById('appointmentsSection');
+
+    // Show appointments section only for admin users
+    if (appointmentsSection && requestData.user_id !== requestData.this_user_id) {
+        appointmentsSection.classList.remove('hidden');
+    }
+
+    if (requestData.appointments && requestData.appointments.length > 0) {
+        let appointmentsHTML = '';
+        requestData.appointments.forEach(appointment => {
+            // Determine status badge
+            let statusBadge = '';
+            if (appointment.status === 'scheduled') {
+                statusBadge = '<span class="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">زمان‌بندی شده</span>';
+            } else if (appointment.status === 'completed') {
+                statusBadge = '<span class="inline-block px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">انجام شده</span>';
+            } else if (appointment.status === 'cancelled') {
+                statusBadge = '<span class="inline-block px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">لغو شده</span>';
+            }
+
+            appointmentsHTML += `
+                <div class="bg-white rounded-xl p-4 border border-gray-200 hover:border-purple-300 transition-all duration-200 group" data-appointment-id="${appointment.id}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <h4 class="font-semibold text-gray-800">${appointment.title}</h4>
+                                ${statusBadge}
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                📅 ${appointment.scheduled_at_jalali}
+                                🕐 ${appointment.scheduled_at_time}
+                            </p>
+                            ${appointment.notes ? `<p class="text-sm text-gray-500 mt-2 italic">📝 ${appointment.notes}</p>` : ''}
+                            <p class="text-xs text-gray-400 mt-2">
+                                توسط ${appointment.user_name} - ${appointment.updated_at_human}
+                            </p>
+                        </div>
+                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <button type="button"
+                                onclick="editAppointment(${appointment.id})"
+                                class="p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors"
+                                title="ویرایش">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </button>
+                            <button type="button"
+                                onclick="deleteAppointment(${appointment.id})"
+                                class="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors"
+                                title="حذف">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        if (appointmentsList) {
+            appointmentsList.innerHTML = appointmentsHTML;
+        }
+
+        // Update appointments count
+        const appointmentsCount = document.getElementById('appointmentsCount');
+        if (appointmentsCount) {
+            appointmentsCount.textContent = `${requestData.appointments.length} قرار ملاقات`;
+        }
+    } else {
+        // Show empty state
+        if (appointmentsList && appointmentsList.parentElement) {
+            appointmentsList.parentElement.innerHTML = `
+                <div class="text-center py-6">
+                    <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p class="text-gray-500">هنوز قرار ملاقاتی برای این درخواست تعیین نشده است</p>
+                </div>
+            `;
+        }
+
+        // Update appointments count
+        const appointmentsCount = document.getElementById('appointmentsCount');
+        if (appointmentsCount) {
+            appointmentsCount.textContent = '0 قرار ملاقات';
+        }
+    }
+
     // Show modal with animation
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -210,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         modal.classList.remove('show');
-        setTimeout(() => {
+
             modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
 
@@ -222,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Update main page after modal close
             updateMainPageAfterModalClose();
-        }, 300);
+
     }
 
     // Close modal with button

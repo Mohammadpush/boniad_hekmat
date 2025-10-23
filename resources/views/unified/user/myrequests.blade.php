@@ -9,23 +9,25 @@
     <!-- استایل‌های مخصوص این صفحه -->
     <link rel="stylesheet" href="{{ asset('assets/css/pages/myrequests/styles.css') }}">
 @endsection
-
-@section('title')
+@section('title', 'درخواست های من')
+@section('page-title')
     <h1 class="text-black text-[clamp(0.7rem,3.5vw,1.25rem)] font-bold h-fit my-auto">
         درخواست های من
     </h1>
     @if (!$requests->isEmpty())
-    <a href="{{ route('unified.requestform') }}"
-        class="bg-green-500 text-center rounded-3xl flex w-[clamp(100px,25vw,150px)] max-[342px]:fixed max-[342px]:bottom-0 max-[342px]:w-[100vw] max-[342px]:left-0  max-[342px]:rounded-none z-20 h-[50px] justify-center ">
+        <a href="{{ route('unified.requestform') }}"
+            class="bg-green-500 text-center rounded-3xl flex w-[clamp(100px,25vw,150px)] max-[342px]:fixed max-[342px]:bottom-0 max-[342px]:w-[100vw] max-[342px]:left-0  max-[342px]:rounded-none z-20 h-[50px] justify-center ">
 
-        <span class="h-fit m-auto text-[clamp(0.5rem,3vw,1rem)] max-[342px]:text-base">افزودن درخواست +</span>
-    </a>
+            <span class="h-fit text-white m-auto text-[clamp(0.5rem,3vw,1rem)] max-[342px]:text-base">افزودن درخواست
+                +</span>
+        </a>
     @endif
 @endsection
 
 @section('content')
     @php
         use Morilog\Jalali\Jalalian;
+        use Illuminate\Support\Facades\Auth;
     @endphp
 
 
@@ -61,9 +63,16 @@
 
                     @foreach ($requests as $request)
                         <!-- کارت -->
-                        <div
-                            class="card-hover bg-gradient-to-br from-white to-gray-50 w-72 h-96 flex flex-col items-center justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden select-none">
-
+                        <div class="card-hover bg-gradient-to-br from-white to-gray-50 w-72 h-96 flex flex-col items-center justify-center rounded-3xl shadow-lg border border-gray-200 p-6 relative overflow-hidden select-none"
+                            id='cardcontainar-{{ $request->id }}'>
+                            <a href="{{ route('unified.message', ['id' => $request->id]) }}"
+                                id='messageBtn-{{ $request->id }}'
+                                class="absolute top-5 bg-blue-400 p-1 rounded-full right-5 opacity-0 transition-opacity duration-300 invisible">
+                                <svg class="w-5 h-5 text-[#e2e0e0] flex-shrink-0 transition-colors duration-200"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                </svg> </a>
                             <!-- آیکون وضعیت در گوشه -->
 
                             <!-- تصویر پروفایل -->
@@ -111,6 +120,8 @@
 
                                 <button type="button"
                                     onclick="openRequestDetailModal({
+                                                                this_user_id : {{ Auth::user()->id }},
+                                                                user_id : {{ $request->user->id }},
                                                                 id: {{ $request->id }},
                                                                 name: '{{ addslashes($request->name) }}',
                                                                 grade: '{{ addslashes($request->grade) }}',
@@ -151,18 +162,32 @@
                                                                 future: '{{ addslashes($request->future) }}',
                                                                 favorite_major: '{{ addslashes($request->favorite_major) }}',
                                                                 help_others: '{{ addslashes($request->help_others) }}',
-                                                                suggestion: '{{ addslashes($request->suggestion) }}'
+                                                                suggestion: '{{ addslashes($request->suggestion) }}',
+                                                                appointments: {!! json_encode($request->appointments->map(function ($apt) {
+                                                                    return [
+                                                                        'id' => $apt->id,
+                                                                        'title' => $apt->title,
+                                                                        'status' => $apt->status,
+                                                                        'notes' => $apt->notes,
+                                                                        'scheduled_at_jalali' => \Morilog\Jalali\Jalalian::fromDateTime($apt->scheduled_at)->format('Y/m/d'),
+                                                                        'scheduled_at_time' => $apt->scheduled_at->format('H:i'),
+                                                                        'user_name' => $apt->user ? $apt->user->name : 'ناشناس',
+                                                                        'updated_at_human' => $apt->updated_at->diffForHumans(['locale' => 'fa']),
+                                                                    ];
+                                                                }))!!}
+
                                                             })"
                                     class="action-btn flex-1 w-1/2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-medium text-center shadow-md hover:shadow-lg flex items-center py-3 justify-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7"></path>
                                     </svg>
-                                    مشاهده {{  $request->story=='accept' ? '' : ' / ویرایش' }}
+                                    مشاهده {{ $request->story == 'accept' ? '' : ' / ویرایش' }}
                                 </button>
                                 @if ($request->story == 'accept')
-                                    <button onclick="opencardnumberpopup({
-                                    id: {{ $request->id  }},
+                                    <button
+                                        onclick="opencardnumberpopup({
+                                    id: {{ $request->id }},
                                     cardnumber : {{ $request->cardnumber }}
                                     })"
                                         class=" bg-blue-600 w-1/2 hover:bg-blue-700  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-white font-medium text-[10px] py-3 px-4 rounded-lg shadow-sm transition-colors duration-200 ease-in-out border border-transparent">
@@ -319,12 +344,14 @@
     </div>
     @endif
     </div>
+
     </main>
 @endsection
 @section('scripts')
     <!-- اسکریپت‌های عمومی -->
 
     <script src="{{ asset('assets/js/input-validation.js') }}"></script>
+    <script src="{{ asset('assets/js/request-cards.js') }}"></script>
 
     <!-- اسکریپت مخصوص این صفحه -->
     <script src="{{ asset('assets/js/pages/myrequests/card-manager.js') }}"></script>

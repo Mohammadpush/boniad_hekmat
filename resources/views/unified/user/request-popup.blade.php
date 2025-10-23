@@ -4,7 +4,7 @@
 
 <link rel="stylesheet" href="{{ asset('assets/css/request-detail.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/request-detail-popup/slider-styles.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/request-detail-popup/progress-bar-styles.css') }}">{{-- مودال جزئیات درخواست برای کاربران --}}
+<link rel="stylesheet" href="{{ asset('assets/css/request-detail-popup/progress-bar-styles.css') }}"> {{-- مودال جزئیات درخواست برای کاربران --}}
 <div id="requestDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 ">
     <div class="flex items-center justify-center min-h-screen p-2">
         {{-- دکمه بستن کنار مودال (سمت راست بالا) --}}

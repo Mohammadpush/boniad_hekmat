@@ -75,6 +75,10 @@ Route::middleware(['auth'])->prefix('unified')->name('unified.')->group(function
     Route::get('/message/{id?}', [UnifiedController::class, 'message'])->name('message');
     Route::post('/storemessage/{id}', [UnifiedController::class, 'storemessage'])->name('storemessage');
 
+    // API Routes for Real-time Updates
+    Route::get('/api/unread-count', [UnifiedController::class, 'getUnreadCount'])->name('api.unread');
+    Route::get('/api/new-messages/{id}', [UnifiedController::class, 'getNewMessages'])->name('api.newmessages');
+
     // Accepted Requests - Admin/Master Only
     Route::get('/acceptes', [UnifiedController::class, 'acceptes'])->name('acceptes');
 

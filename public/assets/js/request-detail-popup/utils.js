@@ -21,15 +21,14 @@ function showNotification(message, type = 'info') {
 
     // Create notification
     const notification = document.createElement('div');
-    notification.className = `custom-notification fixed top-4 left-4 px-4 py-2 rounded-lg shadow-lg z-[100] flex items-center space-x-2 space-x-reverse animate-pulse ${
-        type === 'success' ? 'bg-green-500 text-white' :
+    notification.className = `custom-notification fixed top-4 left-4 px-4 py-2 rounded-lg shadow-lg z-[100] flex items-center space-x-2 space-x-reverse animate-pulse ${type === 'success' ? 'bg-green-500 text-white' :
         type === 'error' ? 'bg-red-500 text-white' :
-        'bg-blue-500 text-white'
-    }`;
+            'bg-blue-500 text-white'
+        }`;
 
     const icon = type === 'success' ? 'M5 13l4 4L19 7' :
-                type === 'error' ? 'M6 18L18 6M6 6l12 12' :
-                'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+        type === 'error' ? 'M6 18L18 6M6 6l12 12' :
+            'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
 
     notification.innerHTML = `
         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -80,6 +79,8 @@ function updateCard(cardElement, requestData) {
         if (viewButton) {
             const newOnclick = `openRequestDetailModal({
                 id: ${requestData.id},
+                this_user_id : ${requestData.this_user_id },
+                user_id : ${ requestData.user_id },
                 name: '${requestData.name.replace(/'/g, "\\'")}',
                 grade: '${requestData.grade}',
                 story: '${requestData.story}',
@@ -287,7 +288,7 @@ function saveAllEditingFields() {
                     completed++;
                 }
             })
-            .catch(() => {}); // Continue even on error
+            .catch(() => { }); // Continue even on error
     });
 
     // Wait for all to complete
@@ -326,7 +327,7 @@ function initializeCancelPopup() {
     const closeBtn = document.getElementById('warning-closepopup');
 
     if (openBtn) {
-        openBtn.addEventListener('click', function(e) {
+        openBtn.addEventListener('click', function (e) {
             e.preventDefault();
             showCancelConfirmation();
         });
@@ -339,7 +340,7 @@ function initializeCancelPopup() {
     // Close on background click
     const popup = document.getElementById('waning-popup');
     if (popup) {
-        popup.addEventListener('click', function(e) {
+        popup.addEventListener('click', function (e) {
             if (e.target === popup) {
                 hideCancelConfirmation();
             }
@@ -347,7 +348,7 @@ function initializeCancelPopup() {
     }
 
     // Close on Escape key
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && !popup.classList.contains('hidden')) {
             hideCancelConfirmation();
         }

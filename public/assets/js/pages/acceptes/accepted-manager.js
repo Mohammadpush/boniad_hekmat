@@ -1,16 +1,26 @@
 /**
  * اسکریپت اختصاصی صفحه پذیرفته‌شدگان
+ * مدیریت مودال و فرم های بورسیه
  */
-
 class AcceptedStudentsManager {
     constructor() {
         this.currentModal = null;
+        this.currentRequestId = null;
+
+        // Cache DOM elements
+        this.elements = {
+            modal: document.getElementById('scholarshipModal'),
+            modalContent: document.getElementById('modalContent'),
+            form: document.getElementById('scholarshipForm'),
+            requestIdInput: document.getElementById('modalRequestId'),
+        };
+
         this.init();
     }
 
     init() {
         this.setupEventListeners();
-        this.checkForLaravelMessages();
+        this.setupFormSubmission();
     }
 
     setupEventListeners() {
@@ -22,49 +32,64 @@ class AcceptedStudentsManager {
         });
 
         // Close modals when clicking outside
-        document.addEventListener('click', (e) => {
-            if (e.target.matches('.modal-backdrop')) {
-                this.closeAllModals();
-            }
-        });
+        if (this.elements.modal) {
+            this.elements.modal.addEventListener('click', (e) => {
+                if (e.target === this.elements.modal) {
+                    this.closeScholarshipModal();
+                }
+            });
+        }
     }
 
-    checkForLaravelMessages() {
-        // This will be replaced by Laravel Blade template when needed
+    setupFormSubmission() {
+        if (!this.elements.form) return;
+
+        // ✅ اضافه کردن formatter برای price input
+        const priceInput = this.elements.form.querySelector('#price');
+        if (priceInput) {
+            priceInput.addEventListener('input', (e) => {
+                this.formatPrice(e.target);
+            });
+        }
+
+        this.elements.form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Validate form
+            if (!this.validateScholarshipForm()) {
+                return;
+            }
+
+            // Remove commas from price before submit
+            const priceInput = this.elements.form.querySelector('#price');
+            if (priceInput) {
+                priceInput.value = priceInput.value.replace(/,/g, '');
+            }
+
+            // Submit form via AJAX
+            this.submitScholarshipForm();
+        });
     }
 
     // Scholarship Modal Functions
     openScholarshipModal(requestId) {
-        const modal = document.getElementById('scholarshipModal');
-        const modalContent = document.getElementById('modalContent');
-        const form = document.getElementById('scholarshipForm');
-        const requestIdInput = document.getElementById('modalRequestId');
 
-        if (!modal || !modalContent || !form || !requestIdInput) {
-            console.error('Modal elements not found');
-            return;
-        }
-        else
-        {
-            console.log(modal,modalContent,form,requestIdInput);
-        }
-
-        // Set the request ID
-        requestIdInput.value = requestId;
-
+        this.currentRequestId = requestId;
+        this.elements.requestIdInput.value = requestId;
+        this.elements.form.action = `/unified/storemessage/${requestId}`;
 
         // Show modal
-        modal.classList.remove('hidden');
+        this.elements.modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
 
         // Animate modal appearance
         requestAnimationFrame(() => {
-            modalContent.classList.remove('scale-95', 'opacity-0');
-            modalContent.classList.add('scale-100', 'opacity-100');
+            this.elements.modalContent.classList.remove('scale-95', 'opacity-0');
+            this.elements.modalContent.classList.add('scale-100', 'opacity-100');
         });
 
         // Focus first input
-        const firstInput = modal.querySelector('input[type="text"]');
+        const firstInput = this.elements.modal.querySelector('input[type="text"]');
         if (firstInput) {
             setTimeout(() => firstInput.focus(), 300);
         }
@@ -73,24 +98,20 @@ class AcceptedStudentsManager {
     }
 
     closeScholarshipModal() {
-        const modal = document.getElementById('scholarshipModal');
-        const modalContent = document.getElementById('modalContent');
-        const form = document.getElementById('scholarshipForm');
-
-        if (!modal || !modalContent || !form) return;
 
         // Animate modal disappearance
-        modalContent.classList.add('scale-95', 'opacity-0');
-        modalContent.classList.remove('scale-100', 'opacity-100');
+        this.elements.modalContent.classList.add('scale-95', 'opacity-0');
+        this.elements.modalContent.classList.remove('scale-100', 'opacity-100');
 
         setTimeout(() => {
-            modal.classList.add('hidden');
+            this.elements.modal.classList.add('hidden');
             document.body.style.overflow = '';
 
             // Reset form
-            form.reset();
+            this.elements.form.reset();
 
             this.currentModal = null;
+            this.currentRequestId = null;
         }, 300);
     }
 
@@ -151,9 +172,6 @@ class AcceptedStudentsManager {
                 </div>
                 <h3 class="success-title">عملیات موفق!</h3>
                 <p class="success-message" id="successMessage">${message}</p>
-                <button onclick="acceptedManager.closeSuccessPopup()" class="btn btn-primary">
-                    تأیید
-                </button>
             </div>
         `;
 
@@ -178,27 +196,21 @@ class AcceptedStudentsManager {
         this.closeSuccessPopup();
     }
 
+
     // Form validation and submission
     validateScholarshipForm() {
-        const form = document.getElementById('scholarshipForm');
-        if (!form) return false;
+        if (!this.elements.form) return false;
 
-        const title = form.querySelector('#title').value.trim();
-        const description = form.querySelector('#description').value.trim();
-        const price = form.querySelector('#price').value.trim();
-
-        if (!title) {
-            this.showError('لطفاً عنوان بورسیه را وارد کنید');
-            return false;
-        }
-
-        if (title.length > 25) {
-            this.showError('عنوان بورسیه نمی‌تواند بیش از 25 کاراکتر باشد');
-            return false;
-        }
+        const description = this.elements.form.querySelector('#description')?.value.trim() || '';
+        const price = this.elements.form.querySelector('#price')?.value.trim() || '';
 
         if (!description) {
             this.showError('لطفاً توضیحات را وارد کنید');
+            return false;
+        }
+
+        if (description.length < 10) {
+            this.showError('توضیحات باید حداقل 10 کاراکتر باشد');
             return false;
         }
 
@@ -207,7 +219,72 @@ class AcceptedStudentsManager {
             return false;
         }
 
+        // بررسی اینکه قیمت عدد است
+        const priceNumber = parseInt(price.replace(/,/g, ''));
+        if (isNaN(priceNumber) || priceNumber <= 0) {
+            this.showError('مبلغ بورسیه باید عدد مثبت باشد');
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * ارسال فرم بورسیه از طریق AJAX
+     */
+    async submitScholarshipForm() {
+        const formData = new FormData(this.elements.form);
+        const submitBtn = this.elements.form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+
+        try {
+            // Show loading state
+            submitBtn.innerHTML = '<svg class="animate-spin w-5 h-5 inline-block ml-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>درحال پردازش...';
+            submitBtn.disabled = true;
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+            const response = await fetch(this.elements.form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',  // ✅ اضافه کردن Accept header
+                }
+            });
+
+            console.log('Response Status:', response.status);
+            console.log('Response Headers:', response.headers);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Response Error:', errorText);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Response Data:', data);
+
+            if (data.success) {
+                this.showSuccessPopup('بورسیه با موفقیت تعیین شد');
+                this.closeScholarshipModal();
+
+                // Reload page after success
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                this.showError(data.message || 'خطا در ارسال اطلاعات');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            this.showError('خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید.');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
     }
 
     showError(message) {
@@ -218,75 +295,48 @@ class AcceptedStudentsManager {
         }
     }
 
-    // Progress bar animations
-    animateProgressBar(element, targetPercent) {
-        let currentPercent = 0;
-        const increment = targetPercent / 50; // 50 frames for smooth animation
+    /**
+     * نمایش Popup موفقیت
+     */
+    showSuccessPopup(message = 'عملیات با موفقیت انجام شد') {
+        const popup = document.getElementById('successPopup');
+        const content = document.getElementById('successContent');
+        const messageElement = document.getElementById('successMessage');
 
-        const animate = () => {
-            if (currentPercent < targetPercent) {
-                currentPercent += increment;
-                element.style.width = `${Math.min(currentPercent, targetPercent)}%`;
-                requestAnimationFrame(animate);
-            }
-        };
+        if (!popup || !content) {
+            this.createSuccessPopup(message);
+            return;
+        }
 
-        animate();
-    }
+        if (messageElement) {
+            messageElement.textContent = message;
+        }
 
-    // Initialize progress bars with animation
-    initializeProgressBars() {
-        const progressBars = document.querySelectorAll('.progress-bar-fill[data-percent]');
+        popup.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
 
-        progressBars.forEach(bar => {
-            const percent = parseFloat(bar.dataset.percent);
-            bar.style.width = '0%';
-
-            // Animate after a short delay
-            setTimeout(() => {
-                this.animateProgressBar(bar, percent);
-            }, 100);
+        requestAnimationFrame(() => {
+            content.classList.add('show');
         });
+
+        // Auto close after 5 seconds
+        setTimeout(() => {
+            this.closeSuccessPopup();
+        }, 5000);
     }
 
-    // Copy functionality
-    copyToClipboard(text) {
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(text).then(() => {
-                this.showSuccess('متن کپی شد');
-            }).catch(() => {
-                this.fallbackCopyTextToClipboard(text);
-            });
-        } else {
-            this.fallbackCopyTextToClipboard(text);
-        }
-    }
+    closeSuccessPopup() {
+        const popup = document.getElementById('successPopup');
+        const content = document.getElementById('successContent');
 
-    fallbackCopyTextToClipboard(text) {
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        textArea.style.top = '0';
-        textArea.style.left = '0';
-        textArea.style.position = 'fixed';
+        if (!popup || !content) return;
 
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
+        content.classList.remove('show');
 
-        try {
-            document.execCommand('copy');
-            this.showSuccess('متن کپی شد');
-        } catch (err) {
-            console.error('Fallback: Could not copy text: ', err);
-        }
-
-        document.body.removeChild(textArea);
-    }
-
-    showSuccess(message) {
-        if (window.toastManager) {
-            window.toastManager.success(message);
-        }
+        setTimeout(() => {
+            popup.classList.add('hidden');
+            document.body.style.overflow = '';
+        }, 300);
     }
 
     // Utility methods
@@ -294,40 +344,18 @@ class AcceptedStudentsManager {
         // Remove non-digits
         let value = input.value.replace(/[^0-9]/g, '');
 
-        // Add thousand separators with comma (same as price-input.js)
+        // Add thousand separators with comma
         if (value.length > 3) {
             value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
 
         input.value = value;
     }
-
-    // Initialize everything
-    initialize() {
-        this.initializeProgressBars();
-
-        // Note: price input formatting is handled by price-input.js
-        // We don't need to set up the event listener here to avoid conflicts
-
-        // Setup form submission - remove commas before submit
-        const scholarshipForm = document.getElementById('scholarshipForm');
-        if (scholarshipForm) {
-            scholarshipForm.addEventListener('submit', (e) => {
-                // Remove commas from price before validation
-                const priceInput = document.getElementById('price');
-                if (priceInput) {
-                    priceInput.value = priceInput.value.replace(/,/g, '');
-                }
-
-                if (!this.validateScholarshipForm()) {
-                    e.preventDefault();
-                }
-            });
-        }
-    }
 }
 
-// Global functions for compatibility
+/**
+ * Global functions for compatibility with onclick handlers
+ */
 function openScholarshipModal(requestId) {
     if (window.acceptedManager) {
         window.acceptedManager.openScholarshipModal(requestId);
@@ -353,7 +381,6 @@ function closeSuccessPopup() {
 }
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     window.acceptedManager = new AcceptedStudentsManager();
-    window.acceptedManager.initialize();
 });

@@ -3,8 +3,7 @@
 /* Container اصلی */
 .message-container {
     display: flex;
-    height: calc(100vh - 100px);
-    max-width: 1400px;
+    height: 100vh;
     margin: 0 auto;
     background: white;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -213,6 +212,25 @@
     text-align: center;
 }
 
+/* ==================== Date Separator ==================== */
+.date-separator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 16px 0;
+    gap: 12px;
+}
+
+.date-separator-text {
+    font-size: 17px;
+    font-weight: 600;
+    color: #9ca3af;
+    background: #f3f4f6;
+    padding: 4px 12px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
 /* Message Bubbles */
 .message-wrapper {
     display: flex;
@@ -278,6 +296,23 @@
 
 .message-time {
     font-size: 11px;
+}
+
+.message-ticks {
+    display: flex;
+    align-items: center;
+    gap: -2px;
+    font-size: 12px;
+}
+
+.message-ticks svg {
+    width: 14px;
+    height: 14px;
+    margin: 0 -2px;
+}
+
+.message-ticks svg:first-child {
+    margin-right: -4px;
 }
 
 .message-badge {

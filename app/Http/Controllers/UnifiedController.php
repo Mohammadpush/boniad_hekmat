@@ -270,66 +270,207 @@ class UnifiedController extends Controller
     public function message($id = null)
     {
         $userRole = Auth::user()->role;
+        $currentUserId = Auth::id();
 
-        // Get requests based on role
+        // Get requests based on role and sort by latest message (like Telegram)
         if ($userRole === 'user') {
-            $requests = ModelRequest::where('user_id', Auth::id())->get();
+            $requests = ModelRequest::where('user_id', $currentUserId)
+                ->leftJoin('scholarships', function($join) {
+                    $join->on('requests.id', '=', 'scholarships.request_id')
+                        ->whereRaw('scholarships.id = (
+                            SELECT id FROM scholarships s2
+                            WHERE s2.request_id = requests.id
+                            ORDER BY s2.created_at DESC
+                            LIMIT 1
+                        )');
+                })
+                ->select('requests.*', 'scholarships.created_at as last_message_at')
+                ->orderByRaw('COALESCE(scholarships.created_at, requests.created_at) DESC')
+                ->get();
         } else {
-            $requests = ModelRequest::with('user')->get();
+            $requests = ModelRequest::with('user')
+                ->leftJoin('scholarships', function($join) {
+                    $join->on('requests.id', '=', 'scholarships.request_id')
+                        ->whereRaw('scholarships.id = (
+                            SELECT id FROM scholarships s2
+                            WHERE s2.request_id = requests.id
+                            ORDER BY s2.created_at DESC
+                            LIMIT 1
+                        )');
+                })
+                ->select('requests.*', 'scholarships.created_at as last_message_at')
+                ->orderByRaw('COALESCE(scholarships.created_at, requests.created_at) DESC')
+                ->get();
         }
 
         // Get messages for selected request
         $scholarships = [];
         $selectedRequest = null;
         if ($id) {
-            $scholarships = Scholarship::with(['request', 'profile'])
+            $scholarships = Scholarship::with(['request', 'profile', 'sender'])
                 ->where('request_id', $id)
                 ->orderBy('created_at', 'asc')
                 ->get();
+
             $selectedRequest = ModelRequest::with('user')->find($id);
+
+            // تیک زدن فقط پیام‌هایی که از طرف دیگران است
+            Scholarship::where('request_id', $id)
+                ->where('sender_user_id', '!=', $currentUserId)
+                ->where('tick', false)
+                ->update(['tick' => true]);
         }
 
         return view('unified.user.message', compact('scholarships', 'requests', 'selectedRequest', 'id'));
     }
 
-    public function storemessage(Request $request, $id)
+    // API: Get unread messages count
+    public function getUnreadCount()
     {
-        $data = $request->validate([
-            'description' => 'required|string',
-            'story' => 'required|in:thanks,warning,message,scholarship',
-            'price' => 'nullable|integer',
-        ]);
-
+        $currentUserId = Auth::id();
         $userRole = Auth::user()->role;
 
+        // Get all requests based on role
         if ($userRole === 'user') {
-            $data['profile_id'] = null;
+            $requestIds = ModelRequest::where('user_id', $currentUserId)->pluck('id');
         } else {
-            if ($userRole === 'admin') {
-                $data['profile_id'] = Auth::user()->profile->id;
-            } else {
+            $requestIds = ModelRequest::pluck('id');
+        }
+
+        // Count unread messages across all requests
+        $unreadCount = Scholarship::whereIn('request_id', $requestIds)
+            ->where('sender_user_id', '!=', $currentUserId)
+            ->where('tick', false)
+            ->count();
+
+        // Get unread count per request
+        $unreadPerRequest = Scholarship::whereIn('request_id', $requestIds)
+            ->where('sender_user_id', '!=', $currentUserId)
+            ->where('tick', false)
+            ->groupBy('request_id')
+            ->selectRaw('request_id, COUNT(*) as count')
+            ->pluck('count', 'request_id');
+
+        return response()->json([
+            'success' => true,
+            'total_unread' => $unreadCount,
+            'unread_per_request' => $unreadPerRequest
+        ]);
+    }
+
+    // API: Get new messages for a specific request
+    public function getNewMessages(Request $request, $id)
+    {
+        $lastMessageId = $request->query('last_message_id', 0);
+        $currentUserId = Auth::id();
+
+        $newMessages = Scholarship::with(['sender', 'profile'])
+            ->where('request_id', $id)
+            ->where('id', '>', $lastMessageId)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Mark as read
+        Scholarship::where('request_id', $id)
+            ->where('sender_user_id', '!=', $currentUserId)
+            ->where('tick', false)
+            ->update(['tick' => true]);
+
+        return response()->json([
+            'success' => true,
+            'messages' => $newMessages->map(function($message) {
+                return [
+                    'id' => $message->id,
+                    'description' => $message->description,
+                    'story' => $message->story,
+                    'price' => $message->price,
+                    'created_at' => $message->created_at->toIso8601String(),
+                    'sender_name' => $message->sender->name ?? 'نامشخص',
+                    'is_from_admin' => !empty($message->profile_id) || $message->ismaster,
+                ];
+            })
+        ]);
+    }
+
+    public function storemessage(Request $request, $id)
+    {
+        try {
+            $data = $request->validate([
+                'description' => 'required|string',
+                'story' => 'required|in:thanks,warning,message,scholarship',
+                'price' => 'nullable|integer',
+            ]);
+
+            $userRole = Auth::user()->role;
+            $data['sender_user_id'] = Auth::id(); // ذخیره فرستنده
+
+            if ($userRole === 'user') {
                 $data['profile_id'] = null;
-                $data['ismaster'] = true;
-            }
-        }
-
-        $data['request_id'] = $id;
-
-        // If it's a scholarship, handle DailyTracker
-        if ($data['story'] === 'scholarship') {
-            $tracker = DailyTracker::where('request_id', $id)->first();
-            if ($tracker) {
-                $tracker->start_date = Carbon::now()->startOfDay();
-                $tracker->save();
+            } else {
+                if ($userRole === 'admin') {
+                    $data['profile_id'] = Auth::user()->profile->id;
+                } else {
+                    $data['profile_id'] = null;
+                    $data['ismaster'] = true;
+                }
             }
 
+            $data['request_id'] = $id;
+
+            // If it's a scholarship, handle DailyTracker
+            if ($data['story'] === 'scholarship') {
+                $tracker = DailyTracker::where('request_id', $id)->first();
+                if ($tracker) {
+                    $tracker->start_date = Carbon::now()->startOfDay();
+                    $tracker->save();
+                }
+
+                $scholarship = Scholarship::create($data);
+
+                // ✅ بررسی AJAX درخواست (بهتر)
+                if ($request->expectsJson() || $request->wantsJson() || $request->isXmlHttpRequest()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'بورسیه با موفقیت تعیین شد',
+                        'scholarship_id' => $scholarship->id,
+                        'redirect' => route('unified.acceptes')
+                    ], 200);
+                }
+
+                return redirect()->route('unified.acceptes')->with('success', 'بورسیه با موفقیت تعیین شد');
+            }
+
+            // Regular message
             Scholarship::create($data);
-            return redirect()->route('unified.acceptes')->with('success', 'بورسیه با موفقیت تعیین شد');
-        }
 
-        // Regular message
-        Scholarship::create($data);
-        return redirect()->route('unified.message', $id)->with('success', 'پیام با موفقیت ارسال شد');
+            // ✅ بررسی AJAX درخواست (بهتر)
+            if ($request->expectsJson() || $request->wantsJson() || $request->isXmlHttpRequest()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'پیام با موفقیت ارسال شد',
+                    'redirect' => route('unified.message', $id)
+                ], 200);
+            }
+
+            return redirect()->route('unified.message', $id)->with('success', 'پیام با موفقیت ارسال شد');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson() || $request->isXmlHttpRequest()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'خطا در اعتبارسنجی',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
+        } catch (\Exception $e) {
+            if ($request->expectsJson() || $request->isXmlHttpRequest()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'خطا در ذخیره اطلاعات: ' . $e->getMessage()
+                ], 500);
+            }
+            throw $e;
+        }
     }
 
     // Accepted Requests - Admin/Master Only

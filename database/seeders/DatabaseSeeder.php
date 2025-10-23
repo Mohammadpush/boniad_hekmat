@@ -50,7 +50,7 @@ class DatabaseSeeder extends Seeder
         // Generate fake requests data for each user
         $requests = [];
         $grades = ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم', 'هفتم', 'هشتم', 'نهم', 'دهم', 'یازدهم', 'دوازدهم'];
-        $stories = ['submit', 'accept', 'check', 'reject', 'epointment'];
+        $stories = ['submit', 'accept', 'check', 'reject'];
         $knowOptions = ['شبکه‌های اجتماعی', 'دوستان', 'خانواده', 'مدرسه', 'سایت بنیاد', 'سایر'];
         $counselingMethods = ['مشاوره مدرسه', 'مشاوره خارجی', 'روش‌های دیگر', 'مشاوره نمی‌کنم'];
         $helpOthers = ['بله، همیشه', 'گاهی اوقات', 'خیر، هرگز'];
@@ -113,7 +113,6 @@ class DatabaseSeeder extends Seeder
                     'imgpath' => 'userimage/default.png',
                     'gradesheetpath' => 'gradesheets/sample.pdf',
                     'story' => $stories[array_rand($stories)],
-                    'date' => mt_rand(0, 1) ? now()->subDays(mt_rand(1, 30)) : null,
                     'cardnumber' => mt_rand(0, 1) ? str_pad(mt_rand(1000000000000000, 9999999999999999), 16, '0', STR_PAD_LEFT) : null,
                     'created_at' => now()->subDays(mt_rand(0, 60)),
                     'updated_at' => now()->subDays(mt_rand(0, 30)),

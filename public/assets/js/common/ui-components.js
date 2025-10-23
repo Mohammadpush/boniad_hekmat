@@ -39,8 +39,13 @@ class ModalManager {
         });
     }
 
+
+    isOpen() {
+        return this.currentModal !== null;
+    }
     openModal(modalId) {
         const modal = document.getElementById(modalId);
+        console.log('mlskjfl;asjkhfl;oashf;lkajsdhfkljashfklajshfkljsahdf',modal)
         if (!modal) return;
 
         this.currentModal = modal;
@@ -87,10 +92,6 @@ class ModalManager {
             // trigger event
             modal.dispatchEvent(new CustomEvent('modal:closed'));
         }, 200);
-    }
-
-    isOpen() {
-        return this.currentModal !== null;
     }
 }
 
@@ -245,6 +246,15 @@ class LoadingManager {
 // ایجاد نمونه‌های global
 window.modalManager = new ModalManager();
 window.toastManager = new ToastManager();
+
+// تابع گلوبال برای سازگاری با onclick
+window.openModal = function(modalId) {
+    window.modalManager.openModal(modalId);
+};
+
+window.closeModal = function(modalId) {
+    window.modalManager.closeModal();
+};
 
 // Export برای استفاده در ماژول‌ها
 if (typeof module !== 'undefined' && module.exports) {

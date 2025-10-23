@@ -47,7 +47,7 @@ function initCardNumberInput() {
     if (!digits.length || !hiddenInput || !finalInput || !popup) return;
 
     let currentIndex = 0;
-    let cardNumber = ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'];
+    let cardNumber = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'];
 
     // فوکس روی مستطیل فعلی
     function focusCurrentDigit() {
@@ -70,7 +70,7 @@ function initCardNumberInput() {
 
     // بررسی تکمیل همه ارقام
     function checkCompletion() {
-        const isComplete = cardNumber.every(digit => digit !== '0');
+        const isComplete = cardNumber.every(digit => digit !== 'X');
         if (isComplete) {
             digits.forEach(digit => {
                 digit.classList.remove('border-gray-300', 'bg-gray-50', 'border-blue-500', 'bg-blue-50');
@@ -130,12 +130,15 @@ function initCardNumberInput() {
         if (e.key === 'Backspace') {
             e.preventDefault();
 
-            if (cardNumber[currentIndex] == 'X') {
-                cardNumber[currentIndex] = '0';
-                digits[currentIndex].textContent = 'X';
+            // ✅ تصحیح: از 'X' استفاده کن برای نشان دادن خالی
+            if (cardNumber[currentIndex] === 'X') {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    cardNumber[currentIndex] = 'X';
+                    digits[currentIndex].textContent = 'X';
+                }
             } else {
-                currentIndex--;
-                cardNumber[currentIndex] = '0';
+                cardNumber[currentIndex] = 'X';
                 digits[currentIndex].textContent = 'X';
             }
 
@@ -177,7 +180,8 @@ function initCardNumberInput() {
     // ریست کردن فرم - انتقال داخل initCardNumberInput
     function resetForm() {
         currentIndex = 0;
-        cardNumber = ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'];
+        // ✅ تصحیح: همیشه 'X' استفاده کن، نه '0'
+        cardNumber = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'];
         digits.forEach((digit, index) => {
             digit.textContent = 'X';
             digit.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200',

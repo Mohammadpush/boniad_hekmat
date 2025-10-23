@@ -15,7 +15,6 @@ class UnifiedLayoutManager {
     init() {
         this.cacheElements();
         this.setupEventListeners();
-        this.createMobileOverlay();
     }
 
     cacheElements() {
@@ -24,17 +23,7 @@ class UnifiedLayoutManager {
         this.sidebar = document.querySelector('.layout-sidebar');
     }
 
-    createMobileOverlay() {
-        // Create overlay for mobile menu
-        this.overlay = document.createElement('div');
-        this.overlay.className = 'mobile-overlay';
-        document.body.appendChild(this.overlay);
 
-        // Close menu when clicking overlay
-        this.overlay.addEventListener('click', () => {
-            this.closeMobileMenu();
-        });
-    }
 
     setupEventListeners() {
         if (!this.navbarToggle || !this.navbarMenu) return;

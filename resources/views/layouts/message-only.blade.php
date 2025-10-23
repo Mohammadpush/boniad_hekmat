@@ -175,22 +175,15 @@
 
         <!-- Main Content -->
         <div class="flex-1 min-[658px]:mr-[63px]  w-full ">
-            <div class=" shadow hide max-[342px]:h-[80px] fixed bg-[#f9fafb] z-[2] max-[658px]:w-full">
-                <div class="px-3 py-4  ">
+                
                     <button class="navbar-toggle max-[658px]:block min-[659px]:hidden z-[50]">
                         <span class="bar"></span>
                         <span class="bar"></span>
                         <span class="bar"></span>
                     </button>
-                    <div class="flex justify-between gap-6 w-[calc(100vw_-_90px)] mr-auto px-4 ">
-                        @yield('page-title')
 
 
-                </div>
 
-                </div>
-
-            </div>
 
             <!-- Mobile Navigation Menu (Hidden by default) -->
             <ul
@@ -232,7 +225,7 @@
                 <li><a href="{{ route('logout') }}"
                         class="lamp block py-4 text-lg text-gray-700 hover:text-red-600">خروج</a></li>
             </ul>
-            <main class=" mt-[80px]">
+            <main class=" ">
 
                 @yield('content')
             </main>
@@ -251,7 +244,6 @@
     <!-- Layout JavaScript -->
     <script src="{{ asset('assets/js/layouts/unified-layout.js') }}"></script>
     <script src="{{ asset('assets/js/search-functionality.js') }}"></script>
-    {{-- <script src="{{ asset('assets/js/aceeptes/modal.js') }}"></script> --}}
 
     <!-- Set current user role for JavaScript -->
     <script>
